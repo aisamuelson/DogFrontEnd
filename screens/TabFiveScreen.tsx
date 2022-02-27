@@ -1,23 +1,140 @@
-import { StyleSheet } from 'react-native';
+import React, { Component, useState } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ListRenderItem, Image } from 'react-native';
+import Colors from '../constants/Colors';
+import useColorScheme from '../hooks/useColorScheme';
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+type listingProps = {
+  name: string,
+  age: number,
+  sex: string
+};
 
-export default function TabFourScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabFourScreen.tsx" />
+const DATA: listingProps[] = [
+  {
+    name: 'Pet 1',
+    age: 0,
+    sex: "F"
+  },
+  {
+    name: 'Pet 2',
+    age: 99,
+    sex: "M"
+  }
+];
+
+const PetListing = (prop: listingProps) => (
+  <View style={{
+    flexDirection: "column",
+    marginHorizontal: 5,
+    marginBottom: 10,
+    height: 400
+  }}>
+    <View style={{
+      alignItems:'center',
+      flex:7,
+      //borderColor:'red',
+      //borderWidth:5
+    }}>
+      <Image //TODO: adress overflow issues
+        style={{
+          height: '100%',
+          resizeMode: 'contain',
+          overflow: 'hidden',
+        }}
+        source={require('../assets/images/dog-placeholder.jpeg')}
+      />
     </View>
+    <View style={{
+      backgroundColor: "#65D7FB",
+      flex:4,
+      flexDirection:'row',
+    }}>
+      <View style={{
+        padding:20
+      }}>
+        <Text style={styles.listingName}>{prop.name}</Text>
+        <Text style={styles.listingDetail}>Age:&nbsp;
+          <Text>{prop.age}</Text>
+        </Text>
+        <Text style={styles.listingDetail}>Sex:&nbsp;
+          <Text>{prop.sex}</Text>
+        </Text>
+      </View>
+      <TouchableOpacity 
+            style={[styles.pillButton, {
+              position:'absolute',
+              bottom:0,
+              right:0
+            }]}
+            onPress={()=>alert("Remove Pet")}>
+            <Text>Remove</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
+
+export default function TabFiveScreen() {
+  const textColor = Colors[useColorScheme()].text;
+
+  const renderItem: ListRenderItem<listingProps> = ({item}) => (
+    <PetListing 
+      name = {item.name}
+      age = {item.age}
+      sex = {item.sex}
+    />
   );
-}
+  
+  return (
+    <SafeAreaView style={[styles.container,{
+      flexDirection:"column"
+    }]}>
+      <View style={{ 
+        flex: 1,
+        flexDirection:"row",
+        alignItems:"center"
+      }}>
+        <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity 
+            style={styles.roundButton}
+            onPress={()=>alert("Profile Pic")}>
+            <Text>Picture</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{
+          flex: 1,
+          flexDirection: "column",
+          backgroundColor: "transparent"
+        }}>
+          <Text style={{
+            fontSize: 18,
+            marginBottom: 10,
+            color: textColor
+          }}>Username</Text>
+          <Text style={{
+            color: textColor
+          }}>About me...</Text>
+        </View>
+      </View>
+      <View style={{ 
+        flex: 4, 
+        //backgroundColor: "green"
+      }}>
+        <FlatList
+          data = {DATA}
+          renderItem = {renderItem}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1
   },
   title: {
     fontSize: 20,
@@ -28,4 +145,32 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
+  roundButton: {
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 100,
+    backgroundColor: 'grey',
+  },
+  pillButton: {
+    width: 80,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 100,
+    backgroundColor: '#FB6565',
+    margin: 10
+  },
+  listingName: {
+    fontWeight:'bold',
+    fontSize:30,
+    marginBottom:10
+  }, 
+  listingDetail: {
+    fontSize:16,
+    marginBottom:2
+  }
 });

@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Pressable, Text } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -114,10 +114,23 @@ function BottomTabNavigator() {
       <BottomTab.Screen
         name="TabFive"
         component={TabFiveScreen}
-        options={{
+        options={({ navigation }: RootTabScreenProps<'TabFive'>) => ({
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
+          headerRight: () => (
+            <Pressable
+              //onPress={() => navigation.navigate('')}
+              onPress={() => alert('TODO: Navigate to Settings')}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}>
+              <Text style={{
+                color: Colors[colorScheme].text,
+                paddingEnd: 15
+              }}>Settings</Text>
+            </Pressable>
+          ),
+        })}
       />
     </BottomTab.Navigator>
   );
