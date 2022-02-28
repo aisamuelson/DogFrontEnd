@@ -6,20 +6,10 @@ import {
   ListRenderItem, Image,
 } from 'react-native';
 import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
+import { RootTabScreenProps, ListingProps } from '../types';
 import React, {useState} from "react";
 
-
-
-type listingProps = {
-  id: string,
-  name: string,
-  breed: string,
-  avatar: string
-};
-
-
-const testPetList: listingProps[] = [
+const testPetList: ListingProps[] = [
   {id:'dog1',
     name: 'Dog',
     breed:'dog',
@@ -47,7 +37,7 @@ const testPetList: listingProps[] = [
 ];
 
 
-const PetListing = (prop: listingProps) => (
+const PetListing = (prop: ListingProps) => (
     <View style={styles.petListContainer}>
       <View style={styles.petListItemContainer}>
         <Image
@@ -61,23 +51,29 @@ const PetListing = (prop: listingProps) => (
             <Text>{prop.breed}</Text>
           </Text>
         </View>
+        {/* The whole listing has been made clickable, but if necessary we can add 'learn more' back in as text
         <TouchableOpacity
             style={styles.viewMoreStyle}
-            onPress={()=>alert("Remove Pet")}>
+        >
           <Text style={styles.viewMoreFont}>View more {'>'} </Text>
         </TouchableOpacity>
+        */}
     </View>
 );
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 
-  const renderItem: ListRenderItem<listingProps> = ({item}) => (
-      <PetListing
-          id = {item.id}
-          name = {item.name}
-          breed = {item.breed}
-          avatar = {item.avatar}
-      />);
+  const renderItem: ListRenderItem<ListingProps> = ({item}) => (
+      <TouchableOpacity
+        onPress={()=>navigation.navigate('Detail', {item})}
+      >
+        <PetListing
+            id = {item.id}
+            name = {item.name}
+            breed = {item.breed}
+            avatar = {item.avatar}
+        />
+      </TouchableOpacity>);
 
   return (
     <SafeAreaView>
@@ -89,12 +85,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex:1,
-    alignItems: 'center',
-    flexDirection:'column',
-  },
-
   petListContainer:{
     flex:1,
     flexDirection: "column",
@@ -113,9 +103,12 @@ const styles = StyleSheet.create({
     fontSize:30,
     marginBottom:10
   },
+
   petListItemBreed: {
     fontSize:16,
-    marginBottom:2},
+    marginBottom:2
+  },
+
   imageStyle:{
     width: '100%',
     height:'100%',
@@ -126,6 +119,7 @@ const styles = StyleSheet.create({
     bottom:0,
     right:0,
   },
+
   viewMoreFont: {
     fontStyle: 'italic',
     textDecorationLine: 'underline',

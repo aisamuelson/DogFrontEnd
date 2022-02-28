@@ -17,6 +17,7 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
+  Detail: undefined | {id: string} | {item: ListingProps};
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
@@ -36,3 +37,16 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+export type ListingProps = {
+  id: string,
+  name: string,
+  breed: string,
+  avatar: string
+};
+
+export type RouteParamList = {
+  Detail: {
+    item: ListingProps;
+  }
+}

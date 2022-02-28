@@ -3,26 +3,29 @@ import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ListR
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
-type listingProps = {
+type profileProps = {
+  id: string,
   name: string,
   age: number,
   sex: string
 };
 
-const DATA: listingProps[] = [
+const DATA: profileProps[] = [
   {
+    id: 'pet1',
     name: 'Pet 1',
     age: 0,
     sex: "F"
   },
   {
+    id: 'pet2',
     name: 'Pet 2',
     age: 99,
     sex: "M"
   }
 ];
 
-const PetListing = (prop: listingProps) => (
+const PetListing = (prop: profileProps) => (
   <View style={{
     flexDirection: "column",
     marginHorizontal: 5,
@@ -35,11 +38,10 @@ const PetListing = (prop: listingProps) => (
       //borderColor:'red',
       //borderWidth:5
     }}>
-      <Image //TODO: adress overflow issues
+      <Image
         style={{
           height: '100%',
-          resizeMode: 'contain',
-          overflow: 'hidden',
+          width: '100%'
         }}
         source={require('../assets/images/dog-placeholder.jpeg')}
       />
@@ -73,11 +75,12 @@ const PetListing = (prop: listingProps) => (
   </View>
 );
 
-export default function TabFiveScreen() {
+export default function ProfileScreen() {
   const textColor = Colors[useColorScheme()].text;
 
-  const renderItem: ListRenderItem<listingProps> = ({item}) => (
+  const renderItem: ListRenderItem<profileProps> = ({item}) => (
     <PetListing 
+      id = {item.id}
       name = {item.name}
       age = {item.age}
       sex = {item.sex}
@@ -126,6 +129,7 @@ export default function TabFiveScreen() {
         <FlatList
           data = {DATA}
           renderItem = {renderItem}
+          keyExtractor = {item => item.id}
         />
       </View>
     </SafeAreaView>

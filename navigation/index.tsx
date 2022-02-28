@@ -18,7 +18,8 @@ import HomeScreen from '../screens/HomeScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import PostScreen from '../screens/PostScreen';
 import MessagesScreen from '../screens/MessagesScreen';
-import TabFiveScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import DetailScreen from '../screens/DetailScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -46,6 +47,7 @@ function RootNavigator() {
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
+      <Stack.Screen name="Detail" component={DetailScreen} />
     </Stack.Navigator>
   );
 }
@@ -71,20 +73,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
       <BottomTab.Screen
@@ -93,6 +82,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Favorites',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
@@ -101,6 +91,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Post',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
@@ -109,27 +100,16 @@ function BottomTabNavigator() {
         options={{
           title: 'Messages',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
         name="TabFive"
-        component={TabFiveScreen}
+        component={ProfileScreen}
         options={({ navigation }: RootTabScreenProps<'TabFive'>) => ({
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              //onPress={() => navigation.navigate('')}
-              onPress={() => alert('TODO: Navigate to Settings')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <Text style={{
-                color: Colors[colorScheme].text,
-                paddingEnd: 15
-              }}>Settings</Text>
-            </Pressable>
-          ),
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
     </BottomTab.Navigator>
@@ -144,4 +124,22 @@ function TabBarIcon(props: {
   color: string;
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function SettingsButton(color: string) {
+  return (
+    <Pressable
+    //onPress={() => navigation.navigate('')}
+    onPress={() => alert('TODO: Navigate to Settings')}
+    style={({ pressed }) => ({
+      opacity: pressed ? 0.5 : 1,
+    })}>
+    <FontAwesome
+      name="gear"
+      size={25}
+      color={color}
+      style={{ marginRight: 15 }}
+    />
+  </Pressable> 
+  )
 }
