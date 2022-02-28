@@ -6,7 +6,7 @@ import { Button, Image, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { TextInput } from 'react-native-paper';
 
-export default function TabThreeScreen() {
+export default function PostScreen() {
 
   const [image, setImage] = useState<string | null>();
 
@@ -33,7 +33,7 @@ export default function TabThreeScreen() {
       <Button title="Pick an image from camera roll" onPress={pickImage} />
       {/* <TextInput label='Email' value={this.state.text} onChangeText={text => this.setState({ text })}/> */}
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabThreeScreen.tsx" />
+      <EditScreenInfo path="/screens/PostScreen.tsx" />
     </View>
   );
 }
