@@ -3,11 +3,13 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
-  ListRenderItem, Image,
+  ListRenderItem,
+  Image,
 } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps, ListingProps } from '../types';
 import React, {useState} from "react";
+import SearchBar from "../components/SearchBar";
 
 const testPetList: ListingProps[] = [
   {id:'dog1',
@@ -51,17 +53,13 @@ const PetListing = (prop: ListingProps) => (
             <Text>{prop.breed}</Text>
           </Text>
         </View>
-        {/* The whole listing has been made clickable, but if necessary we can add 'learn more' back in as text
-        <TouchableOpacity
-            style={styles.viewMoreStyle}
-        >
-          <Text style={styles.viewMoreFont}>View more {'>'} </Text>
-        </TouchableOpacity>
-        */}
     </View>
 );
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+
+  const [searchPhrase, setSearchPhrase] = useState("");
+  const [clicked, setClicked] = useState(false);
 
   const renderItem: ListRenderItem<ListingProps> = ({item}) => (
       <TouchableOpacity
@@ -77,14 +75,29 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
   return (
     <SafeAreaView>
+      {!clicked}
+      <SearchBar
+          searchPhrase={searchPhrase}
+          setSearchPhrase={setSearchPhrase}
+          clicked={clicked}
+          setClicked={setClicked}
+      />
       <FlatList
           data={testPetList}
           renderItem={renderItem}
+          keyExtractor={(item) => item.id}
       />
     </SafeAreaView>);
 }
 
 const styles = StyleSheet.create({
+  title: {
+    width: "100%",
+    marginTop: 20,
+    fontSize: 25,
+    fontWeight: "bold",
+    marginLeft: "10%",
+  },
   petListContainer:{
     flex:1,
     flexDirection: "column",
@@ -112,16 +125,5 @@ const styles = StyleSheet.create({
   imageStyle:{
     width: '100%',
     height:'100%',
-  },
-
-  viewMoreStyle:{
-    position:'absolute',
-    bottom:0,
-    right:0,
-  },
-
-  viewMoreFont: {
-    fontStyle: 'italic',
-    textDecorationLine: 'underline',
   },
 });
