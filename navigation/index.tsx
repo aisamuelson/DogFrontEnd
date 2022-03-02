@@ -8,19 +8,22 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Pressable, Text } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
+
+import HomeScreen from '../screens/HomeScreen';
+import FavoritesScreen from '../screens/FavoritesScreen';
+import PostScreen from '../screens/PostScreen';
+import MessagesScreen from '../screens/MessagesScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import DetailScreen from '../screens/DetailScreen';
 import Login from '../screens/login';
 import Signup from '../screens/signup';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
-import TabThreeScreen from '../screens/TabThreeScreen';
-import TabFourScreen from '../screens/TabFourScreen';
-import TabFiveScreen from '../screens/TabFiveScreen';
+
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -49,13 +52,17 @@ function RootNavigator() {
   //   return 
   // }
   return (
+
     // <Stack.Navigator>
-      // <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      // <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      // <Stack.Group screenOptions={{ presentation: 'modal' }}>
-      //   <Stack.Screen name="Modal" component={ModalScreen} />
-      // </Stack.Group>
-    // </Stack.Navigator>
+    //   <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+    //   <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+    //   <Stack.Group screenOptions={{ presentation: 'modal' }}>
+    //     <Stack.Screen name="Modal" component={ModalScreen} />
+    //   </Stack.Group>
+    //   <Stack.Screen name="Detail" component={DetailScreen} />
+
+    
+    //  </Stack.Navigator>
 
     <Stack.Navigator 
     screenOptions={{
@@ -68,6 +75,7 @@ function RootNavigator() {
       initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Detail" component={DetailScreen} />
         <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
         <Stack.Group screenOptions={{ presentation: 'modal' }}>
@@ -94,57 +102,48 @@ function BottomTabNavigator() {
       }}>
       <BottomTab.Screen
         name="TabOne"
-        component={TabOneScreen}
+        component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
       <BottomTab.Screen
         name="TabTwo"
-        component={TabTwoScreen}
+        component={FavoritesScreen}
         options={{
           title: 'Favorites',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
         name="TabThree"
-        component={TabThreeScreen}
+        component={PostScreen}
         options={{
           title: 'Post',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
         name="TabFour"
-        component={TabFourScreen}
+        component={MessagesScreen}
         options={{
           title: 'Messages',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
         name="TabFive"
-        component={TabFiveScreen}
-        options={{
+        component={ProfileScreen}
+        options={({ navigation }: RootTabScreenProps<'TabFive'>) => ({
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
+          headerRight: () => SettingsButton(Colors[colorScheme].text),
+        })}
       />
     </BottomTab.Navigator>
   );
@@ -158,4 +157,22 @@ function TabBarIcon(props: {
   color: string;
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function SettingsButton(color: string) {
+  return (
+    <Pressable
+    //onPress={() => navigation.navigate('')}
+    onPress={() => alert('TODO: Navigate to Settings')}
+    style={({ pressed }) => ({
+      opacity: pressed ? 0.5 : 1,
+    })}>
+    <FontAwesome
+      name="gear"
+      size={25}
+      color={color}
+      style={{ marginRight: 15 }}
+    />
+  </Pressable> 
+  )
 }
