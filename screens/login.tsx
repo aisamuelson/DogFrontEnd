@@ -26,7 +26,7 @@ const Login = ({navigation}) =>{
                 <PageLogo resizeMode="cover" source={require('./../assets/images/img1.gif')}/>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Login</SubTitle>
-                <Formik initialValues={{username:'',password:''}} onSubmit={(values) => {console.log(values); navigation.navigate("Root", {screen:"TabOneScreen"})}}>
+                <Formik initialValues={{username:'',password:''}} onSubmit={(values) => {console.log(values); navigation.navigate("Root", {screen:"HomeScreen"})}}>
                     {({handleChange, handleBlur, handleSubmit, values})=> (<StyledFormArea>
                         <MyTextInput
                             label="Username"

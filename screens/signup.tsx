@@ -20,7 +20,7 @@ const Signup = ({navigation}) =>{
             <SignLogo></SignLogo>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Signup</SubTitle>
-                <Formik initialValues={{username:'',email:'',password:'',confirmPassword:''}} onSubmit={(values) => {console.log(values); navigation.naviage("Root", {screen:"TabOneScreen"})}}>
+                <Formik initialValues={{username:'',email:'',password:'',confirmPassword:''}} onSubmit={(values) => {console.log(values); navigation.naviage("Root", {screen:"HomeScreen"})}}>
                     {({handleChange, handleBlur, handleSubmit, values})=> (<StyledFormArea>
                         <MyTextInput
                             label="Username"
