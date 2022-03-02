@@ -14,6 +14,8 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
+import Login from '../screens/login';
+import Signup from '../screens/signup';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import TabThreeScreen from '../screens/TabThreeScreen';
@@ -21,6 +23,9 @@ import TabFourScreen from '../screens/TabFourScreen';
 import TabFiveScreen from '../screens/TabFiveScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+
+// import {Colors} from './../components/LogStyles';
+const {primary, tertiary} = Colors;
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -39,13 +44,35 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+
+  // if (LOGGED_IN){
+  //   return 
+  // }
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
+    // <Stack.Navigator>
+      // <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      // <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      // <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      //   <Stack.Screen name="Modal" component={ModalScreen} />
+      // </Stack.Group>
+    // </Stack.Navigator>
+
+    <Stack.Navigator 
+    screenOptions={{
+      headerStyle: {backgroundColor:'transparent'},
+      headerTintColor: tertiary,
+      headerTransparent: true,
+      headerTitle: '',
+      headerLeftContainerStyle: {paddingLeft: 20}
+      }}
+      initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+        <Stack.Group screenOptions={{ presentation: 'modal' }}>
+          <Stack.Screen name="Modal" component={ModalScreen} />
+        </Stack.Group>
     </Stack.Navigator>
   );
 }
