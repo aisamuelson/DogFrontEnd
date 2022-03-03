@@ -9,7 +9,7 @@ import {View} from 'react-native';
 
 const{brand, darkLight, primary} = Colors;
 
-const Signup = ({navigation}) =>{
+const Signup2 = ({navigation}) =>{
     const [hidePassword, setHidePassword] = useState(true);
 
     return (
@@ -20,58 +20,49 @@ const Signup = ({navigation}) =>{
             <SignLogo></SignLogo>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Signup</SubTitle>
-                <Formik initialValues={{fullname:'',email:'',password:'',confirmPassword:''}} onSubmit={(values) => {console.log(values); navigation.navigate("Signup2")}}>
+                <Formik initialValues={{adr1:'',city:'',state:'',zip:''}} onSubmit={(values) => {console.log(values); navigation.navigate("Root", {screen:"HomeScreen"})}}>
                     {({handleChange, handleBlur, handleSubmit, values})=> (<StyledFormArea>
                         <MyTextInput
-                            label="Email"
+                            label="Address Line 1"
                             icon = "mail"
-                            placeholder = "example@email.com"
+                            placeholder = "1 Dog Ln"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('email')}
-                            onBlur = {handleBlur('email')}
-                            value = {values.email}
-                            keyboardType="email-address"
+                            onChangeText = {handleChange('adr1')}
+                            onBlur = {handleBlur('adr1')}
+                            value = {values.adr1}
                         />
                         <MyTextInput
-                            label="Full Name"
-                            icon = "user"
-                            placeholder = "Dog Lover"
+                            label="City"
+                            icon = "mail"
+                            placeholder = "Catsville"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('fullname')}
-                            onBlur = {handleBlur('fullname')}
-                            value = {values.fullname}
+                            onChangeText = {handleChange('city')}
+                            onBlur = {handleBlur('city')}
+                            value = {values.city}
                         />
                         <MyTextInput
-                            label="Password"
-                            icon = "lock"
-                            placeholder = "* * * * * *"
+                            label="State"
+                            icon = "mail"
+                            placeholder = "1 Dog Ln"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('password')}
-                            onBlur = {handleBlur('password')}
-                            value = {values.password}
-                            secureTextEntry={hidePassword}
-                            isPassword={true}
-                            hidePassword = {hidePassword}
-                            setHidePassword = {setHidePassword}
+                            onChangeText = {handleChange('state')}
+                            onBlur = {handleBlur('sate')}
+                            value = {values.state}
                         />
                         <MyTextInput
-                            label="Confirm Password"
-                            icon = "lock"
-                            placeholder = "* * * * * *"
+                            label="Zip Code"
+                            icon = "mail"
+                            placeholder = "1 Dog Ln"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('confirmPassword')}
-                            onBlur = {handleBlur('confirmPassword')}
-                            value = {values.confirmPassword}
-                            secureTextEntry={hidePassword}
-                            isPassword={true}
-                            hidePassword = {hidePassword}
-                            setHidePassword = {setHidePassword}
+                            onChangeText = {handleChange('zip')}
+                            onBlur = {handleBlur('zip')}
+                            value = {values.zip}
                         />
                         <MsgBox>
                             ...
                         </MsgBox>
                         <StyledButton onPress={handleSubmit}>
-                            <ButtonText>Continue</ButtonText>
+                            <ButtonText>Signup</ButtonText>
                         </StyledButton>
                         <Line/>
                         <ExtraView>
@@ -101,4 +92,4 @@ const MyTextInput = ({label, icon, isPassword, hidePassword, setHidePassword, ..
         </View>
     );
 }
-export default Signup;
+export default Signup2;

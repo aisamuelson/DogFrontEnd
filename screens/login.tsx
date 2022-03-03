@@ -5,7 +5,7 @@ import { Feather, Ionicons, Fontisto } from "@expo/vector-icons";
 import KeyboardWrapper from "../components/KeyboardWrapper";
 
 import { StyledContainer, InnerContainer, PageLogo, SignLogo, PageTitle, SubTitle, StyledFormArea, LeftIcon, RightIcon, StyledInputLabel, StyledTextInput, Colors, StyledButton, ButtonText, MsgBox, Line, ExtraView, ExtraText, TextLink, TextLinkContent} from './../components/LogStyles';
-import {View} from 'react-native';
+import {View, ActivityIndicator} from 'react-native';
 
 import axios from "axios";
 
@@ -17,6 +17,36 @@ const handleGoogleSignIn = () =>{
 
 const Login = ({navigation}) =>{
     const [hidePassword, setHidePassword] = useState(true);
+    const [message, setMessage] = useState();
+    const [messageType, setMessageType] = useState();
+
+    const handleLogin = (credentials, setSubmitting) =>{
+        handleMessage(null);
+        const url = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/login';
+        axios
+            .post(url, credentials)
+            .then((response)=>{
+                const result = response.data;
+                const {message, satus, data} = result;
+
+                if(status !== 'SUCCESS'){
+                    handleMessage(message, status);
+                }else{
+                    navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
+                }
+                setSubmitting(false);
+            })
+            .catch(error =>{
+            console.log(error.JSON());
+            setSubmitting(false);
+            handleMessage("An error has occurred. Please check your network and try again");
+        })
+    }
+
+    const handleMessage = (message, type = 'FAILED') =>{
+        setMessage(message);
+        setMessageType(type);
+    }
 
     return (
         <KeyboardWrapper>
@@ -26,17 +56,28 @@ const Login = ({navigation}) =>{
                 <PageLogo resizeMode="cover" source={require('./../assets/images/img1.gif')}/>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Login</SubTitle>
-                <Formik initialValues={{username:'',password:''}} onSubmit={(values) => {console.log(values); navigation.navigate("Root", {screen:"HomeScreen"})}}>
-                    {({handleChange, handleBlur, handleSubmit, values})=> (<StyledFormArea>
+                <Formik initialValues={{email:'',password:''}} 
+                    onSubmit={
+                        (values, {setSubmitting}) => {
+                            if(values.email == '' || values.password == ''){
+                                handleMessage("Please fill out all fields");
+                                setSubmitting(false);
+                            }else{
+                                handleLogin(values, setSubmitting);
+                            }
+                        }
+                    }
+                >
+                    {({handleChange, handleBlur, handleSubmit, values, isSubmitting})=> (<StyledFormArea>
                         <MyTextInput
-                            label="Username"
-                            icon = "user"
-                            placeholder = "Username"
+                            label="Email"
+                            icon = "mail"
+                            placeholder = "example@email.com"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('username')}
-                            onBlur = {handleBlur('username')}
-                            value = {values.username}
-                            // keyboardType="email-address"
+                            onChangeText = {handleChange('email')}
+                            onBlur = {handleBlur('email')}
+                            value = {values.email}
+                            keyboardType="email-address"
                         />
                         <MyTextInput
                             label="Password"
@@ -51,12 +92,16 @@ const Login = ({navigation}) =>{
                             hidePassword = {hidePassword}
                             setHidePassword = {setHidePassword}
                         />
-                        <MsgBox>
-                            ...
+                        <MsgBox type={messageType}>
+                            {message}
                         </MsgBox>
-                        <StyledButton onPress={handleSubmit}>
+                        {!isSubmitting && <StyledButton onPress={handleSubmit}>
                             <ButtonText>Login</ButtonText>
-                        </StyledButton>
+                        </StyledButton>}
+
+                        {isSubmitting && <StyledButton disabled={true}>
+                            <ActivityIndicator size="large" color={primary}/>
+                        </StyledButton>}
                         <Line/>
                         <StyledButton google={true} onPress={handleSubmit}>
                             <Fontisto name="google" color={primary} size={25} />

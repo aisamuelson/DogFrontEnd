@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from '@expo/vector-icons';
+ import {FontAwesome} from "@expo/vector-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -23,6 +23,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import DetailScreen from '../screens/DetailScreen';
 import Login from '../screens/login';
 import Signup from '../screens/signup';
+import Signup2 from '../screens/signup2';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -75,6 +76,7 @@ function RootNavigator() {
       initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Signup2" component={Signup2} />
         <Stack.Screen name="Detail" component={DetailScreen} />
         <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
@@ -105,7 +107,7 @@ function BottomTabNavigator() {
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
@@ -114,7 +116,7 @@ function BottomTabNavigator() {
         component={FavoritesScreen}
         options={{
           title: 'Favorites',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="heart" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
@@ -123,7 +125,7 @@ function BottomTabNavigator() {
         component={PostScreen}
         options={{
           title: 'Post',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="plus-square" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
@@ -132,7 +134,7 @@ function BottomTabNavigator() {
         component={MessagesScreen}
         options={{
           title: 'Messages',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
@@ -141,7 +143,7 @@ function BottomTabNavigator() {
         component={ProfileScreen}
         options={({ navigation }: RootTabScreenProps<'TabFive'>) => ({
           title: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
