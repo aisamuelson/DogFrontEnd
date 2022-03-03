@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from '@expo/vector-icons';
+ import {FontAwesome} from "@expo/vector-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -14,14 +14,22 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
+
 import HomeScreen from '../screens/HomeScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import PostScreen from '../screens/PostScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import DetailScreen from '../screens/DetailScreen';
+import Login from '../screens/login';
+import Signup from '../screens/signup';
+import Signup2 from '../screens/signup2';
+
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+
+// import {Colors} from './../components/LogStyles';
+const {primary, tertiary} = Colors;
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -40,14 +48,41 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+
+  // if (LOGGED_IN){
+  //   return 
+  // }
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
-      <Stack.Screen name="Detail" component={DetailScreen} />
+
+    // <Stack.Navigator>
+    //   <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+    //   <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+    //   <Stack.Group screenOptions={{ presentation: 'modal' }}>
+    //     <Stack.Screen name="Modal" component={ModalScreen} />
+    //   </Stack.Group>
+    //   <Stack.Screen name="Detail" component={DetailScreen} />
+
+    
+    //  </Stack.Navigator>
+
+    <Stack.Navigator 
+    screenOptions={{
+      headerStyle: {backgroundColor:'transparent'},
+      headerTintColor: tertiary,
+      headerTransparent: true,
+      headerTitle: '',
+      headerLeftContainerStyle: {paddingLeft: 20}
+      }}
+      initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="Signup2" component={Signup2} />
+        <Stack.Screen name="Detail" component={DetailScreen} />
+        <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+        <Stack.Group screenOptions={{ presentation: 'modal' }}>
+          <Stack.Screen name="Modal" component={ModalScreen} />
+        </Stack.Group>
     </Stack.Navigator>
   );
 }
@@ -72,7 +107,7 @@ function BottomTabNavigator() {
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
@@ -81,7 +116,7 @@ function BottomTabNavigator() {
         component={FavoritesScreen}
         options={{
           title: 'Favorites',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="heart" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
@@ -90,7 +125,7 @@ function BottomTabNavigator() {
         component={PostScreen}
         options={{
           title: 'Post',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="plus-square" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
@@ -99,7 +134,7 @@ function BottomTabNavigator() {
         component={MessagesScreen}
         options={{
           title: 'Messages',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
@@ -108,7 +143,7 @@ function BottomTabNavigator() {
         component={ProfileScreen}
         options={({ navigation }: RootTabScreenProps<'TabFive'>) => ({
           title: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
           headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
