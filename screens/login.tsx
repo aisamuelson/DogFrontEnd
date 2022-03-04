@@ -37,7 +37,7 @@ const Login = ({navigation}) =>{
                 setSubmitting(false);
             })
             .catch(error =>{
-            console.log(message);
+            console.log(error);
             setSubmitting(false);
             handleMessage("Incorrect username or password");
         })

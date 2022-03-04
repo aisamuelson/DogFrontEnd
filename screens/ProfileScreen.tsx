@@ -86,6 +86,8 @@ export default function ProfileScreen() {
       sex = {item.sex}
     />
   );
+
+  // const{name, email} = route.params;
   
   return (
     <SafeAreaView style={[styles.container,{

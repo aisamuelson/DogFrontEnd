@@ -1,16 +1,51 @@
 import React, {useState} from "react";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { Feather, Ionicons, Fontisto } from "@expo/vector-icons";
+import {Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import KeyboardWrapper from "../components/KeyboardWrapper";
 
 import { StyledContainer, InnerContainer, SignLogo, PageTitle, SubTitle, StyledFormArea, LeftIcon, RightIcon, StyledInputLabel, StyledTextInput, Colors, StyledButton, ButtonText, MsgBox, Line, ExtraView, ExtraText, TextLink, TextLinkContent} from './../components/LogStyles';
-import {View} from 'react-native';
+import {View, ActivityIndicator} from 'react-native';
+
+import axios from "axios";
 
 const{brand, darkLight, primary} = Colors;
 
-const Signup2 = ({navigation}) =>{
-    const [hidePassword, setHidePassword] = useState(true);
+const Signup2 = ({navigation, route}) =>{
+    const fullname = route.params.fullname;
+    const email = route.params.email;
+    const password = route.params.password;
+
+    const [message, setMessage] = useState();
+    const [messageType, setMessageType] = useState();
+
+    const handleSignup = (credentials, setSubmitting) =>{
+        handleMessage(null);
+        const url = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/register';
+        axios
+            .post(url, credentials)
+            .then((response)=>{
+                const result = response.data;
+                const {email} = result;
+                console.log(credentials)
+                //if(email !== 'user with this email address already exists.'){
+                    navigation.navigate("Root", {screen:"HomeScreen"})
+                // }else{
+                //     handleMessage(email);
+                // }
+                // setSubmitting(false);
+            })
+            .catch(error =>{
+            console.log(error);
+            setSubmitting(false);
+            handleMessage("A user with this email address already exists");
+        })
+    }
+
+    const handleMessage = (message, type = 'FAILED') =>{
+        setMessage(message);
+        setMessageType(type);
+    }
 
     return (
         <KeyboardWrapper>
@@ -20,21 +55,32 @@ const Signup2 = ({navigation}) =>{
             <SignLogo></SignLogo>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Signup</SubTitle>
-                <Formik initialValues={{adr1:'',city:'',state:'',zip:''}} onSubmit={(values) => {console.log(values); navigation.navigate("Root", {screen:"HomeScreen"})}}>
-                    {({handleChange, handleBlur, handleSubmit, values})=> (<StyledFormArea>
+                <Formik initialValues={{full_name:fullname, email: email, password:password, addressLine:'',city:'',state:'',zipcode:''}} 
+                    onSubmit={(values, {setSubmitting}) => {
+                        // console.log(values); navigation.navigate("Root", {screen:"HomeScreen"})
+                        if(values.addressLine == '' || values.city == '' || values.state == '' || values.zipcode == ''){
+                            handleMessage("Please fill out all fields");
+                            setSubmitting(false);
+                        }else{
+                            console.log(values)
+                            handleSignup(values, setSubmitting);
+                        }
+                    }}
+                >
+                    {({handleChange, handleBlur, handleSubmit, values, isSubmitting})=> (<StyledFormArea>
                         <MyTextInput
-                            label="Address Line 1"
-                            icon = "mail"
+                            label="Address"
+                            icon = "home"
                             placeholder = "1 Dog Ln"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('adr1')}
-                            onBlur = {handleBlur('adr1')}
-                            value = {values.adr1}
+                            onChangeText = {handleChange('addressLine')}
+                            onBlur = {handleBlur('addressLine')}
+                            value = {values.addressLine}
                         />
                         <MyTextInput
                             label="City"
-                            icon = "mail"
-                            placeholder = "Catsville"
+                            icon = "city"
+                            placeholder = "Petsville"
                             placeholderTextColor = {darkLight}
                             onChangeText = {handleChange('city')}
                             onBlur = {handleBlur('city')}
@@ -42,8 +88,8 @@ const Signup2 = ({navigation}) =>{
                         />
                         <MyTextInput
                             label="State"
-                            icon = "mail"
-                            placeholder = "1 Dog Ln"
+                            icon = "globe"
+                            placeholder = "AL"
                             placeholderTextColor = {darkLight}
                             onChangeText = {handleChange('state')}
                             onBlur = {handleBlur('sate')}
@@ -51,19 +97,23 @@ const Signup2 = ({navigation}) =>{
                         />
                         <MyTextInput
                             label="Zip Code"
-                            icon = "mail"
-                            placeholder = "1 Dog Ln"
+                            icon = "map-pin"
+                            placeholder = "12345"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('zip')}
-                            onBlur = {handleBlur('zip')}
-                            value = {values.zip}
+                            onChangeText = {handleChange('zipcode')}
+                            onBlur = {handleBlur('zipcode')}
+                            value = {values.zipcode}
                         />
-                        <MsgBox>
-                            ...
+                        <MsgBox type={messageType}>
+                            {message}
                         </MsgBox>
-                        <StyledButton onPress={handleSubmit}>
+                        {!isSubmitting && <StyledButton onPress={handleSubmit}>
                             <ButtonText>Signup</ButtonText>
-                        </StyledButton>
+                        </StyledButton>}
+
+                        {isSubmitting && <StyledButton disabled={true}>
+                            <ActivityIndicator size="large" color={primary}/>
+                        </StyledButton>}
                         <Line/>
                         <ExtraView>
                             <ExtraText>Already have an account? </ExtraText>
@@ -82,7 +132,7 @@ const MyTextInput = ({label, icon, isPassword, hidePassword, setHidePassword, ..
     return(
         <View>
             <LeftIcon>
-                <Feather name={icon} size={30} color={brand}/>
+                <FontAwesome5 name={icon} size={30} color={brand}/>
             </LeftIcon>
             <StyledInputLabel>{label}</StyledInputLabel>
             <StyledTextInput {...props}/>
