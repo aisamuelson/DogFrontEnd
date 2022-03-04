@@ -6,7 +6,7 @@
  import {FontAwesome} from "@expo/vector-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable, Text } from 'react-native';
 
@@ -27,6 +27,7 @@ import Signup2 from '../screens/signup2';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import SettingsScreen from "../screens/SettingsScreen";
 
 // import {Colors} from './../components/LogStyles';
 const {primary, tertiary} = Colors;
@@ -71,7 +72,8 @@ function RootNavigator() {
       headerTintColor: tertiary,
       headerTransparent: true,
       headerTitle: '',
-      headerLeftContainerStyle: {paddingLeft: 20}
+      //Deprecated? Change if incorrect
+      //headerLeftContainerStyle: {paddingLeft: 20} 
       }}
       initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} />
@@ -80,9 +82,7 @@ function RootNavigator() {
         <Stack.Screen name="Detail" component={DetailScreen} />
         <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-        <Stack.Group screenOptions={{ presentation: 'modal' }}>
-          <Stack.Screen name="Modal" component={ModalScreen} />
-        </Stack.Group>
+        <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
     </Stack.Navigator>
   );
 }
@@ -95,20 +95,19 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
-
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         tabBarActiveTintColor: Colors[colorScheme].tint,
-      }}>
+        headerRight: () => SettingsButton(navigation, Colors[colorScheme].text),
+      })}>
       <BottomTab.Screen
         name="TabOne"
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
       <BottomTab.Screen
@@ -117,7 +116,6 @@ function BottomTabNavigator() {
         options={{
           title: 'Favorites',
           tabBarIcon: ({ color }) => <TabBarIcon name="heart" color={color} />,
-          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
@@ -126,7 +124,6 @@ function BottomTabNavigator() {
         options={{
           title: 'Post',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus-square" color={color} />,
-          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
@@ -135,7 +132,6 @@ function BottomTabNavigator() {
         options={{
           title: 'Messages',
           tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={color} />,
-          headerRight: () => SettingsButton(Colors[colorScheme].text),
         }}
       />
       <BottomTab.Screen
@@ -144,7 +140,6 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'TabFive'>) => ({
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-          headerRight: () => SettingsButton(Colors[colorScheme].text),
         })}
       />
     </BottomTab.Navigator>
@@ -161,11 +156,10 @@ function TabBarIcon(props: {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
 
-function SettingsButton(color: string) {
+function SettingsButton(navigation: NativeStackScreenProps<RootStackParamList>['navigation'], color: string) {
   return (
     <Pressable
-    //onPress={() => navigation.navigate('')}
-    onPress={() => alert('TODO: Navigate to Settings')}
+    onPress={() => navigation.navigate('Settings')}
     style={({ pressed }) => ({
       opacity: pressed ? 0.5 : 1,
     })}>
