@@ -52,11 +52,12 @@ const styles = StyleSheet.create({
 
   imageContainerStyle: {
     height: 350,
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
   textContainerStyle: {
-    padding: 15
+    padding: 15,
+    backgroundColor: 'rgba(255,255,255,0.7)',
   },
 
   imageStyle:{
