@@ -11,6 +11,13 @@ const{brand, darkLight, primary} = Colors;
 
 const Signup = ({navigation}) =>{
     const [hidePassword, setHidePassword] = useState(true);
+    const [message, setMessage] = useState();
+    const [messageType, setMessageType] = useState();
+
+    const handleMessage = (message, type = 'FAILED') =>{
+        setMessage(message);
+        setMessageType(type);
+    }
 
     return (
         <KeyboardWrapper>
@@ -20,7 +27,20 @@ const Signup = ({navigation}) =>{
             <SignLogo></SignLogo>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Signup</SubTitle>
-                <Formik initialValues={{fullname:'',email:'',password:'',confirmPassword:''}} onSubmit={(values) => {console.log(values); navigation.navigate("Signup2")}}>
+                <Formik initialValues={{fullname:'',email:'',password:'',confirmPassword:''}} 
+                    onSubmit={(values) => {
+                        if(values.fullname == '' || values.email == '' || values.password == '' || values.confirmPassword == ''){
+                            handleMessage("Please fill out all fields");
+                        }else{
+                            if(values.password != values.confirmPassword){
+                                handleMessage("Passwords do not match");
+                            }else{
+                                console.log(values); 
+                                navigation.navigate("Signup2", {fullname: values.fullname, email: values.email, password: values.password});
+                            }
+                        }  
+                    }}
+                >
                     {({handleChange, handleBlur, handleSubmit, values})=> (<StyledFormArea>
                         <MyTextInput
                             label="Email"
@@ -67,8 +87,8 @@ const Signup = ({navigation}) =>{
                             hidePassword = {hidePassword}
                             setHidePassword = {setHidePassword}
                         />
-                        <MsgBox>
-                            ...
+                        <MsgBox type={messageType}>
+                            {message}
                         </MsgBox>
                         <StyledButton onPress={handleSubmit}>
                             <ButtonText>Continue</ButtonText>
