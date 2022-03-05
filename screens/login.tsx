@@ -27,19 +27,19 @@ const Login = ({navigation}) =>{
             .post(url, credentials)
             .then((response)=>{
                 const result = response.data;
-                const {message, token} = result;
-                console.log("result: ", result, " token:", token, " message: ", message)
-                if(message !== 'Wrong username or password'){
-                    navigation.navigate("Root", {screen:"HomeScreen"})
+                const {message, satus, data} = result;
+
+                if(status !== 'SUCCESS'){
+                    handleMessage(message, status);
                 }else{
-                    handleMessage(message);
+                    navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
                 }
                 setSubmitting(false);
             })
             .catch(error =>{
-            console.log(message);
+            console.log(error.JSON());
             setSubmitting(false);
-            handleMessage("Incorrect username or password");
+            handleMessage("An error has occurred. Please check your network and try again");
         })
     }
 
