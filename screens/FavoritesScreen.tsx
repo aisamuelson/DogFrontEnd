@@ -116,6 +116,3 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   }
 });
-
-// use email instead of username
-// make display name optional 
