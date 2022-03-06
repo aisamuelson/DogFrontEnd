@@ -4,6 +4,7 @@ import { FavoritePetCard } from '../components/FavoritePetCard';
 import * as React from 'react';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps, FavCardProp } from '../types';
 import { Item } from 'react-native-paper/lib/typescript/components/List/List';
+import axios from 'axios';
 
 
 let testFavListData: FavCardProp[] = [
@@ -28,8 +29,58 @@ let testFavListData: FavCardProp[] = [
   }
 ]
 
+function getData(onDone: any, onError: any) {
+  const urlFav = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/';
+  const petHeaderConfig = {
+    headers: {
+      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+    }
+
+  }
+
+  axios.get(urlFav, petHeaderConfig)
+    .then((response) => {
+      onDone(response.data)
+    })
+    .catch((error) => {
+      onError(error.response)
+    })
+}
+
+function parseResp(data: any) {
+  let parsedData = []
+  data.forEach((item, index) => {
+    let post = item.postid
+    let prop = {
+      id: post.petid.petowner,
+      name: post.petid.petname,
+      age: post.petid.age_year,
+      neutered: post.petid.neutered ? "Yes" : "No",
+      sex: "F",
+      breed: post.petid.breed,
+      avatar: post.image
+    }
+    parsedData.push(prop)
+  });
+  return parsedData;
+}
+
 
 export default function FavoritesScreen( { navigation }: RootTabScreenProps<'TabTwo'> ) {
+
+  const [data, setData] = React.useState([])
+
+  React.useEffect(() => {
+    getData(
+      (data: any) => {
+        let parsedData = parseResp(data)
+        setData(parsedData)
+      },
+      (err: any) => {
+        console.log(err)
+      }
+    )
+  }, [])
 
   const renderItem: ListRenderItem<FavCardProp> = ({item}) => (
     <TouchableOpacity
@@ -49,7 +100,7 @@ export default function FavoritesScreen( { navigation }: RootTabScreenProps<'Tab
   return (
       <View style={styles.container}>
         <FlatList
-          data={testFavListData}
+          data={data}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         >
