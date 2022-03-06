@@ -33,7 +33,7 @@ function getData(onDone: any, onError: any) {
   const urlFav = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/';
   const petHeaderConfig = {
     headers: {
-      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inh1cjJAcnBpLmVkdSIsImV4cCI6MTY0ODk1NDA0MH0.u1WrXn_IJlgZ8nxWtQdjmhIbmOcmf9JU7B2CFxSyP8g",
     }
 
   }
@@ -52,7 +52,7 @@ function parseResp(data: any) {
   data.forEach((item, index) => {
     let post = item.postid
     let prop = {
-      id: post.petid.petowner,
+      id: post.postid,
       name: post.petid.petname,
       age: post.petid.age_year,
       neutered: post.petid.neutered ? "Yes" : "No",
