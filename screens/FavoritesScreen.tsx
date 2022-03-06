@@ -56,7 +56,7 @@ function parseResp(data: any) {
       name: post.petid.petname,
       age: post.petid.age_year,
       neutered: post.petid.neutered ? "Yes" : "No",
-      sex: "F",
+      sex: post.petid.gender,
       breed: post.petid.breed,
       avatar: post.image
     }

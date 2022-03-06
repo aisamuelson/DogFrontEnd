@@ -18,7 +18,9 @@
     "@emotion/styled": "^11.8.1",
     "@expo/vector-icons": "^12.0.0",
     "@mui/material": "^5.4.3",
+    "@react-native-community/datetimepicker": "4.0.0",
     "@react-native-community/hooks": "^2.8.1",
+    "@react-native-picker/picker": "2.2.1",
     "@react-navigation/bottom-tabs": "^6.0.5",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.1.0",
@@ -41,11 +43,12 @@
     "react-native-elements": "^3.4.2",
     "react-native-image-picker": "^4.7.3",
     "react-native-paper": "^4.11.2",
+    "react-native-picker-select": "^8.0.4",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
     "react-native-web": "0.17.1",
-    "styled-components": "^5.3.3",
-    "@react-native-community/datetimepicker": "4.0.0"
+    "react-native-woodpicker": "^0.3.17",
+    "styled-components": "^5.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

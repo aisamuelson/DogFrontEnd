@@ -11,6 +11,7 @@ import KeyboardWrapper from '../components/KeyboardWrapper';
 import { Icon } from 'react-native-elements'
 import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { DatePicker, Picker, PickerItem } from 'react-native-woodpicker';
 
 const { brand, darkLight, primary } = Colors;
 
@@ -33,11 +34,7 @@ const onHandleSubmit = (parameter: any) => (e: any) => {
   }
 
   let neutered;
-  if (parameter.neutered.toLowerCase() == 'yes') {
-    neutered = true
-  } else if (parameter.neutered.toLowerCase() == 'no') {
-    neutered = false
-  } else {
+  if (!parameter.neutered) {
     Alert.alert("Field Error(Neutered)", 'Is your pet neutered? Please indicate \"Yes\" or \"No\"', [{text: "OK"}])
     return
   }
@@ -55,9 +52,9 @@ const onHandleSubmit = (parameter: any) => (e: any) => {
   } else {
     breed = parameter.breed
   }
-  let date = new Date(parameter.birthday)
+  let date = parameter.birthday
   let now = new Date()
-  if (isNaN(date)) {
+  if (isNaN(date) || !date) {
     Alert.alert("Field Missing", "Invalid date for birthday. Please enter the birthday in format \"YYYY-MM-DD\"(e.g. 2015-03-25)", [{text: "OK"}])
     return
   } else {
@@ -68,15 +65,20 @@ const onHandleSubmit = (parameter: any) => (e: any) => {
     Alert.alert("Field Missing", "Pick a nice photo for your pet please", [{text: "OK"}])
   }
 
+  if (!parameter.gender) {
+    Alert.alert("Field Missing", "Is your pet a boy or a girl?", [{text: "OK"}])
+  }
   const jsonData = JSON.stringify({
     petname: parameter.name,
-    pettype: parameter.petType,
-    breed: parameter.breed,
+    pettype: parameter.petType["value"],
+    breed: breed,
     age_year: monthDiff(date, now) % 12,
     age_month: Math.floor(monthDiff(date, now)/12),
-    birthday: parameter.birthday,
-    neutered: neutered
+    birthday: parameter.birthday.toISOString().substring(0, 10),
+    neutered: parameter.neutered["value"],
+    gender: parameter.gender["value"]
   })
+  console.log(jsonData)
   axios.post(
     urlPet,
     jsonData,
@@ -137,21 +139,35 @@ export default function PostScreen() {
   };
 
   const [name, onChangeName] = React.useState<string | undefined>(undefined)
-  const [ageYear, onChangeAgeYear] = React.useState<string | undefined>(undefined)
-  const [ageMonth, onChangeAgeMonth] = React.useState<string | undefined>(undefined)
-  const [birthday, onChangeBirthday] = React.useState<string | undefined>(undefined)
-  const [neutered, onChangeNeutered] = React.useState<string | undefined>(undefined)
+  // const [birthday, onChangeBirthday] = React.useState<string | undefined>(undefined)
+  const [birthday, onChangeBirthday] = React.useState<Date | null>(null)
+  const [neutered, onChangeNeutered] = React.useState<PickerItem>()
   const [breed, onChangeBreed] = React.useState<string | undefined>(undefined)
   const [reason, onChangeReason] = React.useState<string | undefined>(undefined)
-  const [open, setOpen] = useState(false);
-  const [petType, setPetType] = useState<string | null>(null);
-  const [petTypes, setPetTypes] = useState([
-    { label: 'Cat', value: 'CAT' },
-    { label: 'Dog', value: 'DOG' }
-  ]);
+  const [petType, setPetType] = useState<PickerItem>();
+  // const [petTypes, setPetTypes] = useState([
+  //   { label: 'Cat', value: 'CAT' },
+  //   { label: 'Dog', value: 'DOG' }
+  // ]);
 
-  const [date, setDate] = useState(new Date())
-  const [openDate, setOpenDate] = useState(false)
+  const neuteredStatus: Array<PickerItem> = [
+    {label: "Yes", value: true},
+    {label: "No", value: false}
+  ]
+
+  const petTypes: Array<PickerItem> = [
+    {label: "Cat", value: 'CAT'},
+    {label: "Dog", value: 'DOG'}
+  ]
+  const [openGender, setOpenGender] = useState(false);
+  const [gender, setGender] = useState<PickerItem>();
+  const genders: Array<PickerItem> = [
+    { label: 'Male', value: 'M' },
+    { label: 'Female', value: 'F' }
+  ];
+  const handleText = (): string => birthday
+      ? birthday.toLocaleDateString()
+      : "Set Birthday";
   let imageIcon;
   if (image == undefined) {
     imageIcon = <Icon name="plus" type="font-awesome" />
@@ -187,20 +203,26 @@ export default function PostScreen() {
             <View style={styles.spacer}></View>
             <View style={styles.flexV}>
               <Text style={{ fontSize: 10 }}>Type:</Text>
-              <View style={{ position: "relative", zIndex: 10 }}>
-                <DropDownPicker
-                  open={open}
-                  value={petType}
+                <Picker
+                  item={petType}
                   items={petTypes}
-                  setOpen={setOpen}
-                  setValue={setPetType}
-                  setItems={setPetTypes}
+                  onItemChange={setPetType}
+                  placeholder="Select a type..."
                   style={styles.inputBox}
-                  listItemContainerStyle={styles.dropdownContainer}
-                  dropDownContainerStyle={styles.dropdownListContainer}
-                  listMode="SCROLLVIEW"
+                  // textInputStyle={{color: "#C4C4C4"}}
                 />
-              </View>
+            </View>
+            <View style={styles.spacer}></View>
+            <View style={styles.flexV}>
+              <Text style={{ fontSize: 10 }}>Gender:</Text>
+                <Picker
+                  item={gender}
+                  items={genders}
+                  onItemChange={setGender}
+                  placeholder="Select a gender..."
+                  style={styles.inputBox}
+                  // textInputStyle={{color: "#C4C4C4"}}
+                />
             </View>
           </View>
         </View>
@@ -208,11 +230,12 @@ export default function PostScreen() {
           <View style={styles.basicInfoLeft}>
             <View style={styles.flexV}>
               <Text style={{ fontSize: 10 }}>Birthday:</Text>
-              <TextInput
-                placeholder="YYYY-MM-DD"
-                onChangeText={onChangeBirthday}
+              <DatePicker
                 value={birthday}
+                onDateChange={onChangeBirthday}
+                text={handleText()}
                 style={styles.inputBox}
+                // textInputStyle={{color: "#C4C4C4"}}
               />
             </View>
 
@@ -221,10 +244,11 @@ export default function PostScreen() {
           <View style={styles.basicInfoRight}>
             <View style={[styles.flexV]}>
               <Text style={{ fontSize: 10 }}>Neutered:</Text>
-              <TextInput
-                placeholder="Yes/No"
-                onChangeText={onChangeNeutered}
-                value={neutered}
+              <Picker
+                item={neutered}
+                items={neuteredStatus}
+                onItemChange={onChangeNeutered}
+                placeholder="Is your pet Neutered?"
                 style={styles.inputBox}
               />
             </View>
@@ -255,8 +279,7 @@ export default function PostScreen() {
             style={styles.button}
             onPress={onHandleSubmit({
               name: name,
-              ageYear: ageYear,
-              ageMonth: ageMonth,
+              gender: gender,
               birthday: birthday,
               breed: breed,
               neutered: neutered,
@@ -315,8 +338,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "baseline",
-    marginBottom: 20
-    // borderWidth: 2
+    marginBottom: 20,
+    // borderWidth: 2,
   },
 
   spacer: {
@@ -330,6 +353,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5E5E5",
     borderRadius: 5,
     paddingLeft: 5,
+    shadowRadius: 5,
+    marginTop: 3
+  },
+
+  picker: {
+    height: 30,
+    borderWidth: 1,
+    alignItems: "stretch",
+    width: "100%",
+    backgroundColor: "#E5E5E5",
+    borderRadius: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
     shadowRadius: 5,
     marginTop: 3
   },
