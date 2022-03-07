@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView, TouchableOpacity, ListRenderItem, FlatList } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, ListRenderItem, FlatList, RefreshControl } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { FavoritePetCard } from '../components/FavoritePetCard';
 import * as React from 'react';
@@ -6,34 +6,11 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps, FavCardProp }
 import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 import axios from 'axios';
 
-
-let testFavListData: FavCardProp[] = [
-  {
-    id: "1",
-    name: "Orange",
-    avatar: "https://picsum.photos/200/300",
-    breed: "Domestic Short Hair",
-    sex: "M",
-    age: 5,
-    neutered: "Yes"
-  },
-
-  {
-    id: "2",
-    name: "Pearl",
-    avatar: "https://picsum.photos/200/300",
-    breed: "Domestic Short Hair",
-    sex: "F",
-    age: 6,
-    neutered: "Yes"
-  }
-]
-
 function getData(onDone: any, onError: any) {
   const urlFav = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/';
   const petHeaderConfig = {
     headers: {
-      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inh1cjJAcnBpLmVkdSIsImV4cCI6MTY0ODk1NDA0MH0.u1WrXn_IJlgZ8nxWtQdjmhIbmOcmf9JU7B2CFxSyP8g",
+      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
     }
 
   }
@@ -43,7 +20,7 @@ function getData(onDone: any, onError: any) {
       onDone(response.data)
     })
     .catch((error) => {
-      onError(error.response)
+      onError(error)
     })
 }
 
@@ -66,11 +43,11 @@ function parseResp(data: any) {
 }
 
 
-export default function FavoritesScreen( { navigation }: RootTabScreenProps<'TabTwo'> ) {
+export default function FavoritesScreen({ navigation }: RootTabScreenProps<'TabTwo'>) {
 
   const [data, setData] = React.useState([])
 
-  React.useEffect(() => {
+  const handleRefresh = () => {
     getData(
       (data: any) => {
         let parsedData = parseResp(data)
@@ -80,32 +57,78 @@ export default function FavoritesScreen( { navigation }: RootTabScreenProps<'Tab
         console.log(err)
       }
     )
+  }
+
+  const handleRemove = (id) => {
+    const urlRemoveFav = `http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/remove/${id}`;
+    console.log(urlRemoveFav)
+    const petHeaderConfig = {
+      headers: {
+        'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+      }
+    }
+    axios.delete(urlRemoveFav, petHeaderConfig)
+      .then((response) => {
+        handleRefresh()
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  const [refreshing, setRefreshing] = React.useState(false)
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getData(
+      (data: any) => {
+        let parsedData = parseResp(data)
+        setData(parsedData)
+        setRefreshing(false)
+      },
+      (err: any) => {
+        console.log(err)
+        setRefreshing(false)
+      }
+    )
   }, [])
 
-  const renderItem: ListRenderItem<FavCardProp> = ({item}) => (
+  React.useEffect(() => {
+    handleRefresh()
+  }, [])
+  // handleRefresh();
+
+  const renderItem: ListRenderItem<FavCardProp> = ({ item }) => (
     <TouchableOpacity
-      onPress={()=>navigation.navigate('Detail', {item})}
+      onPress={() => navigation.navigate('Detail', { item })}
     >
-      <FavoritePetCard 
-            id = {item.id}
-            name = {item.name}
-            avatar = {item.avatar}
-            breed = {item.breed}
-            sex = {item.sex}
-            age = {item.age}
-            neutered = {item.neutered}
-          />
+      <FavoritePetCard
+        id={item.id}
+        name={item.name}
+        avatar={item.avatar}
+        breed={item.breed}
+        sex={item.sex}
+        age={item.age}
+        neutered={item.neutered}
+        handleRemove={handleRemove}
+      />
     </TouchableOpacity>);
 
   return (
-      <View style={styles.container}>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        >
-        </FlatList>
-      </View>
+    <View style={styles.container}>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
+      </FlatList>
+    </View>
   );
 }
 

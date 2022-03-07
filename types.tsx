@@ -57,7 +57,8 @@
  export type FavCardProp = ListingProps & {
    sex: string,
    age: number,
-   neutered: string
+   neutered: string,
+   handleRemove: (id: any) => void
  }
  
  export type InputTextRowProp = {
