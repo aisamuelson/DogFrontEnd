@@ -3,7 +3,6 @@ import { Text, View } from '../components/Themed';
 import { FavoritePetCard } from '../components/FavoritePetCard';
 import * as React from 'react';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps, FavCardProp } from '../types';
-import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 import axios from 'axios';
 
 function getData(onDone: any, onError: any) {
@@ -17,6 +16,7 @@ function getData(onDone: any, onError: any) {
   axios.get(urlFav, petHeaderConfig)
     .then((response) => {
       onDone(response.data)
+      console.log("fav page response:", response.data)
     })
     .catch((error) => {
       onError(error)
@@ -34,7 +34,7 @@ function parseResp(data: any) {
       neutered: post.petid.neutered ? "Yes" : "No",
       sex: post.petid.gender,
       breed: post.petid.breed,
-      avatar: post.image
+      avatar: post.image,
     }
     parsedData.push(prop)
   });
