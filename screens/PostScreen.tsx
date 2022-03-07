@@ -14,7 +14,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { DatePicker, Picker, PickerItem } from 'react-native-woodpicker';
 
 const { brand, darkLight, primary } = Colors;
-
+/**
+ * 1. Before the server's response, the user should not be able to make another post
+ * 
+ */
 function monthDiff(d1, d2) {
   var months;
   months = (d2.getFullYear() - d1.getFullYear()) * 12;
@@ -23,102 +26,107 @@ function monthDiff(d1, d2) {
   return months <= 0 ? 0 : months;
 }
 
-const onHandleSubmit = (parameter: any) => (e: any) => {
-  const urlPet = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/mypet';
-  const urlPosts = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/myposts';
-  const petHeaderConfig = {
-    headers: {
-      'Authorization': `Bearer ${global.token}`,
-      'Content-Type': "application/json"
-    }
-  }
-
-  let neutered;
-  if (!parameter.neutered) {
-    Alert.alert("Field Error(Neutered)", 'Is your pet neutered? Please indicate \"Yes\" or \"No\"', [{text: "OK"}])
-    return
-  }
-
-  if (!parameter.name) {
-    Alert.alert("Field Missing", "Please give you furry friend a nice name", [{text: "OK"}])
-    return
-  }
-  if (!parameter.petType) {
-    Alert.alert("Field Missing", "Dog? Cat? Please specify it.", [{text: "OK"}])
-  }
-  let breed: string;
-  if (!parameter.breed) {
-    breed = "N/A"
-  } else {
-    breed = parameter.breed
-  }
-  let date = parameter.birthday
-  let now = new Date()
-  if (isNaN(date) || !date) {
-    Alert.alert("Field Missing", "Invalid date for birthday. Please enter the birthday in format \"YYYY-MM-DD\"(e.g. 2015-03-25)", [{text: "OK"}])
-    return
-  } else {
-    console.log(monthDiff(date, now))
-  }
-
-  if (!parameter.image) {
-    Alert.alert("Field Missing", "Pick a nice photo for your pet please", [{text: "OK"}])
-  }
-
-  if (!parameter.gender) {
-    Alert.alert("Field Missing", "Is your pet a boy or a girl?", [{text: "OK"}])
-  }
-  const jsonData = JSON.stringify({
-    petname: parameter.name,
-    pettype: parameter.petType["value"],
-    breed: breed,
-    age_year: monthDiff(date, now) % 12,
-    age_month: Math.floor(monthDiff(date, now)/12),
-    birthday: parameter.birthday.toISOString().substring(0, 10),
-    neutered: parameter.neutered["value"],
-    gender: parameter.gender["value"]
-  })
-  console.log(jsonData)
-  axios.post(
-    urlPet,
-    jsonData,
-    petHeaderConfig,
-  ).then((response) => {
-    console.log(response.data)
-    const postsData = new FormData()
-
-    const postsHeaderConfig = {
-      'Accept': '*/*',
-      'Authorization': `Bearer ${global.token}`,
-      // 'Content-Type': "multipart/form-data"
-    }
-    postsData.append('image', {
-      uri: parameter.image,
-      type: "image/*",
-      name: "petphoto.jpg"
-    })
-    postsData.append('desc', parameter.reason)
-    postsData.append('petid', response.data.petid)
-    fetch(urlPosts, {
-      method: "post",
-      body: postsData,
-      headers: postsHeaderConfig
-    }).then(response => response.json())
-    .then(response => {
-      Alert.alert("Success", "", [{text: "OK"}])
-    })
-    .catch(function (response) {
-        //handle error
-        console.log(response)
-        Alert.alert("Error", "There is an error on our end", [{text: "OK"}])
-    });
-  })
-    .catch((error) => {
-      Alert.alert("Error", "There is an error on our end", [{text: "OK"}])
-    })
-}
-
 export default function PostScreen() {
+
+  const onHandleSubmit = (parameter: any) => (e: any) => {
+    const urlPet = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/mypet';
+    const urlPosts = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/myposts';
+    const petHeaderConfig = {
+      headers: {
+        'Authorization': `Bearer ${global.token}`,
+        'Content-Type': "application/json"
+      }
+    }
+
+    setDisabled(true)
+
+    let neutered;
+    if (!parameter.neutered) {
+      Alert.alert("Field Error(Neutered)", 'Is your pet neutered? Please indicate \"Yes\" or \"No\"', [{ text: "OK" }])
+      return
+    }
+
+    if (!parameter.name) {
+      Alert.alert("Field Missing", "Please give you furry friend a nice name", [{ text: "OK" }])
+      return
+    }
+    if (!parameter.petType) {
+      Alert.alert("Field Missing", "Dog? Cat? Please specify it.", [{ text: "OK" }])
+    }
+    let breed: string;
+    if (!parameter.breed) {
+      breed = "N/A"
+    } else {
+      breed = parameter.breed
+    }
+    let date = parameter.birthday
+    let now = new Date()
+    if (isNaN(date) || !date) {
+      Alert.alert("Field Missing", "Invalid date for birthday. Please enter the birthday in format \"YYYY-MM-DD\"(e.g. 2015-03-25)", [{ text: "OK" }])
+      return
+    } else {
+      console.log(monthDiff(date, now))
+    }
+
+    if (!parameter.image) {
+      Alert.alert("Field Missing", "Pick a nice photo for your pet please", [{ text: "OK" }])
+    }
+
+    if (!parameter.gender) {
+      Alert.alert("Field Missing", "Is your pet a boy or a girl?", [{ text: "OK" }])
+    }
+    const jsonData = JSON.stringify({
+      petname: parameter.name,
+      pettype: parameter.petType["value"],
+      breed: breed,
+      age_year: monthDiff(date, now) % 12,
+      age_month: Math.floor(monthDiff(date, now) / 12),
+      birthday: parameter.birthday.toISOString().substring(0, 10),
+      neutered: parameter.neutered["value"],
+      gender: parameter.gender["value"]
+    })
+    console.log(jsonData)
+    axios.post(
+      urlPet,
+      jsonData,
+      petHeaderConfig,
+    ).then((response) => {
+      console.log(response.data)
+      const postsData = new FormData()
+
+      const postsHeaderConfig = {
+        'Accept': '*/*',
+        'Authorization': `Bearer ${global.token}`,
+        // 'Content-Type': "multipart/form-data"
+      }
+      postsData.append('image', {
+        uri: parameter.image,
+        type: "image/*",
+        name: "petphoto.jpg"
+      })
+      postsData.append('desc', parameter.reason)
+      postsData.append('petid', response.data.petid)
+      fetch(urlPosts, {
+        method: "post",
+        body: postsData,
+        headers: postsHeaderConfig
+      }).then(response => response.json())
+        .then(response => {
+          setDisabled(false)
+          Alert.alert("Success", "", [{ text: "OK" }])
+        })
+        .catch(function (response) {
+          setDisabled(false)
+          //handle error
+          console.log(response)
+          Alert.alert("Error", "There is an error on our end", [{ text: "OK" }])
+        });
+    })
+      .catch((error) => {
+        setDisabled(false)
+        Alert.alert("Error", "There is an error on our end", [{ text: "OK" }])
+      })
+  }
 
   const [image, setImage] = useState<string | null>();
 
@@ -141,23 +149,25 @@ export default function PostScreen() {
   const [name, onChangeName] = React.useState<string | undefined>(undefined)
   // const [birthday, onChangeBirthday] = React.useState<string | undefined>(undefined)
   const [birthday, onChangeBirthday] = React.useState<Date | null>(null)
-  const [neutered, onChangeNeutered] = React.useState<PickerItem>({label: "Yes", value: true})
+  const [neutered, onChangeNeutered] = React.useState<PickerItem>({ label: "Yes", value: true })
   const [breed, onChangeBreed] = React.useState<string | undefined>(undefined)
   const [reason, onChangeReason] = React.useState<string | undefined>(undefined)
-  const [petType, setPetType] = useState<PickerItem>({label: "Cat", value: 'CAT'});
+  const [petType, setPetType] = useState<PickerItem>({ label: "Cat", value: 'CAT' });
+
+  const [disabled, setDisabled] = useState<boolean>(false);
   // const [petTypes, setPetTypes] = useState([
   //   { label: 'Cat', value: 'CAT' },
   //   { label: 'Dog', value: 'DOG' }
   // ]);
 
   const neuteredStatus: Array<PickerItem> = [
-    {label: "Yes", value: true},
-    {label: "No", value: false}
+    { label: "Yes", value: true },
+    { label: "No", value: false }
   ]
 
   const petTypes: Array<PickerItem> = [
-    {label: "Cat", value: 'CAT'},
-    {label: "Dog", value: 'DOG'}
+    { label: "Cat", value: 'CAT' },
+    { label: "Dog", value: 'DOG' }
   ]
   const [gender, setGender] = useState<PickerItem>({ label: 'Male', value: 'M' });
   const genders: Array<PickerItem> = [
@@ -165,8 +175,8 @@ export default function PostScreen() {
     { label: 'Female', value: 'F' }
   ];
   const handleText = (): string => birthday
-      ? birthday.toLocaleDateString()
-      : "Set Birthday";
+    ? birthday.toLocaleDateString()
+    : "Set Birthday";
   let imageIcon;
   if (image == undefined) {
     imageIcon = <Icon name="plus" type="font-awesome" />
@@ -202,26 +212,26 @@ export default function PostScreen() {
             <View style={styles.spacer}></View>
             <View style={styles.flexV}>
               <Text style={{ fontSize: 10 }}>Type:</Text>
-                <Picker
-                  item={petType}
-                  items={petTypes}
-                  onItemChange={setPetType}
-                  placeholder="Select a type..."
-                  style={styles.inputBox}
-                  // textInputStyle={{color: "#C4C4C4"}}
-                />
+              <Picker
+                item={petType}
+                items={petTypes}
+                onItemChange={setPetType}
+                placeholder="Select a type..."
+                style={styles.inputBox}
+              // textInputStyle={{color: "#C4C4C4"}}
+              />
             </View>
             <View style={styles.spacer}></View>
             <View style={styles.flexV}>
               <Text style={{ fontSize: 10 }}>Gender:</Text>
-                <Picker
-                  item={gender}
-                  items={genders}
-                  onItemChange={setGender}
-                  placeholder="Select a gender..."
-                  style={styles.inputBox}
-                  // textInputStyle={{color: "#C4C4C4"}}
-                />
+              <Picker
+                item={gender}
+                items={genders}
+                onItemChange={setGender}
+                placeholder="Select a gender..."
+                style={styles.inputBox}
+              // textInputStyle={{color: "#C4C4C4"}}
+              />
             </View>
           </View>
         </View>
@@ -234,7 +244,7 @@ export default function PostScreen() {
                 onDateChange={onChangeBirthday}
                 text={handleText()}
                 style={styles.inputBox}
-                // textInputStyle={{color: "#C4C4C4"}}
+              // textInputStyle={{color: "#C4C4C4"}}
               />
             </View>
 
@@ -285,7 +295,9 @@ export default function PostScreen() {
               petType: petType,
               reason: reason,
               image: image
-            })}>
+            })}
+            disabled={disabled}
+            >
             <Text style={{ color: "white", fontSize: 24 }}>Make Post</Text>
           </TouchableOpacity>
         </View>

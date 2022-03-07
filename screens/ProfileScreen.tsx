@@ -7,6 +7,7 @@ import { PetListingCard } from "../components/PetListingCard";
 import APIs from '../constants/APIs';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
+import { Alert } from 'react-native';
 
 export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFive'>) {
   const textColor = Colors[useColorScheme()].text;
@@ -43,9 +44,33 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   }, [])
   //console.log(posts);
 
+
+
+  const handleAdd = (id: number) => {
+    const petaddFavURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
+    const petaddFavHeader = {
+      headers: {
+        'Authorization': `Bearer ${global.token}`,
+        'content-type': 'application/json'
+      }
+    }
+    const data = JSON.stringify( {
+      postid: id
+    })
+    axios.post(
+      petaddFavURL,
+      data,
+      petaddFavHeader
+    ).then(( response ) => {
+      Alert.alert("Success", "", [{text: "OK"}])
+    }).catch(( error ) => {
+      Alert.alert("Failed", "You've already added this pet to favorite!", [{text: "OK"}])
+    })
+  }
+
   const listings = posts.map((post) => {
     const listing: ListingProps = {
-      id: '' + post.petid.petid,
+      id: '' + post.postid,
       name: post.petid.petname,
       breed: post.petid.breed,
       avatar: post.image,
@@ -62,6 +87,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
           name = {item.name}
           breed = {item.breed}
           avatar = {item.avatar}
+          handleAdd = {handleAdd}
           // description = {item.description}
       />
     </TouchableOpacity>

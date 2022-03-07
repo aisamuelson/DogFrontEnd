@@ -2,19 +2,19 @@ import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { FavCardProp } from '../types';
 
-export function FavoritePetCard( prop: FavCardProp ) {
+export function FavoritePetCard(prop: FavCardProp) {
   return (
     <View style={styles.container}>
       <View style={styles.petPhotoColumn}>
         <View style={styles.petPhoto}>
-          <Image source={{uri: prop.avatar}}
-                style={{width: "100%", aspectRatio: 1}}
-                resizeMode={'cover'}/>
+          <Image source={{ uri: prop.avatar }}
+            style={{ width: "100%", aspectRatio: 1 }}
+            resizeMode={'cover'} />
           <View style={styles.textContainer}>
-            <Text style={{padding: 15, fontSize: 20, fontWeight: "bold"}}>{prop.name}</Text>
+            <Text style={{ padding: 15, fontSize: 20, fontWeight: "bold" }}>{prop.name}</Text>
           </View>
           <View style={styles.removeButtonContainer}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.removeButton}
               onPress={() => prop.handleRemove(prop.id)}>
               <Text style={styles.buttonText}>Remove</Text>
@@ -39,8 +39,8 @@ export function FavoritePetCard( prop: FavCardProp ) {
           <Text style={styles.labelText}>Neutered:</Text>
           <Text style={styles.attrText}>{prop.neutered}</Text>
         </View>
-        <View style={styles.distanceBox}> 
-          <Text style={{fontSize: 18, fontWeight: "bold"}}>Distance:{ 2 } mi</Text>
+        <View style={styles.distanceBox}>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>Distance:{2} mi</Text>
         </View>
       </View>
     </View>
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10
   },
-  
+
   petPhotoColumn: {
     paddingVertical: 10,
     width: "40%",
@@ -132,5 +132,5 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     flexDirection: "row",
     backgroundColor: "#C5C5C5"
-  }
+  },
 });
