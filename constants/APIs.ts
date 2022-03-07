@@ -13,5 +13,6 @@ function getParams(token: string){
 export default {
     myPets,
     myPosts,
+    postAPI,
     getParams
 }

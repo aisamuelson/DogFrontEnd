@@ -54,6 +54,10 @@
    }
  }
 
+ export type ListingCardProp = ListingProps & {
+   handleAdd: (id: any) => void
+ }
+
  export type FavCardProp = ListingProps & {
    sex: string,
    age: number,
