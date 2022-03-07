@@ -10,9 +10,8 @@ function getData(onDone: any, onError: any) {
   const urlFav = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/';
   const petHeaderConfig = {
     headers: {
-      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+      'Authorization': `Bearer ${global.token}`,
     }
-
   }
 
   axios.get(urlFav, petHeaderConfig)
@@ -46,7 +45,7 @@ function parseResp(data: any) {
 export default function FavoritesScreen({ navigation }: RootTabScreenProps<'TabTwo'>) {
 
   const [data, setData] = React.useState([])
-
+  console.log(global.token)
   const handleRefresh = () => {
     getData(
       (data: any) => {
@@ -64,7 +63,7 @@ export default function FavoritesScreen({ navigation }: RootTabScreenProps<'TabT
     console.log(urlRemoveFav)
     const petHeaderConfig = {
       headers: {
-        'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+        'Authorization': `Bearer ${global.token}`,
       }
     }
     axios.delete(urlRemoveFav, petHeaderConfig)
