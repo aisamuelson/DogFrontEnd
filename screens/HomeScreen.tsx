@@ -44,7 +44,7 @@ const petListConfig = {
 function parseListRes(data){
     let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; }[] = [];
     data.forEach((item) =>{
-        console.log("this post is:", item);
+        //console.log("this post is:", item);
         let post ={
             id: item.postid,
             name: item.petid.petname,
@@ -54,7 +54,7 @@ function parseListRes(data){
         }
         parsedData.push(post);
     });
-    console.log("inside parseListRes:",parsedData);
+    //console.log("inside parseListRes:",parsedData);
     return parsedData;
 }
 
@@ -70,14 +70,14 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         .get(petListURL, petListConfig)
         .then(async function (response) {
           let parsedData = parseListRes(response.data);
-          console.log('parsedData is: ',parsedData);
+          //console.log('parsedData is: ',parsedData);
 
           setPetList(parsedData);
-          console.log('the petlist is:', petList);
+          //console.log('the petlist is:', petList);
 
         })
         .catch(function (error) {
-          console.log(error)
+          //console.log(error)
         })
   },[])
 

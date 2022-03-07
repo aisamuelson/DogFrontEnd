@@ -25,6 +25,7 @@ const Signup2 = ({navigation, route}) =>{
         axios
             .post(url, credentials)
             .then((response)=>{
+                console.log(response);
                 const result = response.data;
                 const {email} = result;
                 console.log(credentials)

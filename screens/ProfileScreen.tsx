@@ -1,90 +1,76 @@
-import React, { Component, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ListRenderItem, Image } from 'react-native';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
+import { RootTabScreenProps, ListingProps, PostInfo } from '../types';
+import { PetListingCard } from "../components/PetListingCard";
+import APIs from '../constants/APIs';
+import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 
-type profileProps = {
-  id: string,
-  name: string,
-  age: number,
-  sex: string
-};
-
-const DATA: profileProps[] = [
-  {
-    id: 'pet1',
-    name: 'Pet 1',
-    age: 0,
-    sex: "F"
-  },
-  {
-    id: 'pet2',
-    name: 'Pet 2',
-    age: 99,
-    sex: "M"
-  }
-];
-
-const PetListing = (prop: profileProps) => (
-  <View style={{
-    flexDirection: "column",
-    marginHorizontal: 5,
-    marginBottom: 10,
-    height: 400
-  }}>
-    <View style={{
-      alignItems:'center',
-      flex:7,
-      //borderColor:'red',
-      //borderWidth:5
-    }}>
-      <Image
-        style={{
-          height: '100%',
-          width: '100%'
-        }}
-        source={require('../assets/images/dog-placeholder.jpeg')}
-      />
-    </View>
-    <View style={{
-      backgroundColor: "#65D7FB",
-      flex:4,
-      flexDirection:'row',
-    }}>
-      <View style={{
-        padding:20
-      }}>
-        <Text style={styles.listingName}>{prop.name}</Text>
-        <Text style={styles.listingDetail}>Age:&nbsp;
-          <Text>{prop.age}</Text>
-        </Text>
-        <Text style={styles.listingDetail}>Sex:&nbsp;
-          <Text>{prop.sex}</Text>
-        </Text>
-      </View>
-      <TouchableOpacity 
-            style={[styles.pillButton, {
-              position:'absolute',
-              bottom:0,
-              right:0
-            }]}
-            onPress={()=>alert("Remove Pet")}>
-            <Text>Remove</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-);
-
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFive'>) {
   const textColor = Colors[useColorScheme()].text;
 
-  const renderItem: ListRenderItem<profileProps> = ({item}) => (
-    <PetListing 
-      id = {item.id}
-      name = {item.name}
-      age = {item.age}
-      sex = {item.sex}
-    />
+  // Profile Info //
+  const [imageURL, setImageURL] = useState<string>('');
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      setImageURL(result.uri);
+    }
+  };
+
+  let userEmail = 'User@email.com';
+
+  // Posts //
+  const [posts, setPosts] = useState<PostInfo[]>([]);
+
+  const headerConfig = {
+    headers: {
+      'Authorization': APIs.tempAuth
+    }
+  }
+
+  useEffect(() => {
+    axios.get<PostInfo[]>(APIs.myPosts, headerConfig)
+    .then((response) => {
+      setPosts(response.data);
+      //console.log(posts);
+    })
+    .catch((error) =>{
+      console.log(error);
+    })
+  }, [])
+  //console.log(posts);
+
+  const listings = posts.map((post) => {
+    const listing: ListingProps = {
+      id: '' + post.petid.petid,
+      name: post.petid.petname,
+      breed: post.petid.breed,
+      avatar: post.image,
+    }
+    return listing;
+  })
+
+  const renderItem: ListRenderItem<ListingProps> = ({item}) => (
+    <TouchableOpacity
+      onPress={()=>navigation.navigate('Detail', {item})}
+    >
+      <PetListingCard
+          id = {item.id}
+          name = {item.name}
+          breed = {item.breed}
+          avatar = {item.avatar}
+          // description = {item.description}
+      />
+    </TouchableOpacity>
   );
 
   // const{name, email} = route.params;
@@ -105,8 +91,14 @@ export default function ProfileScreen() {
           }}>
           <TouchableOpacity 
             style={styles.roundButton}
-            onPress={()=>alert("Profile Pic")}>
-            <Text>Picture</Text>
+            onPress={pickImage}>
+            {imageURL == '' 
+              ? <Text>Picture</Text>
+              : <Image
+                  source={{uri:imageURL}}
+                  style={{ width: "130%", aspectRatio: 1 }}
+                />
+            }
           </TouchableOpacity>
         </View>
         <View style={{
@@ -118,21 +110,24 @@ export default function ProfileScreen() {
             fontSize: 18,
             marginBottom: 10,
             color: textColor
-          }}>Username</Text>
+          }}>{userEmail}</Text>
+          {false && //TODO: add more user info. Perhaps edit profile?
           <Text style={{
             color: textColor
           }}>About me...</Text>
+          }
         </View>
       </View>
       <View style={{ 
         flex: 4, 
         //backgroundColor: "green"
       }}>
+        {
         <FlatList
-          data = {DATA}
+          data = {listings}
           renderItem = {renderItem}
           keyExtractor = {item => item.id}
-        />
+        />}
       </View>
     </SafeAreaView>
   );
@@ -159,6 +154,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 100,
     backgroundColor: 'grey',
+    overflow: 'hidden'
   },
   pillButton: {
     width: 80,
@@ -169,14 +165,5 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: '#FB6565',
     margin: 10
-  },
-  listingName: {
-    fontWeight:'bold',
-    fontSize:30,
-    marginBottom:10
-  }, 
-  listingDetail: {
-    fontSize:16,
-    marginBottom:2
   }
 });
