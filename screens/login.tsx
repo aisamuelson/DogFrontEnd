@@ -27,9 +27,11 @@ const Login = ({navigation}) =>{
             .post(url, credentials)
             .then((response)=>{
                 const result = response.data;
-                const {message, status, data} = result;
-                if(status !== 'SUCCESS'){
-                    handleMessage(message, status);
+                const {message, token} = result;
+                global.token = token
+                console.log("result: ", result, " token:", token, " message: ", message)
+                if(message !== 'Wrong username or password'){
+                    navigation.navigate("Root", {screen:"HomeScreen"})
                 }else{
                     navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
                 }

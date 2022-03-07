@@ -35,7 +35,7 @@ import { PetListingCard } from "../components/PetListingCard";
 const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts';
 const petListConfig = {
   headers:{
-    'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+    'Authorization': `Bearer ${global.token}`,
     'accept': 'application/json',
     'content-type': 'application/json'
   }
