@@ -21,16 +21,13 @@ const Login = ({navigation}) =>{
     const [messageType, setMessageType] = useState();
 
     const handleLogin = (credentials, setSubmitting) =>{
-        navigation.navigate("Root", {screen:"HomeScreen"})
         handleMessage(null);
         const url = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/login';
         axios
             .post(url, credentials)
             .then((response)=>{
                 const result = response.data;
-                console.log(response);
                 const {message, status, data} = result;
-                console.log(status);
                 if(status !== 'SUCCESS'){
                     handleMessage(message, status);
                 }else{
