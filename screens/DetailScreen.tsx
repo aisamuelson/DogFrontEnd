@@ -13,14 +13,10 @@ export default function DetailScreen() {
   const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
 
   useEffect(() => {
-    axios.get<PostInfo[]>(APIs.myPosts, APIs.getParams(global.token))
+    axios.get<PostInfo>(APIs.postAPI + `${id}`, APIs.getParams(global.token))
     .then((response) => {
-      const posts = response.data;
-      posts.forEach(post => {
-        if(post.petid.petid + '' == id){
-          setPetInfo(post.petid);
-        }
-      });
+      const post = response.data;
+      setPetInfo(post.petid)
     })
     .catch((error) =>{
       console.log(error);

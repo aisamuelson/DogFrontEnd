@@ -1,6 +1,6 @@
-import { SafeAreaView,  FlatList,  TouchableOpacity,  ListRenderItem, Image, Button, RefreshControl } from 'react-native';
+import { SafeAreaView, FlatList, TouchableOpacity, ListRenderItem, Image, Button, RefreshControl, Alert } from 'react-native';
 import { RootTabScreenProps, ListingProps } from '../types';
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import SearchBar from "../components/SearchBar";
 import { PetListingCard } from "../components/PetListingCard";
@@ -32,29 +32,19 @@ import { PetListingCard } from "../components/PetListingCard";
 //     avatar:'https://www.gardeningknowhow.com/wp-content/uploads/2016/09/ferret.jpg'},
 // ];
 
-function parseListRes(data){
-    let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; }[] = [];
-    data.forEach((item) =>{
-<<<<<<< HEAD
-        // console.log("this post is:", item);
-=======
-        //console.log("this post is:", item);
->>>>>>> 1b35be09778214a84985cc38526a55008f0871dd
-        let post ={
-            id: item.postid,
-            name: item.petid.petname,
-            breed: item.petid.breed,
-            avatar:item.image,
-            description: item.desc
-        }
-        parsedData.push(post);
-    });
-<<<<<<< HEAD
-    // console.log("inside parseListRes:",parsedData);
-=======
-    //console.log("inside parseListRes:",parsedData);
->>>>>>> 1b35be09778214a84985cc38526a55008f0871dd
-    return parsedData;
+function parseListRes(data) {
+  let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; }[] = [];
+  data.forEach((item) => {
+    let post = {
+      id: item.postid,
+      name: item.petid.petname,
+      breed: item.petid.breed,
+      avatar: item.image,
+      description: item.desc
+    }
+    parsedData.push(post);
+  });
+  return parsedData;
 }
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
@@ -63,7 +53,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
   const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts';
   const petListConfig = {
-    headers:{
+    headers: {
       'Authorization': `Bearer ${global.token}`,
       'accept': 'application/json',
       'content-type': 'application/json'
@@ -78,53 +68,76 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
     axios
-        .get(petListURL, petListConfig)
-        .then(function (response) {
-          let parsedData = parseListRes(response.data);
-          // console.log('parsedData is: ',parsedData);
+      .get(petListURL, petListConfig)
+      .then(function (response) {
+        let parsedData = parseListRes(response.data);
+        // console.log('parsedData is: ',parsedData);
 
-          setPetList(parsedData);
-          setRefreshing(false);
-          // console.log('the petlist is:', petList);
+        setPetList(parsedData);
+        setRefreshing(false);
+        // console.log('the petlist is:', petList);
 
-        })
-        .catch(function (error) {
-          console.log(error)
-          setRefreshing(false)
-        })
+      })
+      .catch(function (error) {
+        console.log(error)
+        setRefreshing(false)
+      })
   }, [])
 
   useEffect(() => {
     axios
-        .get(petListURL, petListConfig)
-        .then(function (response) {
-          let parsedData = parseListRes(response.data);
-          // console.log('parsedData is: ',parsedData);
-          
-          setPetList(parsedData);
-          // console.log('the petlist is:', petList);
+      .get(petListURL, petListConfig)
+      .then(function (response) {
+        let parsedData = parseListRes(response.data);
+        // console.log('parsedData is: ',parsedData);
 
-        })
-        .catch(function (error) {
-          //console.log(error)
-        })
-  },[])
+        setPetList(parsedData);
+        // console.log('the petlist is:', petList);
 
-  const renderItem: ListRenderItem<ListingProps> = ({item}) => (
-      <TouchableOpacity
-        onPress={()=>navigation.navigate('Detail', {item})}
-      >
-        <PetListingCard
-            id = {item.id}
-            name = {item.name}
-            breed = {item.breed}
-            avatar = {item.avatar}
-            // description = {item.description}
-        />
-      </TouchableOpacity>);
+      })
+      .catch(function (error) {
+        //console.log(error)
+      })
+  }, [])
+
+  const handleAdd = (id: number) => {
+    const petaddFavURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
+    const petaddFavHeader = {
+      headers: {
+        'Authorization': `Bearer ${global.token}`,
+        'content-type': 'application/json'
+      }
+    }
+    const data = JSON.stringify( {
+      postid: id
+    })
+    axios.post(
+      petaddFavURL,
+      data,
+      petaddFavHeader
+    ).then(( response ) => {
+      Alert.alert("Success", "", [{text: "OK"}])
+    }).catch(( error ) => {
+      Alert.alert("Failed", "You've already added this pet to favorite!", [{text: "OK"}])
+    })
+  }
+
+  const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('Detail', { item })}
+    >
+      <PetListingCard
+        id={item.id}
+        name={item.name}
+        breed={item.breed}
+        avatar={item.avatar}
+        handleAdd={handleAdd}
+      // description = {item.description}
+      />
+    </TouchableOpacity>);
 
   return (
-    <SafeAreaView style = {{flex:1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       {!clicked}
       {/* <SearchBar
           searchPhrase={searchPhrase}
@@ -133,15 +146,15 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
           setClicked={setClicked}
       /> */}
       <FlatList
-          data={petList}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => 'key' + index}
-          refreshControl= {
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }
+        data={petList}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => 'key' + index}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </SafeAreaView>);
 }
