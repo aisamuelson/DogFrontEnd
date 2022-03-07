@@ -12,14 +12,8 @@ export default function DetailScreen() {
 
   const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
 
-  const headerConfig = {
-    headers: {
-      'Authorization': APIs.tempAuth
-    }
-  }
-
   useEffect(() => {
-    axios.get<PostInfo[]>(APIs.myPosts, headerConfig)
+    axios.get<PostInfo[]>(APIs.myPosts, APIs.getParams(global.token))
     .then((response) => {
       const posts = response.data;
       posts.forEach(post => {
