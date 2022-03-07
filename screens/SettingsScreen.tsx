@@ -11,7 +11,11 @@ export default function SettingsScreen({ navigation }: NativeStackScreenProps<Ro
     }}>
         <TouchableOpacity 
             style={[styles.button, {backgroundColor: 'red'}]}
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => {
+              global.token = null;
+              global.email = null;
+              navigation.navigate('Login');
+            }}
         >
             <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>

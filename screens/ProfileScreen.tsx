@@ -26,19 +26,13 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
     }
   };
 
-  let userEmail = 'User@email.com';
+  let userEmail = global.email;
 
   // Posts //
   const [posts, setPosts] = useState<PostInfo[]>([]);
 
-  const headerConfig = {
-    headers: {
-      'Authorization': APIs.tempAuth
-    }
-  }
-
   useEffect(() => {
-    axios.get<PostInfo[]>(APIs.myPosts, headerConfig)
+    axios.get<PostInfo[]>(APIs.myPosts, APIs.getParams(global.token))
     .then((response) => {
       setPosts(response.data);
       //console.log(posts);
