@@ -1,4 +1,4 @@
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { FavCardProp } from '../types';
 
@@ -14,9 +14,11 @@ export function FavoritePetCard( prop: FavCardProp ) {
             <Text style={{padding: 15, fontSize: 20, fontWeight: "bold"}}>{prop.name}</Text>
           </View>
           <View style={styles.removeButtonContainer}>
-            <View style={styles.removeButton}>
+            <TouchableOpacity 
+              style={styles.removeButton}
+              onPress={() => prop.handleRemove(prop.id)}>
               <Text style={styles.buttonText}>Remove</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

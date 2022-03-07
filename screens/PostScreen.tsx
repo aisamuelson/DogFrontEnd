@@ -28,7 +28,7 @@ const onHandleSubmit = (parameter: any) => (e: any) => {
   const urlPosts = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/myposts';
   const petHeaderConfig = {
     headers: {
-      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+      'Authorization': `Bearer ${global.token}`,
       'Content-Type': "application/json"
     }
   }
@@ -89,7 +89,7 @@ const onHandleSubmit = (parameter: any) => (e: any) => {
 
     const postsHeaderConfig = {
       'Accept': '*/*',
-      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+      'Authorization': `Bearer ${global.token}`,
       // 'Content-Type': "multipart/form-data"
     }
     postsData.append('image', {
@@ -141,10 +141,10 @@ export default function PostScreen() {
   const [name, onChangeName] = React.useState<string | undefined>(undefined)
   // const [birthday, onChangeBirthday] = React.useState<string | undefined>(undefined)
   const [birthday, onChangeBirthday] = React.useState<Date | null>(null)
-  const [neutered, onChangeNeutered] = React.useState<PickerItem>()
+  const [neutered, onChangeNeutered] = React.useState<PickerItem>({label: "Yes", value: true})
   const [breed, onChangeBreed] = React.useState<string | undefined>(undefined)
   const [reason, onChangeReason] = React.useState<string | undefined>(undefined)
-  const [petType, setPetType] = useState<PickerItem>();
+  const [petType, setPetType] = useState<PickerItem>({label: "Cat", value: 'CAT'});
   // const [petTypes, setPetTypes] = useState([
   //   { label: 'Cat', value: 'CAT' },
   //   { label: 'Dog', value: 'DOG' }
@@ -159,8 +159,7 @@ export default function PostScreen() {
     {label: "Cat", value: 'CAT'},
     {label: "Dog", value: 'DOG'}
   ]
-  const [openGender, setOpenGender] = useState(false);
-  const [gender, setGender] = useState<PickerItem>();
+  const [gender, setGender] = useState<PickerItem>({ label: 'Male', value: 'M' });
   const genders: Array<PickerItem> = [
     { label: 'Male', value: 'M' },
     { label: 'Female', value: 'F' }
