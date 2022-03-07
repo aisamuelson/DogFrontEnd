@@ -3,31 +3,8 @@ import { Text, View } from '../components/Themed';
 import { FavoritePetCard } from '../components/FavoritePetCard';
 import * as React from 'react';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps, FavCardProp } from '../types';
-import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 import axios from 'axios';
 
-
-let testFavListData: FavCardProp[] = [
-  {
-    id: "1",
-    name: "Orange",
-    avatar: "https://picsum.photos/200/300",
-    breed: "Domestic Short Hair",
-    sex: "M",
-    age: 5,
-    neutered: "Yes"
-  },
-
-  {
-    id: "2",
-    name: "Pearl",
-    avatar: "https://picsum.photos/200/300",
-    breed: "Domestic Short Hair",
-    sex: "F",
-    age: 6,
-    neutered: "Yes"
-  }
-]
 
 function getData(onDone: any, onError: any) {
   const urlFav = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/';
@@ -41,6 +18,7 @@ function getData(onDone: any, onError: any) {
   axios.get(urlFav, petHeaderConfig)
     .then((response) => {
       onDone(response.data)
+      console.log("fav page response:", response.data)
     })
     .catch((error) => {
       onError(error.response)
@@ -58,7 +36,7 @@ function parseResp(data: any) {
       neutered: post.petid.neutered ? "Yes" : "No",
       sex: post.petid.gender,
       breed: post.petid.breed,
-      avatar: post.image
+      avatar: post.image,
     }
     parsedData.push(prop)
   });
@@ -86,7 +64,7 @@ export default function FavoritesScreen( { navigation }: RootTabScreenProps<'Tab
     <TouchableOpacity
       onPress={()=>navigation.navigate('Detail', {item})}
     >
-      <FavoritePetCard 
+      <FavoritePetCard
             id = {item.id}
             name = {item.name}
             avatar = {item.avatar}
