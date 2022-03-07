@@ -6,7 +6,7 @@ import {ListingProps} from "../types";
 const { width, height } = Dimensions.get('window')
 
 export function PetListingCard( item: ListingProps) {
-    console.log(item)
+    // console.log(item)
     return (
         <View style={styles.cardView}>
             <View style={styles.petListItemContainer}>

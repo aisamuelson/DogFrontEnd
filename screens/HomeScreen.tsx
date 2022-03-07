@@ -1,4 +1,4 @@
-import { SafeAreaView,  FlatList,  TouchableOpacity,  ListRenderItem, Image, Button } from 'react-native';
+import { SafeAreaView,  FlatList,  TouchableOpacity,  ListRenderItem, Image, Button, RefreshControl } from 'react-native';
 import { RootTabScreenProps, ListingProps } from '../types';
 import React, {useState, useEffect} from "react";
 import axios from 'axios';
@@ -32,19 +32,10 @@ import { PetListingCard } from "../components/PetListingCard";
 //     avatar:'https://www.gardeningknowhow.com/wp-content/uploads/2016/09/ferret.jpg'},
 // ];
 
-const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts';
-const petListConfig = {
-  headers:{
-    'Authorization': `Bearer ${global.token}`,
-    'accept': 'application/json',
-    'content-type': 'application/json'
-  }
-}
-
 function parseListRes(data){
     let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; }[] = [];
     data.forEach((item) =>{
-        console.log("this post is:", item);
+        // console.log("this post is:", item);
         let post ={
             id: item.postid,
             name: item.petid.petname,
@@ -54,26 +45,56 @@ function parseListRes(data){
         }
         parsedData.push(post);
     });
-    console.log("inside parseListRes:",parsedData);
+    // console.log("inside parseListRes:",parsedData);
     return parsedData;
 }
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 
+
+
+  const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts';
+  const petListConfig = {
+    headers:{
+      'Authorization': `Bearer ${global.token}`,
+      'accept': 'application/json',
+      'content-type': 'application/json'
+    }
+  }
+
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
-
+  const [refreshing, setRefreshing] = useState(false);
   const [petList, setPetList] = useState([]);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    axios
+        .get(petListURL, petListConfig)
+        .then(function (response) {
+          let parsedData = parseListRes(response.data);
+          // console.log('parsedData is: ',parsedData);
+
+          setPetList(parsedData);
+          setRefreshing(false);
+          // console.log('the petlist is:', petList);
+
+        })
+        .catch(function (error) {
+          console.log(error)
+          setRefreshing(false)
+        })
+  }, [])
 
   useEffect(() => {
     axios
         .get(petListURL, petListConfig)
-        .then(async function (response) {
+        .then(function (response) {
           let parsedData = parseListRes(response.data);
-          console.log('parsedData is: ',parsedData);
-
+          // console.log('parsedData is: ',parsedData);
+          
           setPetList(parsedData);
-          console.log('the petlist is:', petList);
+          // console.log('the petlist is:', petList);
 
         })
         .catch(function (error) {
@@ -97,16 +118,22 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
   return (
     <SafeAreaView style = {{flex:1}}>
       {!clicked}
-      <SearchBar
+      {/* <SearchBar
           searchPhrase={searchPhrase}
           setSearchPhrase={setSearchPhrase}
           clicked={clicked}
           setClicked={setClicked}
-      />
+      /> */}
       <FlatList
           data={petList}
           renderItem={renderItem}
           keyExtractor={(item, index) => 'key' + index}
+          refreshControl= {
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
       />
     </SafeAreaView>);
 }

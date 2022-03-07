@@ -22,6 +22,7 @@ const Signup2 = ({navigation, route}) =>{
     const handleSignup = (credentials, setSubmitting) =>{
         handleMessage(null);
         const url = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/register';
+        
         axios
             .post(url, credentials)
             .then((response)=>{
@@ -29,7 +30,7 @@ const Signup2 = ({navigation, route}) =>{
                 const {email} = result;
                 console.log(credentials)
                 //if(email !== 'user with this email address already exists.'){
-                    navigation.navigate("Root", {screen:"HomeScreen"})
+                    navigation.navigate("Login")
                 // }else{
                 //     handleMessage(email);
                 // }
