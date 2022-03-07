@@ -35,7 +35,11 @@ import { PetListingCard } from "../components/PetListingCard";
 function parseListRes(data){
     let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; }[] = [];
     data.forEach((item) =>{
+<<<<<<< HEAD
         // console.log("this post is:", item);
+=======
+        //console.log("this post is:", item);
+>>>>>>> 1b35be09778214a84985cc38526a55008f0871dd
         let post ={
             id: item.postid,
             name: item.petid.petname,
@@ -45,7 +49,11 @@ function parseListRes(data){
         }
         parsedData.push(post);
     });
+<<<<<<< HEAD
     // console.log("inside parseListRes:",parsedData);
+=======
+    //console.log("inside parseListRes:",parsedData);
+>>>>>>> 1b35be09778214a84985cc38526a55008f0871dd
     return parsedData;
 }
 
@@ -98,7 +106,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
         })
         .catch(function (error) {
-          console.log(error)
+          //console.log(error)
         })
   },[])
 

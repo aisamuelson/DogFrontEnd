@@ -65,3 +65,23 @@
    label: string,
    placeholder: string
  }
+
+export type PetInfo = {
+    age_month: number,
+    age_year: number,
+    birthday: string,
+    breed: string,
+    gender: string,
+    neutered: boolean,
+    petid: number,
+    petname: string,
+    petowner: number,
+    pettype: string
+}
+
+export type PostInfo = {
+    desc: string,
+    image: string,
+    petid: PetInfo,
+    postid: number
+}

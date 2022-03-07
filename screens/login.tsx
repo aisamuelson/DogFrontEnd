@@ -33,14 +33,14 @@ const Login = ({navigation}) =>{
                 if(message !== 'Wrong username or password'){
                     navigation.navigate("Root", {screen:"HomeScreen"})
                 }else{
-                    handleMessage(message);
+                    navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
                 }
                 setSubmitting(false);
             })
             .catch(error =>{
             console.log(error);
             setSubmitting(false);
-            handleMessage("Incorrect username or password");
+            handleMessage("An error has occurred. Please check your network and try again");
         })
     }
 

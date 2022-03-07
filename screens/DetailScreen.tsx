@@ -1,14 +1,40 @@
-import React, { Component, useState } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ListRenderItem, Image } from 'react-native';
-import appstyles from '../app-styles'
+import React, { useEffect, useState } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, Image } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { RouteParamList, ListingProps } from '../types';
+import { RouteParamList, ListingProps, PetInfo, PostInfo } from '../types';
+import axios from 'axios';
+import APIs from '../constants/APIs';
 
 export default function DetailScreen() {
   const route = useRoute<RouteProp<RouteParamList, 'Detail'>>();
   const data = route.params.item;
-  //console.log(data);
+  const id = data.id;
 
+  const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
+
+  const headerConfig = {
+    headers: {
+      'Authorization': APIs.tempAuth
+    }
+  }
+
+  useEffect(() => {
+    axios.get<PostInfo[]>(APIs.myPosts, headerConfig)
+    .then((response) => {
+      const posts = response.data;
+      posts.forEach(post => {
+        if(post.petid.petid + '' == id){
+          setPetInfo(post.petid);
+        }
+      });
+    })
+    .catch((error) =>{
+      console.log(error);
+    })
+  }, [])
+
+  if (petInfo == null) return null;
+  //console.log(petInfo);
   return (
     <SafeAreaView>
       <View style={styles.imageContainerStyle}>
@@ -20,18 +46,23 @@ export default function DetailScreen() {
         styles.textContainerStyle
       }>
         <Text style={styles.petListItemName}>{data.name}</Text>
+        <Text style={styles.petListItem}>Species:&nbsp;
+          <Text>{petInfo.pettype}</Text>
+        </Text>
         <Text style={styles.petListItem}>Breed:&nbsp;
-          <Text>{data.breed}</Text>
+          <Text>{petInfo.breed}</Text>
         </Text>
-        <Text style={styles.petListItem}>Info:&nbsp;
-          <Text></Text>
+        <Text style={styles.petListItem}>Age:&nbsp;
+          <Text>{petInfo.age_year}</Text>
         </Text>
-        <Text style={styles.petListItem}>Info:&nbsp;
-          <Text></Text>
+        <Text style={styles.petListItem}>Birthday:&nbsp;
+          <Text>{petInfo.birthday}</Text>
         </Text>
-        <Text style={styles.petListItem}></Text>
-        <Text style={styles.petListItem}>Owner Contact Info:&nbsp;
-          <Text></Text>
+        <Text style={styles.petListItem}>Sex:&nbsp;
+          <Text>{petInfo.gender}</Text>
+        </Text>
+        <Text style={styles.petListItem}>Neutered:&nbsp;
+          <Text>{petInfo.neutered ? 'Yes' : 'No'}</Text>
         </Text>
       </View>
     </SafeAreaView>
