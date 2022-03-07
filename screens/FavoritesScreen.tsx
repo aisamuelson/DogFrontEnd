@@ -1,31 +1,96 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../components/EditScreenInfo';
+import { StyleSheet, ScrollView, TouchableOpacity, ListRenderItem, FlatList } from 'react-native';
 import { Text, View } from '../components/Themed';
+import { FavoritePetCard } from '../components/FavoritePetCard';
+import * as React from 'react';
+import { RootStackParamList, RootTabParamList, RootTabScreenProps, FavCardProp } from '../types';
+import axios from 'axios';
 
-export default function FavoritesScreen() {
+
+function getData(onDone: any, onError: any) {
+  const urlFav = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/';
+  const petHeaderConfig = {
+    headers: {
+      'Authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhyaWN4eTEzMTRAZ21haWwuY29tIiwiZXhwIjoxNjQ5MTIzNjg4fQ.aVqzYNBNTBCQYwdcakDWdZ2ZZQC4fPWn2YQYKCzobGo",
+    }
+
+  }
+
+  axios.get(urlFav, petHeaderConfig)
+    .then((response) => {
+      onDone(response.data)
+      console.log("fav page response:", response.data)
+    })
+    .catch((error) => {
+      onError(error.response)
+    })
+}
+
+function parseResp(data: any) {
+  let parsedData = []
+  data.forEach((item, index) => {
+    let post = item.postid
+    let prop = {
+      id: post.petid.petowner,
+      name: post.petid.petname,
+      age: post.petid.age_year,
+      neutered: post.petid.neutered ? "Yes" : "No",
+      sex: post.petid.gender,
+      breed: post.petid.breed,
+      avatar: post.image,
+    }
+    parsedData.push(prop)
+  });
+  return parsedData;
+}
+
+
+export default function FavoritesScreen( { navigation }: RootTabScreenProps<'TabTwo'> ) {
+
+  const [data, setData] = React.useState([])
+
+  React.useEffect(() => {
+    getData(
+      (data: any) => {
+        let parsedData = parseResp(data)
+        setData(parsedData)
+      },
+      (err: any) => {
+        console.log(err)
+      }
+    )
+  }, [])
+
+  const renderItem: ListRenderItem<FavCardProp> = ({item}) => (
+    <TouchableOpacity
+      onPress={()=>navigation.navigate('Detail', {item})}
+    >
+      <FavoritePetCard
+            id = {item.id}
+            name = {item.name}
+            avatar = {item.avatar}
+            breed = {item.breed}
+            sex = {item.sex}
+            age = {item.age}
+            neutered = {item.neutered}
+          />
+    </TouchableOpacity>);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Favorites</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/FavoritesScreen.tsx" />
-    </View>
+      <View style={styles.container}>
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        >
+        </FlatList>
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+    alignItems: "stretch",
+    justifyContent: 'flex-start',
+  }
 });
