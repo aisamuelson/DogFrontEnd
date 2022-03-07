@@ -95,7 +95,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
       </TouchableOpacity>);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style = {{flex:1}}>
       {!clicked}
       <SearchBar
           searchPhrase={searchPhrase}

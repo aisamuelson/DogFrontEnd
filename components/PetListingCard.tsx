@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection: "column",
         marginHorizontal: 5,
-        marginBottom: 10,
+        marginBottom: 20,
         height: 400,
         backgroundColor: 'white',
         margin: width * 0.03,
@@ -39,27 +39,11 @@ const styles = StyleSheet.create({
         shadowOffset: { width:0.5, height: 0.5 },
         shadowOpacity: 0.5,
     },
-    title: {
-        marginHorizontal: width * 0.05,
-        marginVertical: width * 0.03,
-        color: 'black',
-        fontSize: 20,
-        fontWeight: 'bold'
-
-    },
     description: {
         marginVertical: width * 0.05,
         marginHorizontal: width * 0.02,
         color: 'gray',
         fontSize: 18
-    },
-    image: {
-        // height: height / 6,
-        // marginLeft: width * 0.05,
-        // marginRight: width * 0.05,
-        // marginVertical: height * 0.02
-        width: '100%',
-        height:'100%',
     },
     breed: {
         marginBottom: width * 0.0,
@@ -68,39 +52,24 @@ const styles = StyleSheet.create({
         color: 'gray'
 
     },
-        pettitle: {
-            width: "100%",
-            marginTop: 20,
-            fontSize: 25,
-            fontWeight: "bold",
-            marginLeft: "10%",
-        },
-        petListContainer:{
-            flex:1,
-            flexDirection: "column",
-            marginHorizontal: 5,
-            marginBottom: 10,
-            height: 400,
-        },
+    petListItemContainer:{
+        alignItems:'center',
+        flex:7,
+    },
 
-        petListItemContainer:{
-            alignItems:'center',
-            flex:7,
-        },
+    petListItemName: {
+        fontWeight:'bold',
+        fontSize:30,
+        marginBottom:10
+    },
 
-        petListItemName: {
-            fontWeight:'bold',
-            fontSize:30,
-            marginBottom:10
-        },
+    petListItemBreed: {
+        fontSize:16,
+        marginBottom:2
+    },
 
-        petListItemBreed: {
-            fontSize:16,
-            marginBottom:2
-        },
-
-        imageStyle:{
-            width: '100%',
-            height:'100%',
-        },
+    imageStyle:{
+        width: '100%',
+        height:'100%',
+    },
 })
