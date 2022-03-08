@@ -27,11 +27,27 @@ const Signup2 = ({navigation, route}) =>{
             .post(url, credentials)
             .then((response)=>{
                 global.email = credentials.email;
-                const result = response.data;
-                const {email} = result;
-                console.log(credentials)
+
+                //log in after registering
+                const url = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/login';
+                axios
+                    .post(url, credentials)
+                    .then((response)=>{
+                        const result = response.data;
+                        const {message, token} = result;
+                        global.token = token
+                        navigation.navigate("Root", {screen:"HomeScreen"})
+                    })
+                    .catch(error =>{
+                    console.log(error);
+                    handleMessage("An error has occurred. Please check your network and try again");
+                })
+
+                //const result = response.data;
+                //const {email} = result;
+                //console.log(credentials)
                 //if(email !== 'user with this email address already exists.'){
-                    navigation.navigate("Login")
+                    //navigation.navigate("Login")
                 // }else{
                 //     handleMessage(email);
                 // }

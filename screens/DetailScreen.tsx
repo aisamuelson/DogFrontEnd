@@ -19,20 +19,22 @@ export default function DetailScreen() {
   const data = route.params.item;
   const id = data.id;
 
-  const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
+  const [postInfo, setPostInfo] = useState<PostInfo>();
 
   useEffect(() => {
     axios.get<PostInfo>(APIs.postAPI + `${id}`, APIs.getParams(global.token))
       .then((response) => {
         const post = response.data;
-        setPetInfo(post.petid)
+        setPostInfo(post)
       })
       .catch((error) => {
         console.log(error);
       })
   }, [])
 
+  if(postInfo == null) return null;
 
+  const petInfo = postInfo.petid;
 
   const handleAdd = (id: number) => {
     const petaddFavURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
@@ -101,7 +103,6 @@ export default function DetailScreen() {
           <Text style={styles.petListItemName}>{data.name}</Text>
           <Text style={styles.subtitle}>{petInfo.pettype} - {petInfo.breed}</Text>
         </View>
-        <Text style={{ fontSize: 24, marginBottom: 5 }}>Detailed Information</Text>
         <View style={styles.hstack}>
           <MaterialCommunityIcons name="candle" size={24} color="black" />
           <Text style={styles.petListItem}>&nbsp;
@@ -118,11 +119,17 @@ export default function DetailScreen() {
         <View style={styles.hstack}>
           <MaterialCommunityIcons name="bandage" size={24} color="black" />
           <Text style={styles.petListItem}>&nbsp;
-            <Text>{petInfo.neutered ? 'Neutered' : 'Not Neutered'}</Text>
+            <Text>{(petInfo.neutered ? '' : 'Not ') + (petInfo.gender == 'M' ? 'Neutered' : 'Spayed')}</Text>
+          </Text>
+        </View>
+        <View style={styles.hstack}>
+          <FontAwesome name="question-circle-o" size={24} color="black" />
+          <Text style={styles.petListItem}>&nbsp;
+            <Text>{postInfo.desc}</Text>
           </Text>
         </View>
         <TouchableOpacity
-          style={styles.addButton}
+          style={[styles.addButton, {marginTop: 10}]}
           onPress={() => handleAdd(id)}
         >
           <Text style={styles.buttonText}>Favorite</Text>

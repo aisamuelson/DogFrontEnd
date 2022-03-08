@@ -65,7 +65,7 @@ const Login = ({navigation}) =>{
                                 handleMessage("Please fill out all fields");
                                 setSubmitting(false);
                             }else{
-                                handleLogin(values, setSubmitting);
+                                handleLogin({email: values.email.trim(), password: values.password}, setSubmitting);
                             }
                         }
                     }

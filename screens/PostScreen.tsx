@@ -79,8 +79,8 @@ export default function PostScreen() {
       petname: parameter.name,
       pettype: parameter.petType["value"],
       breed: breed,
-      age_year: monthDiff(date, now) % 12,
-      age_month: Math.floor(monthDiff(date, now) / 12),
+      age_year: Math.floor(monthDiff(date, now) / 12),
+      age_month: monthDiff(date, now) % 12,
       birthday: parameter.birthday.toISOString().substring(0, 10),
       neutered: parameter.neutered["value"],
       gender: parameter.gender["value"]
@@ -252,12 +252,12 @@ export default function PostScreen() {
           <View style={styles.spacer}></View>
           <View style={styles.basicInfoRight}>
             <View style={[styles.flexV]}>
-              <Text style={{ fontSize: 10 }}>Neutered:</Text>
+              <Text style={{ fontSize: 10 }}>Neutered/Spayed:</Text>
               <Picker
                 item={neutered}
                 items={neuteredStatus}
                 onItemChange={onChangeNeutered}
-                placeholder="Is your pet Neutered?"
+                placeholder="Is your pet Neutered/Spayed?"
                 style={styles.inputBox}
               />
             </View>

@@ -97,6 +97,9 @@ export default function FavoritesScreen({ navigation }: RootTabScreenProps<'TabT
   }, [])
   // handleRefresh();
 
+  //refresh when page is in focus
+  const unsubscribe = navigation.addListener('focus', handleRefresh);
+
   const renderItem: ListRenderItem<FavCardProp> = ({ item }) => (
     <TouchableOpacity
       onPress={() => navigation.navigate('Detail', { item })}

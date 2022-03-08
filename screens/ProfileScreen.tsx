@@ -32,7 +32,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   // Posts //
   const [posts, setPosts] = useState<PostInfo[]>([]);
 
-  useEffect(() => {
+  function updatePosts(){
     axios.get<PostInfo[]>(APIs.myPosts, APIs.getParams(global.token))
     .then((response) => {
       setPosts(response.data);
@@ -41,10 +41,12 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
     .catch((error) =>{
       console.log(error);
     })
-  }, [])
+  }
+
+  useEffect(updatePosts, [])
   //console.log(posts);
 
-
+  const unsubscribe = navigation.addListener('focus', updatePosts);
 
   const handleAdd = (id: number) => {
     const petaddFavURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';

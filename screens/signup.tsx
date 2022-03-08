@@ -36,7 +36,7 @@ const Signup = ({navigation}) =>{
                                 handleMessage("Passwords do not match");
                             }else{
                                 console.log(values); 
-                                navigation.navigate("Signup2", {fullname: values.fullname, email: values.email, password: values.password});
+                                navigation.navigate("Signup2", {fullname: values.fullname, email: values.email.trim(), password: values.password});
                             }
                         }  
                     }}
