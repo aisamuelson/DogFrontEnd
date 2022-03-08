@@ -55,7 +55,7 @@ const Login = ({navigation}) =>{
         <StyledContainer>
             <StatusBar style="dark"/>
             <InnerContainer>
-                <PageLogo resizeMode="cover" source={require('./../assets/images/img1.gif')}/>
+                <PageLogo resizeMode="cover" source={require('./../assets/images/SaddyDog.png')}/>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Login</SubTitle>
                 <Formik initialValues={{email:'',password:''}} 
