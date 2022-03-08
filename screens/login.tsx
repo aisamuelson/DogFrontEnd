@@ -105,10 +105,12 @@ const Login = ({navigation}) =>{
                             <ActivityIndicator size="large" color={primary}/>
                         </StyledButton>}
                         <Line/>
+                        {false &&
                         <StyledButton google={true} onPress={handleSubmit}>
                             <Fontisto name="google" color={primary} size={25} />
                             <ButtonText google={true}>Sign in with Google</ButtonText>
                         </StyledButton>
+                        }
                         <ExtraView>
                             <ExtraText>Don't have an account already? </ExtraText>
                             <TextLink onPress={() => navigation.navigate("Signup")}><TextLinkContent>Signup</TextLinkContent></TextLink>
