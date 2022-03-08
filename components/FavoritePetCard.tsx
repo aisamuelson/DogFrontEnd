@@ -39,9 +39,11 @@ export function FavoritePetCard(prop: FavCardProp) {
           <Text style={styles.labelText}>Neutered:</Text>
           <Text style={styles.attrText}>{prop.neutered}</Text>
         </View>
+        {false &&
         <View style={styles.distanceBox}>
           <Text style={{ fontSize: 18, fontWeight: "bold" }}>Distance:{2} mi</Text>
         </View>
+        }
       </View>
     </View>
   );

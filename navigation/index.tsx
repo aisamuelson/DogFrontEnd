@@ -126,6 +126,7 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="plus-square" color={color} />,
         }}
       />
+      {false &&
       <BottomTab.Screen
         name="TabFour"
         component={MessagesScreen}
@@ -134,6 +135,7 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={color} />,
         }}
       />
+      }
       <BottomTab.Screen
         name="TabFive"
         component={ProfileScreen}
