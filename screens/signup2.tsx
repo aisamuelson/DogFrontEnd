@@ -79,6 +79,9 @@ const Signup2 = ({navigation, route}) =>{
                         if(values.addressLine == '' || values.city == '' || values.state == '' || values.zipcode == ''){
                             handleMessage("Please fill out all fields");
                             setSubmitting(false);
+                        // }else if(values.state){
+                        //         handleMessage("Please fill out all fields");
+                        //         setSubmitting(false);
                         }else{
                             console.log(values)
                             handleSignup(values, setSubmitting);
@@ -121,6 +124,7 @@ const Signup2 = ({navigation, route}) =>{
                             onChangeText = {handleChange('zipcode')}
                             onBlur = {handleBlur('zipcode')}
                             value = {values.zipcode}
+                            keyboardType="numeric"
                         />
                         <MsgBox type={messageType}>
                             {message}

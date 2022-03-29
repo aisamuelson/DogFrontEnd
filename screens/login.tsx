@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
 import { Feather, Ionicons, Fontisto } from "@expo/vector-icons";
@@ -9,16 +9,17 @@ import {View, ActivityIndicator} from 'react-native';
 
 import axios from "axios";
 
-const{brand, darkLight, primary} = Colors;
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CredentialsContext } from './../components/CredentialsContext';
 
-const handleGoogleSignIn = () =>{
-    const config = {}
-}
+const{brand, darkLight, primary} = Colors;
 
 const Login = ({navigation}) =>{
     const [hidePassword, setHidePassword] = useState(true);
     const [message, setMessage] = useState();
     const [messageType, setMessageType] = useState();
+
+    const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext);
 
     const handleLogin = (credentials, setSubmitting) =>{
         handleMessage(null);
@@ -32,9 +33,11 @@ const Login = ({navigation}) =>{
                 global.email = credentials.email;
                 console.log("result: ", result, " token:", token, " message: ", message)
                 if(message !== 'Wrong username or password'){
-                    navigation.navigate("Root", {screen:"HomeScreen"})
+                    //navigation.navigate("Root", {screen:"HomeScreen"})
+                    persistLogin({...data[0]}, message, status);
                 }else{
-                    navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
+                    // navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
+                    persistLogin({...data[0]}, message, status);
                 }
                 setSubmitting(false);
             })
@@ -50,11 +53,30 @@ const Login = ({navigation}) =>{
         setMessageType(type);
     }
 
+    //INSIDE LOGIN?????
+    // const handleGoogleSignIn = () =>{
+    //     const config = {}
+    // }
+
+    const persistLogin = (credentials, message, status) =>{
+        AsyncStorage.setItem('credentials', JSON.stringify(credentials))
+        .then(()=>{
+            handleMessage(message, status);
+            setStoredCredentials(credentials);
+        })
+        .catch((error)=>{
+            console.log(error);
+            handleMessage('Persisting login failed');
+        })
+    }
+/////////// 
+
     return (
         <KeyboardWrapper>
         <StyledContainer>
             <StatusBar style="dark"/>
             <InnerContainer>
+                <ExtraView/>
                 <PageLogo resizeMode="cover" source={require('./../assets/images/SaddyDog.png')}/>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Login</SubTitle>
@@ -105,10 +127,10 @@ const Login = ({navigation}) =>{
                             <ActivityIndicator size="large" color={primary}/>
                         </StyledButton>}
                         <Line/>
-                        <StyledButton google={true} onPress={handleSubmit}>
+                        {/* <StyledButton google={true} onPress={handleSubmit}>
                             <Fontisto name="google" color={primary} size={25} />
                             <ButtonText google={true}>Sign in with Google</ButtonText>
-                        </StyledButton>
+                        </StyledButton> */}
                         <ExtraView>
                             <ExtraText>Don't have an account already? </ExtraText>
                             <TextLink onPress={() => navigation.navigate("Signup")}><TextLinkContent>Signup</TextLinkContent></TextLink>

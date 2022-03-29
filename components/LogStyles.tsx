@@ -122,7 +122,7 @@ export const ExtraView = styled(View)`
     justify-content: center;
     flex-direction: row;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
 `
 export const ExtraText = styled(Text)`
     justify-content: center;

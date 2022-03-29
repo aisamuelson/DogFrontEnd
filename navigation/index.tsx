@@ -29,6 +29,8 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 import SettingsScreen from "../screens/SettingsScreen";
 
+import { CredentialsContext } from './../components/CredentialsContext';
+
 // import {Colors} from './../components/LogStyles';
 const {primary, tertiary} = Colors;
 
@@ -65,25 +67,33 @@ function RootNavigator() {
 
     
     //  </Stack.Navigator>
-
-    <Stack.Navigator 
-    screenOptions={{
-      headerStyle: {backgroundColor:'transparent'},
-      headerTintColor: tertiary,
-      headerTransparent: true,
-      headerTitle: '',
-      //Deprecated? Change if incorrect
-      //headerLeftContainerStyle: {paddingLeft: 20} 
-      }}
-      initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="Signup2" component={Signup2} />
-        <Stack.Screen name="Detail" component={DetailScreen} />
-        <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-        <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
-    </Stack.Navigator>
+    <CredentialsContext.Consumer>
+      {({storedCredentials}) => (
+        <Stack.Navigator 
+        screenOptions={{
+          headerStyle: {backgroundColor:'transparent'},
+          headerTintColor: tertiary,
+          headerTransparent: true,
+          headerTitle: '',
+          //Deprecated? Change if incorrect
+          //headerLeftContainerStyle: {paddingLeft: 20} 
+          }}
+          initialRouteName="Login">
+            {storedCredentials ? (
+              <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+            ): (
+              <>
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Signup" component={Signup} />
+                <Stack.Screen name="Signup2" component={Signup2} />
+              </>
+            )}
+            <Stack.Screen name="Detail" component={DetailScreen} />
+            <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+            <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
+        </Stack.Navigator>
+      )}
+    </CredentialsContext.Consumer>
   );
 }
 
