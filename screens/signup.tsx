@@ -40,8 +40,8 @@ const Signup = ({navigation}) =>{
                         const result = response.data;
                         const {message, token} = result;
                         global.token = token
-                        //navigation.navigate("Root", {screen:"HomeScreen"})
-                        persistLogin({...data}, message, status);
+                        navigation.navigate("Root", {screen:"HomeScreen"})
+                        //persistLogin({...data}, message, status);
                     })
                     .catch(error =>{
                     console.log(error);

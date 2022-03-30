@@ -34,10 +34,10 @@ const Login = ({navigation}) =>{
                 console.log("result: ", result, " token:", token, " message: ", message)
                 if(message !== 'Wrong username or password'){
                     navigation.navigate("Root", {screen:"HomeScreen"})
-                    //persistLogin({...data[0]}, message, status);
+                    //persistLogin(credentials, token);
                 }else{
                     navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
-                    //persistLogin({...data[0]}, message, status);
+                    //persistLogin(credentials, token);
                 }
                 setSubmitting(false);
             })
@@ -58,10 +58,11 @@ const Login = ({navigation}) =>{
     //     const config = {}
     // }
 
-    const persistLogin = (credentials, message, status) =>{
+    const persistLogin = (credentials, token) =>{
         AsyncStorage.setItem('credentials', JSON.stringify(credentials))
         .then(()=>{
-            handleMessage(message, status);
+            //handleMessage(message, status);
+            global.token = token;
             setStoredCredentials(credentials);
         })
         .catch((error)=>{
