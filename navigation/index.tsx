@@ -139,7 +139,7 @@ function BottomTabNavigator() {
         component={ProfileScreen}
         options={({ navigation }: RootTabScreenProps<'TabFive'>) => ({
           //tabBarLabel: 'My',
-          title: 'My',
+          title: 'Me',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         })}
       />
