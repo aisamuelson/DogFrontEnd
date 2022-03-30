@@ -33,11 +33,11 @@ const Login = ({navigation}) =>{
                 global.email = credentials.email;
                 console.log("result: ", result, " token:", token, " message: ", message)
                 if(message !== 'Wrong username or password'){
-                    //navigation.navigate("Root", {screen:"HomeScreen"})
-                    persistLogin({...data[0]}, message, status);
+                    navigation.navigate("Root", {screen:"HomeScreen"})
+                    //persistLogin({...data[0]}, message, status);
                 }else{
-                    // navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
-                    persistLogin({...data[0]}, message, status);
+                    navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
+                    //persistLogin({...data[0]}, message, status);
                 }
                 setSubmitting(false);
             })

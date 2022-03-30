@@ -12,6 +12,8 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CredentialsContext } from './../components/CredentialsContext';
 
+import * as Location from 'expo-location';
+
 const{brand, darkLight, primary} = Colors;
 
 const Signup = ({navigation}) =>{
@@ -38,7 +40,8 @@ const Signup = ({navigation}) =>{
                         const result = response.data;
                         const {message, token} = result;
                         global.token = token
-                        navigation.navigate("Root", {screen:"HomeScreen"})
+                        //navigation.navigate("Root", {screen:"HomeScreen"})
+                        persistLogin({...data}, message, status);
                     })
                     .catch(error =>{
                     console.log(error);
@@ -78,6 +81,18 @@ const Signup = ({navigation}) =>{
             console.log(error);
             handleMessage('Persisting login failed');
         })
+    }
+
+    const getLocation = () =>{
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+              //no location allowed
+              return;
+            }
+            let location = await Location.getCurrentPositionAsync({});
+            //send location to backend
+          })();
     }
 
     return (
