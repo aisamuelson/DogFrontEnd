@@ -80,7 +80,7 @@ function RootNavigator() {
           }}
           initialRouteName="Login">
             {storedCredentials ? (
-              <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+               <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
             ): (
               <>
                 <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
