@@ -35,8 +35,8 @@ export function FavoritePetCard(prop: FavCardProp) {
           <Text style={styles.labelText}>Sex:</Text>
           <Text style={styles.attrText}>{prop.sex}</Text>
         </View>
-        <View style={styles.label}>
-          <Text style={styles.labelText}>Neutered:</Text>
+        <View style={styles.label}> 
+          <Text style={styles.labelText}>{(prop.sex == 'M' ? 'Neutered' : 'Spayed') + ':'}</Text>
           <Text style={styles.attrText}>{prop.neutered}</Text>
         </View>
         <View style={styles.distanceBox}>
