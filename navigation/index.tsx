@@ -86,7 +86,6 @@ function RootNavigator() {
                 <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Signup" component={Signup} />
-                <Stack.Screen name="Signup2" component={Signup2} />
               </>
             )}
             <Stack.Screen name="Detail" component={DetailScreen} />

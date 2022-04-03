@@ -19,7 +19,7 @@ export default function App() {
 
   const checkLoginCredentials = () =>{
     AsyncStorage
-      .getItem('credentials')
+      .getItem('token')
       .then((result)=>{
         if (result !== null){
           setStoredCredentials(JSON.parse(result));
