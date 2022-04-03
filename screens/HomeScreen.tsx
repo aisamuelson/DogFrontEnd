@@ -2,7 +2,9 @@ import { SafeAreaView, FlatList, TouchableOpacity, ListRenderItem, Image, Button
 import { RootTabScreenProps, ListingProps } from '../types';
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import SearchBar from "../components/SearchBar";
+import * as Location from 'expo-location';
+import { Searchbar } from 'react-native-paper';
+// import SearchBar from "../components/SearchBar";
 import { PetListingCard } from "../components/PetListingCard";
 
 
@@ -32,6 +34,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         }
     }
 
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+
     const [searchPhrase, setSearchPhrase] = useState("");
     const [clicked, setClicked] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
@@ -57,9 +62,19 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     }, [])
 
     useEffect(() => {
+
+        // if (searchPhrase != null){
+        //   let searchURL = petListURL + "?name=" + searchPhrase;
+        //   let pulledData = pullData(searchURL);
+        //   setPetList(pulledData);
+        // }
+        // let pulledData = pullData(petListURL);
+        // setPetList(pulledData);
+
+
         axios
-            .get(petListURL, petListConfig)
-            .then(function (response) {
+            .get(petListURL + "?name=" + searchPhrase, petListConfig)
+            .then(async function (response) {
                 let parsedData = parseListRes(response.data);
                 // console.log('parsedData is: ',parsedData);
 
@@ -68,9 +83,29 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
             })
             .catch(function (error) {
-                //console.log(error)
-            })
-    }, [])
+                console.log(error)
+            });
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        })();
+    },[]);
+
+    let text = 'Waiting..';
+    if (errorMsg) {
+        text = errorMsg;
+    } else if (location) {
+        text = JSON.stringify(location);
+    }
+
+    console.log("location is:" + text);
+    // console.log("You searched: " + searchPhrase);
 
     const handleAdd = (id: number) => {
         const petaddFavURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
@@ -117,6 +152,14 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
           clicked={clicked}
           setClicked={setClicked}
       /> */}
+            <Searchbar
+                placeholder="Search"
+                onChangeText={(query) => setSearchPhrase(query)}
+                value={searchPhrase}
+            />
+
+
+
             <FlatList
                 data={petList}
                 renderItem={renderItem}
