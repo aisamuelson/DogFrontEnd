@@ -152,7 +152,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
             style={styles.roundButton}
             onPress={pickImage}>
             {imageUri == '' 
-              ? <Text>Picture</Text>
+              ? <Text>Upload Picture</Text>
               : <Image
                   source={{uri:imageUri}}
                   style={{ width: "130%", aspectRatio: 1 }}

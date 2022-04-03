@@ -22,6 +22,17 @@ export default function SettingsScreen({ navigation }: NativeStackScreenProps<Ro
             </TouchableOpacity>
             
         </View>
+        <View>
+            <TouchableOpacity 
+                style={[styles.button, {backgroundColor: Colors.brand}]}
+                onPress={() => {
+                  navigation.navigate('AdoptPrefs');
+                }}
+            >
+                <Text style={styles.buttonText}>Update Location</Text>
+            </TouchableOpacity>
+            
+        </View>
         <TouchableOpacity 
             style={[styles.button, {backgroundColor: Colors.red}]}
             onPress={() => {

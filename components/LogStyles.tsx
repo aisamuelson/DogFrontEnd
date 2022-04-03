@@ -124,6 +124,11 @@ export const ExtraView = styled(View)`
     align-items: center;
     padding: 10px;
 `
+
+export const ExtraView2 = styled(View)`
+    padding: 30px;
+`
+
 export const ExtraText = styled(Text)`
     justify-content: center;
     align-content: center;

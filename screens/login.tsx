@@ -4,16 +4,16 @@ import { Formik } from "formik";
 import { Feather, Ionicons, Fontisto } from "@expo/vector-icons";
 import KeyboardWrapper from "../components/KeyboardWrapper";
 
-import { StyledContainer, InnerContainer, PageLogo, SignLogo, PageTitle, SubTitle, StyledFormArea, LeftIcon, RightIcon, StyledInputLabel, StyledTextInput, Colors, StyledButton, ButtonText, MsgBox, Line, ExtraView, ExtraText, TextLink, TextLinkContent} from './../components/LogStyles';
+import { StyledContainer, InnerContainer, PageLogo, SignLogo, PageTitle, SubTitle, StyledFormArea, LeftIcon, RightIcon, StyledInputLabel, StyledTextInput, Colors, StyledButton, ButtonText, MsgBox, Line, ExtraView, ExtraView2, ExtraText, TextLink, TextLinkContent} from './../components/LogStyles';
 import {View, ActivityIndicator} from 'react-native';
 
 import axios from "axios";
 
 const{brand, darkLight, primary} = Colors;
 
-const handleGoogleSignIn = () =>{
-    const config = {}
-}
+// const handleGoogleSignIn = () =>{
+//     const config = {}
+// }
 
 const Login = ({navigation}) =>{
     const [hidePassword, setHidePassword] = useState(true);
@@ -30,8 +30,11 @@ const Login = ({navigation}) =>{
                 const {message, token} = result;
                 global.token = token
                 global.email = credentials.email;
-                console.log("result: ", result, " token:", token, " message: ", message)
-                if(message !== 'Wrong username or password'){
+                console.log("result: ", result, " token:", token, " message: ", message);
+                if(response.status !== 200){
+                    handleMessage("An error has occurred. Please check your network and try again")
+                }
+                if(message !== 'Incorrect username or password'){
                     navigation.navigate("Root", {screen:"HomeScreen"})
                 }else{
                     navigation.navigate("Root", {screen:"HomeScreen"}, {...data[0]})
@@ -41,7 +44,8 @@ const Login = ({navigation}) =>{
             .catch(error =>{
             console.log(error);
             setSubmitting(false);
-            handleMessage("An error has occurred. Please check your network and try again");
+
+            handleMessage("Incorrect username or password");
         })
     }
 
@@ -55,6 +59,7 @@ const Login = ({navigation}) =>{
         <StyledContainer>
             <StatusBar style="dark"/>
             <InnerContainer>
+            <ExtraView2/>
                 <PageLogo resizeMode="cover" source={require('./../assets/images/SaddyDog.png')}/>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Login</SubTitle>
@@ -105,10 +110,10 @@ const Login = ({navigation}) =>{
                             <ActivityIndicator size="large" color={primary}/>
                         </StyledButton>}
                         <Line/>
-                        <StyledButton google={true} onPress={handleSubmit}>
+                        {/* <StyledButton google={true} onPress={handleSubmit}>
                             <Fontisto name="google" color={primary} size={25} />
                             <ButtonText google={true}>Sign in with Google</ButtonText>
-                        </StyledButton>
+                        </StyledButton> */}
                         <ExtraView>
                             <ExtraText>Don't have an account already? </ExtraText>
                             <TextLink onPress={() => navigation.navigate("Signup")}><TextLinkContent>Signup</TextLinkContent></TextLink>

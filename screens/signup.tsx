@@ -1,11 +1,18 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { Feather, Ionicons, Fontisto } from "@expo/vector-icons";
+import { Feather, Ionicons} from "@expo/vector-icons";
 import KeyboardWrapper from "../components/KeyboardWrapper";
 
 import { StyledContainer, InnerContainer, SignLogo, PageTitle, SubTitle, StyledFormArea, LeftIcon, RightIcon, StyledInputLabel, StyledTextInput, Colors, StyledButton, ButtonText, MsgBox, Line, ExtraView, ExtraText, TextLink, TextLinkContent} from './../components/LogStyles';
-import {View} from 'react-native';
+import {View, ActivityIndicator} from 'react-native';
+
+import axios from "axios";
+
+//import AsyncStorage from '@react-native-async-storage/async-storage';
+//import { CredentialsContext } from './../components/CredentialsContext';
+
+import * as Location from 'expo-location';
 
 const{brand, darkLight, primary} = Colors;
 
@@ -14,10 +21,79 @@ const Signup = ({navigation}) =>{
     const [message, setMessage] = useState();
     const [messageType, setMessageType] = useState();
 
+    //const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext);
+
+    const handleSignup = (credentials, setSubmitting) =>{
+        handleMessage(null);
+        const url = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/register';
+        
+        axios
+            .post(url, credentials)
+            .then((response)=>{
+                global.email = credentials.email;
+
+                //log in after registering
+                const url = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/login';
+                axios
+                    .post(url, credentials)
+                    .then((response)=>{
+                        const result = response.data;
+                        const {message, token} = result;
+                        global.token = token
+                        navigation.navigate("Root", {screen:"HomeScreen"})
+                        //persistLogin(token, message, status);
+                    })
+                    .catch(error =>{
+                    console.log(error);
+                    handleMessage("An error has occurred. Please check your network and try again");
+                })
+
+                //const result = response.data;
+                //const {email} = result;
+                //console.log(credentials)
+                //if(email !== 'user with this email address already exists.'){
+                    //navigation.navigate("Login")
+                // }else{
+                //     handleMessage(email);
+                // }
+                // setSubmitting(false);
+            })
+            .catch(error =>{
+            console.log(error);
+            setSubmitting(false);
+            handleMessage("A user with this email address already exists");
+        })
+    }
+
+
     const handleMessage = (message, type = 'FAILED') =>{
         setMessage(message);
         setMessageType(type);
     }
+
+    /*const persistLogin = (token, message, status) =>{
+        AsyncStorage.setItem('token', JSON.stringify(token))
+        .then(()=>{
+            handleMessage(message, status);
+            setStoredCredentials(token);
+        })
+        .catch((error)=>{
+            console.log(error);
+            handleMessage('Persisting login failed');
+        })
+    }
+
+    const getLocation = () =>{
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+              //no location allowed
+              return;
+            }
+            let location = await Location.getCurrentPositionAsync({});
+            //send location to backend
+          })();
+    }*/
 
     return (
         <KeyboardWrapper>
@@ -28,20 +104,22 @@ const Signup = ({navigation}) =>{
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Signup</SubTitle>
                 <Formik initialValues={{fullname:'',email:'',password:'',confirmPassword:''}} 
-                    onSubmit={(values) => {
+                    onSubmit={(values, {setSubmitting}) => {
                         if(values.fullname == '' || values.email == '' || values.password == '' || values.confirmPassword == ''){
                             handleMessage("Please fill out all fields");
+                            setSubmitting(false);
                         }else{
                             if(values.password != values.confirmPassword){
                                 handleMessage("Passwords do not match");
+                                setSubmitting(false);
                             }else{
-                                console.log(values); 
-                                navigation.navigate("Signup2", {fullname: values.fullname, email: values.email.trim(), password: values.password});
+                                console.log(values)
+                                handleSignup(values, setSubmitting);
                             }
                         }  
                     }}
                 >
-                    {({handleChange, handleBlur, handleSubmit, values})=> (<StyledFormArea>
+                    {({handleChange, handleBlur, handleSubmit, values, isSubmitting})=> (<StyledFormArea>
                         <MyTextInput
                             label="Email"
                             icon = "mail"
@@ -90,9 +168,13 @@ const Signup = ({navigation}) =>{
                         <MsgBox type={messageType}>
                             {message}
                         </MsgBox>
-                        <StyledButton onPress={handleSubmit}>
-                            <ButtonText>Continue</ButtonText>
-                        </StyledButton>
+                        {!isSubmitting && <StyledButton onPress={handleSubmit}>
+                            <ButtonText>Signup</ButtonText>
+                        </StyledButton>}
+
+                        {isSubmitting && <StyledButton disabled={true}>
+                            <ActivityIndicator size="large" color={primary}/>
+                        </StyledButton>}
                         <Line/>
                         <ExtraView>
                             <ExtraText>Already have an account? </ExtraText>
