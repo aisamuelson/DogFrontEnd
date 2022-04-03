@@ -13,7 +13,17 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   const textColor = Colors[useColorScheme()].text;
 
   // Profile Info //
-  const [imageURL, setImageURL] = useState<string>('');
+  const [imageUri, setImageUri] = useState<string>('');
+
+  useEffect(() => {
+    axios.get(APIs.profilePhoto, APIs.getParams(global.token))
+      .then((response) => {
+        //console.log(response.data);
+        const uri = response.data[0].profilePhoto;
+        //console.log(uri);
+        setImageUri(uri == null ? '' : uri);
+      })
+  }, []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -23,7 +33,34 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
       quality: 1,
     });
     if (!result.cancelled) {
-      setImageURL(result.uri);
+      const photoUri = result.uri;
+      //setImageUri(photoUri);
+      
+      const photoData = new FormData();
+      photoData.append('photo', {
+        uri: photoUri,
+        type: "image/*",
+        name: "profile_photo.jpg"
+      });
+      //console.log('POSTING');
+      //console.log(APIs.profilePhoto);
+      //console.log(photoData);
+
+      fetch(APIs.profilePhoto, {
+        method: "post",
+        body: photoData,
+        headers: { 
+          'Authorization': `Bearer ${global.token}`,
+        }
+      }).then(response => response.json())
+      .then(response => {
+        //console.log('UPLOADED');
+        //console.log(response);
+        setImageUri(APIs.address + response.profilePhoto);
+      }).catch(response => {
+        //console.log(response);
+        Alert.alert("Profile Photo Not Uploaded");
+      })
     }
   };
 
@@ -39,7 +76,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
       //console.log(posts);
     })
     .catch((error) =>{
-      console.log(error);
+      //console.log(error);
     })
   }
 
@@ -49,7 +86,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   const unsubscribe = navigation.addListener('focus', updatePosts);
 
   const handleAdd = (id: number) => {
-    const petaddFavURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
+    const petaddFavUri = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
     const petaddFavHeader = {
       headers: {
         'Authorization': `Bearer ${global.token}`,
@@ -60,7 +97,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
       postid: id
     })
     axios.post(
-      petaddFavURL,
+      petaddFavUri,
       data,
       petaddFavHeader
     ).then(( response ) => {
@@ -96,7 +133,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   );
 
   // const{name, email} = route.params;
-  
+  console.log(imageUri);
   return (
     <SafeAreaView style={[styles.container,{
       flexDirection:"column"
@@ -114,10 +151,10 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
           <TouchableOpacity 
             style={styles.roundButton}
             onPress={pickImage}>
-            {imageURL == '' 
+            {imageUri == '' 
               ? <Text>Picture</Text>
               : <Image
-                  source={{uri:imageURL}}
+                  source={{uri:imageUri}}
                   style={{ width: "130%", aspectRatio: 1 }}
                 />
             }
