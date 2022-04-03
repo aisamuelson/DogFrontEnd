@@ -85,16 +85,16 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             .catch(function (error) {
                 console.log(error)
             });
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-                return;
-            }
+        // (async () => {
+        //     let { status } = await Location.requestForegroundPermissionsAsync();
+        //     if (status !== 'granted') {
+        //         setErrorMsg('Permission to access location was denied');
+        //         return;
+        //     }
 
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-        })();
+        //     let location = await Location.getCurrentPositionAsync({});
+        //     setLocation(location);
+        // })();
     },[]);
 
     let text = 'Waiting..';
