@@ -1,7 +1,7 @@
 import React, {useState, useContext} from "react";
 import { StatusBar } from "expo-status-bar";
 import { Formik } from "formik";
-import { Feather, Ionicons, Fontisto } from "@expo/vector-icons";
+import { Feather, Ionicons} from "@expo/vector-icons";
 import KeyboardWrapper from "../components/KeyboardWrapper";
 
 import { StyledContainer, InnerContainer, SignLogo, PageTitle, SubTitle, StyledFormArea, LeftIcon, RightIcon, StyledInputLabel, StyledTextInput, Colors, StyledButton, ButtonText, MsgBox, Line, ExtraView, ExtraText, TextLink, TextLinkContent} from './../components/LogStyles';
@@ -41,7 +41,7 @@ const Signup = ({navigation}) =>{
                         const {message, token} = result;
                         global.token = token
                         navigation.navigate("Root", {screen:"HomeScreen"})
-                        //persistLogin({...data}, message, status);
+                        persistLogin(token, message, status);
                     })
                     .catch(error =>{
                     console.log(error);
@@ -71,11 +71,11 @@ const Signup = ({navigation}) =>{
         setMessageType(type);
     }
 
-    const persistLogin = (credentials, message, status) =>{
-        AsyncStorage.setItem('credentials', JSON.stringify(credentials))
+    const persistLogin = (token, message, status) =>{
+        AsyncStorage.setItem('token', JSON.stringify(token))
         .then(()=>{
             handleMessage(message, status);
-            setStoredCredentials(credentials);
+            setStoredCredentials(token);
         })
         .catch((error)=>{
             console.log(error);
