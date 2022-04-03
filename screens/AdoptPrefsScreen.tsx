@@ -7,14 +7,7 @@ import axios from 'axios';
 import { DatePicker, Picker, PickerItem } from 'react-native-woodpicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-/**
- * 1. Before the server's response, the user should not be able to make another post
- * 
- */
-
 export default function AdoptPrefsScreen() {
-
-  
   const [petType, setPetType] = useState<PickerItem>({ label: "Cat", value: 'CAT' });
   const [gender, setGender] = useState<PickerItem>({ label: 'Male', value: 'M' });
   const [neutered, onChangeNeutered] = React.useState<PickerItem>({ label: "Yes", value: true })

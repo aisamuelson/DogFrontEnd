@@ -22,7 +22,7 @@ export default function DetailScreen() {
   const [postInfo, setPostInfo] = useState<PostInfo>();
 
   useEffect(() => {
-    axios.get<PostInfo>(APIs.postAPI + `${id}`, APIs.getParams(global.token))
+    axios.get<PostInfo>(APIs.postAPI + '/' + `${id}`, APIs.getParams(global.token))
       .then((response) => {
         const post = response.data;
         setPostInfo(post)

@@ -1,8 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { Component, useState } from 'react';
-import { Text, StyleSheet, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { Text, StyleSheet, SafeAreaView, TouchableOpacity, View, Alert } from 'react-native';
 import { RootStackParamList } from '../types'
 import Colors from '../constants/Colors'
+import * as Location from 'expo-location';
 
 export default function SettingsScreen({ navigation }: NativeStackScreenProps<RootStackParamList>) {
   return (
@@ -19,14 +20,7 @@ export default function SettingsScreen({ navigation }: NativeStackScreenProps<Ro
             >
                 <Text style={styles.buttonText}>Adoption Preferences</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-                style={[styles.button, {backgroundColor: Colors.brand}]}
-                onPress={() => {
-                  //navigation.navigate('Edit');
-                }}
-            >
-                <Text style={styles.buttonText}>Edit My Information</Text>
-            </TouchableOpacity>
+            
         </View>
         <TouchableOpacity 
             style={[styles.button, {backgroundColor: Colors.red}]}

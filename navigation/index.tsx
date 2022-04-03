@@ -68,23 +68,24 @@ function RootNavigator() {
     //  </Stack.Navigator>
 
     <Stack.Navigator 
-    screenOptions={{
-      headerStyle: {backgroundColor:'transparent'},
-      headerTintColor: tertiary,
-      headerTransparent: true,
-      headerTitle: '',
-      //Deprecated? Change if incorrect
-      //headerLeftContainerStyle: {paddingLeft: 20} 
-      }}
       initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="Signup2" component={Signup2} />
+        <Stack.Group
+          screenOptions={{
+            //headerStyle: {backgroundColor:'transparent'},
+            //headerTintColor: tertiary,
+            //headerTransparent: true,
+            //headerTitle: '',
+            headerShown: false 
+          }}
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Signup" component={Signup} />
+          <Stack.Screen name="Signup2" component={Signup2} />
+          <Stack.Screen name="Root" component={BottomTabNavigator} options={{ }} />
+        </Stack.Group>
         <Stack.Screen name="Detail" component={DetailScreen} />
-        <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-        <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerTitle: 'Settings', headerTintColor: Colors[useColorScheme()].text, headerTransparent:false}} />
-        <Stack.Screen name='AdoptPrefs' component={AdoptPrefsScreen} options={{ headerTitle: 'Adoption Preferences', headerTintColor: Colors[useColorScheme()].text, headerTransparent:false}} />
+        <Stack.Screen name='Settings' component={SettingsScreen} options={{ }} />
+        <Stack.Screen name='AdoptPrefs' component={AdoptPrefsScreen} options={{ headerTitle: 'Adoption Preferences' }} />
     </Stack.Navigator>
   );
 }
