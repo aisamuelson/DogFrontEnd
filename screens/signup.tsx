@@ -22,6 +22,8 @@ const Signup = ({navigation}) =>{
     const [messageType, setMessageType] = useState();
 
     //const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext);
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     const handleSignup = (credentials, setSubmitting) =>{
         handleMessage(null);
@@ -40,6 +42,17 @@ const Signup = ({navigation}) =>{
                         const result = response.data;
                         const {message, token} = result;
                         global.token = token
+                        
+                        // getLocation();
+                        // let text = 'Waiting..';
+                        // if (errorMsg) {
+                        //     text = errorMsg;
+                        // } else if (location) {
+                        //     text = JSON.stringify(location);
+                        // }
+
+                        // console.log("location is:" + text);
+
                         navigation.navigate("Root", {screen:"HomeScreen"})
                         //persistLogin(token, message, status);
                     })
@@ -63,6 +76,7 @@ const Signup = ({navigation}) =>{
             setSubmitting(false);
             handleMessage("A user with this email address already exists");
         })
+        
     }
 
 
@@ -82,18 +96,25 @@ const Signup = ({navigation}) =>{
             handleMessage('Persisting login failed');
         })
     }
+    */
 
     const getLocation = () =>{
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-              //no location allowed
-              return;
+                setErrorMsg('Permission to access location was denied');
+                console.log("Permission to access location was denied");
+                return;
             }
             let location = await Location.getCurrentPositionAsync({});
-            //send location to backend
-          })();
-    }*/
+            console.log("hi ", location);
+            
+            setLocation(location);
+            let longitude = location.coords.longitude;
+            let latitude = location.coords.latitude;
+            return {longitude, latitude}
+        })();
+    }
 
     return (
         <KeyboardWrapper>
@@ -103,9 +124,9 @@ const Signup = ({navigation}) =>{
             <SignLogo></SignLogo>
                 <PageTitle>Pet Adoption App</PageTitle>
                 <SubTitle>Account Signup</SubTitle>
-                <Formik initialValues={{fullname:'',email:'',password:'',confirmPassword:''}} 
+                <Formik initialValues={{full_name:'',email:'',password:'',confirmPassword:''}} 
                     onSubmit={(values, {setSubmitting}) => {
-                        if(values.fullname == '' || values.email == '' || values.password == '' || values.confirmPassword == ''){
+                        if(values.full_name == '' || values.email == '' || values.password == '' || values.confirmPassword == ''){
                             handleMessage("Please fill out all fields");
                             setSubmitting(false);
                         }else{
@@ -113,8 +134,28 @@ const Signup = ({navigation}) =>{
                                 handleMessage("Passwords do not match");
                                 setSubmitting(false);
                             }else{
-                                console.log(values)
-                                handleSignup(values, setSubmitting);
+                                console.log(values);
+                                (async () => {
+                                    let { status } = await Location.requestForegroundPermissionsAsync();
+                                    if (status !== 'granted') {
+                                        setErrorMsg('Permission to access location was denied');
+                                        console.log("Permission to access location was denied");
+                                        return;
+                                    }
+                                    let location = await Location.getCurrentPositionAsync({});
+                                    console.log("hi ", location);
+                                    
+                                    setLocation(location);
+                                    let longitude = location.coords.longitude;
+                                    let latitude = location.coords.latitude;
+                                    let email = values.email;
+                                    let full_name = values.full_name;
+                                    let password = values.password;
+                                    let confirmPassword = values.confirmPassword;
+                                    let newValues = {email, full_name, password, confirmPassword, longitude, latitude};
+                                    console.log(newValues);
+                                    handleSignup(newValues, setSubmitting);
+                                })();
                             }
                         }  
                     }}
@@ -135,9 +176,9 @@ const Signup = ({navigation}) =>{
                             icon = "user"
                             placeholder = "Dog Lover"
                             placeholderTextColor = {darkLight}
-                            onChangeText = {handleChange('fullname')}
-                            onBlur = {handleBlur('fullname')}
-                            value = {values.fullname}
+                            onChangeText = {handleChange('full_name')}
+                            onBlur = {handleBlur('full_name')}
+                            value = {values.full_name}
                         />
                         <MyTextInput
                             label="Password"

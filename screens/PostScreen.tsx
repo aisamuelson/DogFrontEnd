@@ -42,16 +42,19 @@ export default function PostScreen() {
 
     let neutered;
     if (!parameter.neutered) {
+      setDisabled(false)
       Alert.alert("Field Error(Neutered)", 'Is your pet neutered? Please indicate \"Yes\" or \"No\"', [{ text: "OK" }])
       return
     }
 
     if (!parameter.name) {
+      setDisabled(false)
       Alert.alert("Field Missing", "Please give you furry friend a nice name", [{ text: "OK" }])
       return
     }
     if (!parameter.petType) {
-      Alert.alert("Field Missing", "Dog? Cat? Please specify it.", [{ text: "OK" }])
+      setDisabled(false)
+      Alert.alert("Field Missing", "Please specify the species of your pet", [{ text: "OK" }])
     }
     let breed: string;
     if (!parameter.breed) {
@@ -62,6 +65,7 @@ export default function PostScreen() {
     let date = parameter.birthday
     let now = new Date()
     if (isNaN(date) || !date) {
+      setDisabled(false)
       Alert.alert("Field Missing", "Invalid date for birthday. Please enter the birthday in format \"YYYY-MM-DD\"(e.g. 2015-03-25)", [{ text: "OK" }])
       return
     } else {
@@ -69,10 +73,12 @@ export default function PostScreen() {
     }
 
     if (!parameter.image) {
+      setDisabled(false)
       Alert.alert("Field Missing", "Pick a nice photo for your pet please", [{ text: "OK" }])
     }
 
     if (!parameter.gender) {
+      setDisabled(false)
       Alert.alert("Field Missing", "Is your pet a boy or a girl?", [{ text: "OK" }])
     }
     const jsonData = JSON.stringify({
@@ -114,17 +120,22 @@ export default function PostScreen() {
         .then(response => {
           setDisabled(false)
           Alert.alert("Success", "", [{ text: "OK" }])
+          setImage(null)
+          onChangeName(undefined)
+          onChangeBirthday(null)
+          onChangeBreed(undefined)
+          onChangeReason(undefined)
         })
         .catch(function (response) {
           setDisabled(false)
           //handle error
           console.log(response)
-          Alert.alert("Error", "There is an error on our end", [{ text: "OK" }])
+          //Alert.alert("Error", "Please fill out all fields", [{ text: "OK" }])
         });
     })
       .catch((error) => {
         setDisabled(false)
-        Alert.alert("Error", "There is an error on our end", [{ text: "OK" }])
+        Alert.alert("Error", "Please fill out all fields", [{ text: "OK" }])
       })
   }
 
@@ -146,13 +157,13 @@ export default function PostScreen() {
     }
   };
 
-  const [name, onChangeName] = React.useState<string | undefined>(undefined)
+  let [name, onChangeName] = React.useState<string | undefined>(undefined)
   // const [birthday, onChangeBirthday] = React.useState<string | undefined>(undefined)
-  const [birthday, onChangeBirthday] = React.useState<Date | null>(null)
-  const [neutered, onChangeNeutered] = React.useState<PickerItem>({ label: "Yes", value: true })
-  const [breed, onChangeBreed] = React.useState<string | undefined>(undefined)
-  const [reason, onChangeReason] = React.useState<string | undefined>(undefined)
-  const [petType, setPetType] = useState<PickerItem>({ label: "Cat", value: 'CAT' });
+  let [birthday, onChangeBirthday] = React.useState<Date | null>(null)
+  let [neutered, onChangeNeutered] = React.useState<PickerItem>({ label: "Select...", value: true })
+  let [breed, onChangeBreed] = React.useState<string | undefined>(undefined)
+  let [reason, onChangeReason] = React.useState<string | undefined>(undefined)
+  let [petType, setPetType] = useState<PickerItem>({ label: "Select...", value: '' });
 
   const [disabled, setDisabled] = useState<boolean>(false);
   // const [petTypes, setPetTypes] = useState([
@@ -169,7 +180,7 @@ export default function PostScreen() {
     { label: "Cat", value: 'CAT' },
     { label: "Dog", value: 'DOG' }
   ]
-  const [gender, setGender] = useState<PickerItem>({ label: 'Male', value: 'M' });
+  const [gender, setGender] = useState<PickerItem>({ label: 'Select...', value: '' });
   const genders: Array<PickerItem> = [
     { label: 'Male', value: 'M' },
     { label: 'Female', value: 'F' }
@@ -190,7 +201,7 @@ export default function PostScreen() {
     <KeyboardWrapper>
       <View style={styles.container}>
         <View style={styles.basicInfo}>
-          <View style={styles.basicInfoLeft}>
+          <View style={styles.basicInfoLeft1}>
             <TouchableOpacity
               onPress={pickImage}
               style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
@@ -203,7 +214,7 @@ export default function PostScreen() {
             <View style={styles.flexV}>
               <Text style={{ fontSize: 10 }}>Name:</Text>
               <TextInput
-                placeholder="Oreo"
+                placeholder="Ex. Oreo"
                 onChangeText={onChangeName}
                 value={name}
                 style={styles.inputBox}
@@ -211,12 +222,12 @@ export default function PostScreen() {
             </View>
             <View style={styles.spacer}></View>
             <View style={styles.flexV}>
-              <Text style={{ fontSize: 10 }}>Type:</Text>
+              <Text style={{ fontSize: 10 }}>Species:</Text>
               <Picker
                 item={petType}
                 items={petTypes}
                 onItemChange={setPetType}
-                placeholder="Select a type..."
+                placeholder="Select a Species..."
                 style={styles.inputBox}
               // textInputStyle={{color: "#C4C4C4"}}
               />
@@ -257,7 +268,7 @@ export default function PostScreen() {
                 item={neutered}
                 items={neuteredStatus}
                 onItemChange={onChangeNeutered}
-                placeholder="Is your pet Neutered/Spayed?"
+                placeholder="Select Yes or No"
                 style={styles.inputBox}
               />
             </View>
@@ -266,7 +277,7 @@ export default function PostScreen() {
         <View style={styles.flexV}>
           <Text style={{ fontSize: 10 }}>Breed:</Text>
           <TextInput
-            placeholder="Domestic Short Hair, Husky..."
+            placeholder="Ex. Domestic Short Hair, Husky..."
             onChangeText={onChangeBreed}
             value={breed}
             style={[styles.inputBox]}
@@ -323,6 +334,14 @@ const styles = StyleSheet.create({
     width: "40%"
   },
 
+  basicInfoLeft1: {
+    width: "40%",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "black",
+    borderRadius: 10
+  },
+
   basicInfoRight: {
     width: "50%",
     // borderWidth: 3,
@@ -334,7 +353,7 @@ const styles = StyleSheet.create({
   },
 
   detailLeft: {
-    width: "50%"
+    width: "50%",
   },
 
   detailRight: {
