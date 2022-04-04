@@ -28,6 +28,7 @@ import Signup2 from '../screens/signup2';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import SettingsScreen from "../screens/SettingsScreen";
+import ChatScreen from "../screens/ChatScreen";
 
 // import {Colors} from './../components/LogStyles';
 const {primary, tertiary} = Colors;
@@ -83,6 +84,7 @@ function RootNavigator() {
         <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
         <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
+        <Stack.Screen name='ChatRoom' component={ChatScreen} options={{ headerTitle: 'Chat' }} />
     </Stack.Navigator>
   );
 }

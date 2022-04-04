@@ -1,14 +1,49 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
+import { collection, addDoc, getFirestore, onSnapshot, setDoc, doc } from "firebase/firestore"
+import ChatRoomListCell from '../components/ChatRoomListCell'
+import { RootTabScreenProps } from '../types';
 
-export default function MessagesScreen() {
+export default function MessagesScreen({ navigation }: RootTabScreenProps<'TabFour'>) {
+
+  const db = getFirestore()
+  try {
+    setDoc(doc(db, "test", "testdoc"), {
+      messages: [
+        {
+          inbound: true,
+          message: "some message"
+        }
+      ]
+    })
+    onSnapshot(doc(db, "test", "testdoc"), (doc) => {
+      console.log("data: ", doc.data().messages);
+    })
+  } catch (e) {
+
+  }
+  
+
+  
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Messages</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/MessagesScreen.tsx" />
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ChatRoom', {user: "xricxy1314"})}
+      >
+        <ChatRoomListCell/>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <ChatRoomListCell/>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <ChatRoomListCell/>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <ChatRoomListCell/>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -16,8 +51,6 @@ export default function MessagesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 20,

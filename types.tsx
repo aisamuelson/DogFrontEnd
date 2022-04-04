@@ -21,6 +21,7 @@
    Signup: undefined;
    Signup2: undefined;
    Settings: undefined;
+   ChatRoom: undefined;
  };
 
  export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
@@ -51,6 +52,10 @@
  export type RouteParamList = {
    Detail: {
      item: ListingProps;
+   }
+
+   ChatRoom: {
+     user: string
    }
  }
 
