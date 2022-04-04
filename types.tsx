@@ -90,3 +90,9 @@ export type PostInfo = {
     petid: PetInfo,
     postid: number
 }
+
+export type filterMenu={
+     option1: string;
+     option2: string;
+     optionKey: number
+}

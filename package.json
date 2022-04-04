@@ -47,9 +47,11 @@
     "react-native-maps": "^0.29.4",
     "react-native-paper": "^4.12.0",
     "react-native-picker-select": "^8.0.4",
+    "react-native-popup-menu": "^0.15.12",
     "react-native-reanimated": "~2.3.1",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
+    "react-native-vector-icons": "^9.1.0",
     "react-native-web": "0.17.1",
     "react-native-woodpicker": "^0.3.17",
     "styled-components": "^5.3.3"
