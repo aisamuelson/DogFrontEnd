@@ -22,6 +22,7 @@
    Signup2: undefined;
    Settings: undefined;
    ChatRoom: undefined;
+   AdoptPrefs: undefined;
  };
 
  export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

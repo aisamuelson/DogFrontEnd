@@ -7,6 +7,7 @@ import APIs from '../constants/APIs';
 import { FontAwesome, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native';
 import { Alert } from 'react-native';
+import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 /**
  * 
  * Improvements to be made:
@@ -14,7 +15,7 @@ import { Alert } from 'react-native';
  * 2. Styling looks too simple
  * 3. should be able to add to favorite in detail page
  */
-export default function DetailScreen() {
+export default function DetailScreen({ navigation }) {
   const route = useRoute<RouteProp<RouteParamList, 'Detail'>>();
   const data = route.params.item;
   const id = data.id;
@@ -22,7 +23,7 @@ export default function DetailScreen() {
   const [postInfo, setPostInfo] = useState<PostInfo>();
 
   useEffect(() => {
-    axios.get<PostInfo>(APIs.postAPI + `${id}`, APIs.getParams(global.token))
+    axios.get<PostInfo>(APIs.postAPI + '/' + `${id}`, APIs.getParams(global.token))
       .then((response) => {
         const post = response.data;
         setPostInfo(post)
@@ -32,7 +33,7 @@ export default function DetailScreen() {
       })
   }, [])
 
-  if(postInfo == null) return null;
+  if (postInfo == null) return null;
 
   const petInfo = postInfo.petid;
 
@@ -44,17 +45,17 @@ export default function DetailScreen() {
         'content-type': 'application/json'
       }
     }
-    const data = JSON.stringify( {
+    const data = JSON.stringify({
       postid: id
     })
     axios.post(
       petaddFavURL,
       data,
       petaddFavHeader
-    ).then(( response ) => {
-      Alert.alert("Success", "", [{text: "OK"}])
-    }).catch(( error ) => {
-      Alert.alert("Failed", "You've already added this pet to favorite!", [{text: "OK"}])
+    ).then((response) => {
+      Alert.alert("Success", "", [{ text: "OK" }])
+    }).catch((error) => {
+      Alert.alert("Failed", "You've already added this pet to favorite!", [{ text: "OK" }])
     })
   }
 
@@ -129,10 +130,16 @@ export default function DetailScreen() {
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.addButton, {marginTop: 10}]}
+          style={[styles.addButton, { marginTop: 10 }]}
           onPress={() => handleAdd(id)}
         >
           <Text style={styles.buttonText}>Favorite</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.addButton, { marginTop: 10 }]}
+          onPress={() => navigation.navigate('ChatRoom', { user: data.owner })}
+        >
+          <Text style={styles.buttonText}>Chat</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

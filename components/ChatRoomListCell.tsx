@@ -6,16 +6,16 @@ import Colors from '../constants/Colors';
 import { MonoText } from './StyledText';
 import { Text, View } from './Themed';
 
-export default function ChatRoomListCell() {
+export default function ChatRoomListCell(prop) {
   
   return (
     <View style={styles.cell}>
       <View style={styles.icon}></View>
       <View style={styles.content}>
-        <Text style={styles.title}>Username</Text>
-        <Text style={styles.snippet} numberOfLines={2}>Snippet of the messageSnippet of the messageSnippet of the messageSnippet of the message</Text>
+        <Text style={styles.title}>{prop.email}</Text>
+        {/* <Text style={styles.snippet} numberOfLines={2}>Snippet of the messageSnippet of the messageSnippet of the messageSnippet of the message</Text> */}
       </View>
-      <View style={styles.mark}></View>
+      {/* <View style={styles.mark}></View> */}
     </View>
   )
 }

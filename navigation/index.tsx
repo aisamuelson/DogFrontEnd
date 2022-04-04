@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
- import {FontAwesome} from "@expo/vector-icons";
+import {FontAwesome} from "@expo/vector-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -29,6 +29,7 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 import SettingsScreen from "../screens/SettingsScreen";
 import ChatScreen from "../screens/ChatScreen";
+import AdoptPrefsScreen from "../screens/AdoptPrefsScreen";
 
 // import {Colors} from './../components/LogStyles';
 const {primary, tertiary} = Colors;
@@ -68,23 +69,28 @@ function RootNavigator() {
     //  </Stack.Navigator>
 
     <Stack.Navigator 
-    screenOptions={{
-      headerStyle: {backgroundColor:'transparent'},
-      headerTintColor: tertiary,
-      headerTransparent: true,
-      headerTitle: '',
-      //Deprecated? Change if incorrect
-      //headerLeftContainerStyle: {paddingLeft: 20} 
-      }}
       initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="Signup2" component={Signup2} />
+        <Stack.Group
+          screenOptions={{
+            //headerStyle: {backgroundColor:'transparent'},
+            //headerTintColor: tertiary,
+            //headerTransparent: true,
+            //headerTitle: '',
+            headerShown: false 
+          }}
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Signup" component={Signup} />
+          <Stack.Screen name="Signup2" component={Signup2} />
+          <Stack.Screen name="Root" component={BottomTabNavigator} options={{ }} />
+        </Stack.Group>
         <Stack.Screen name="Detail" component={DetailScreen} />
-        <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+        {/* <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} /> */}
+        {/* <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} /> */}
         <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerTitle: 'Settings' }} />
         <Stack.Screen name='ChatRoom' component={ChatScreen} options={{ headerTitle: 'Chat' }} />
+        {/* <Stack.Screen name='Settings' component={SettingsScreen} options={{ }} /> */}
+        <Stack.Screen name='AdoptPrefs' component={AdoptPrefsScreen} options={{ headerTitle: 'Adoption Preferences' }} />
     </Stack.Navigator>
   );
 }

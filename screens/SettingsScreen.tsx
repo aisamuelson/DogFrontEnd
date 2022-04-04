@@ -1,16 +1,40 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { Component, useState } from 'react';
-import { Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, SafeAreaView, TouchableOpacity, View, Alert } from 'react-native';
 import { RootStackParamList } from '../types'
+import Colors from '../constants/Colors'
+import * as Location from 'expo-location';
 
 export default function SettingsScreen({ navigation }: NativeStackScreenProps<RootStackParamList>) {
   return (
     <SafeAreaView style={{
         flex: 1,
-        justifyContent: 'flex-end'
+        justifyContent: 'space-between'
     }}>
+        <View>
+            <TouchableOpacity 
+                style={[styles.button, {backgroundColor: Colors.brand}]}
+                onPress={() => {
+                  navigation.navigate('AdoptPrefs');
+                }}
+            >
+                <Text style={styles.buttonText}>Adoption Preferences</Text>
+            </TouchableOpacity>
+            
+        </View>
+        <View>
+            <TouchableOpacity 
+                style={[styles.button, {backgroundColor: Colors.brand}]}
+                onPress={() => {
+                  navigation.navigate('AdoptPrefs');
+                }}
+            >
+                <Text style={styles.buttonText}>Update Location</Text>
+            </TouchableOpacity>
+            
+        </View>
         <TouchableOpacity 
-            style={[styles.button, {backgroundColor: 'red'}]}
+            style={[styles.button, {backgroundColor: Colors.red}]}
             onPress={() => {
               global.token = null;
               global.email = null;

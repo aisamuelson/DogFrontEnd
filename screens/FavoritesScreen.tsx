@@ -16,7 +16,7 @@ function getData(onDone: any, onError: any) {
   axios.get(urlFav, petHeaderConfig)
     .then((response) => {
       onDone(response.data)
-      console.log("fav page response:", response.data)
+      // console.log("fav page response:", response.data)
     })
     .catch((error) => {
       onError(error)
@@ -45,7 +45,7 @@ function parseResp(data: any) {
 export default function FavoritesScreen({ navigation }: RootTabScreenProps<'TabTwo'>) {
 
   const [data, setData] = React.useState([])
-  console.log(global.token)
+  // console.log(global.token)
   const handleRefresh = () => {
     getData(
       (data: any) => {
@@ -60,7 +60,7 @@ export default function FavoritesScreen({ navigation }: RootTabScreenProps<'TabT
 
   const handleRemove = (id) => {
     const urlRemoveFav = `http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/remove/${id}`;
-    console.log(urlRemoveFav)
+    // console.log(urlRemoveFav)
     const petHeaderConfig = {
       headers: {
         'Authorization': `Bearer ${global.token}`,

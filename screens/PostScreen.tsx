@@ -190,7 +190,7 @@ export default function PostScreen() {
     <KeyboardWrapper>
       <View style={styles.container}>
         <View style={styles.basicInfo}>
-          <View style={styles.basicInfoLeft}>
+          <View style={styles.basicInfoLeft1}>
             <TouchableOpacity
               onPress={pickImage}
               style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
@@ -323,6 +323,14 @@ const styles = StyleSheet.create({
     width: "40%"
   },
 
+  basicInfoLeft1: {
+    width: "40%",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "black",
+    borderRadius: 10
+  },
+
   basicInfoRight: {
     width: "50%",
     // borderWidth: 3,
@@ -334,7 +342,7 @@ const styles = StyleSheet.create({
   },
 
   detailLeft: {
-    width: "50%"
+    width: "50%",
   },
 
   detailRight: {
