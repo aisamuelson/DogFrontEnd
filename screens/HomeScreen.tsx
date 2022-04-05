@@ -8,27 +8,14 @@ import {
     View,
     Text,
     Modal,
-    StyleSheet, ScrollView, Button, Pressable,
+    StyleSheet, ScrollView, Pressable,
 } from 'react-native';
 import { RootTabScreenProps, ListingProps } from '../types';
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
 import { PetListingCard } from "../components/PetListingCard";
-import {MaterialIcons} from "@expo/vector-icons";
-// import {BasicButton} from '@phomea/react-native-buttons';
-import GradientButton from 'react-native-gradient-buttons';
 
-const filterOptions= [
-    {key:0,
-     optionType:"Type"},
-    {key:1,
-     optionType:"Gender"},
-    {key:2,
-     optionType:"Neutered/Spayed"}];
-
-let options = [{option: "", key:1}, {option: "", key:2}];
-let options1 = ["",""];
 
 function parseListRes(data: any[]) {
     let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; }[] = [];
@@ -56,28 +43,25 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         }
     }
 
-    // let pullURL = petListURL;
-
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
+
     const [modalVisible, setModalVisible] = useState(false);
+
     const [actionTriggered, setActionTriggered] = useState("");
+    const [buttonTypeText, setButtonTypeText] = useState("Type");
+    const [buttonGenderText, setButtonGenderText] = useState("Gender");
+    const [buttonNeuterText, setButtonNeuterText] = useState("Neutering")
 
     const [searchBreed, setSearchBreed] = useState("");
     const [searchType, setSearchType] = useState("");
-    const [searchSex, setSearchSex] = useState("");
+    const [searchGender, setSearchGender] = useState("");
     const [searchNeuter, setSearchNeuter] = useState("");
+
+    let ageTestURL = petListURL + "?age=22&age=11";
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)
-        // handleSearchPhrase(searchPhrase);
-        // let pullURL = petListURL +
-        //     "?breed=" + searchBreed +
-        //     "&type=" + searchType +
-        //     "&sex=" + searchSex +
-        //     "&neutered=" + searchNeuter;
-        //
-        // console.log("current pullURL is:" + pullURL);
         axios
             .get(buildURL(), petListConfig)
             .then(function (response) {
@@ -93,17 +77,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 console.log(error)
                 setRefreshing(false)
             })
-    }, [searchBreed, searchType, searchSex, searchNeuter])
+    }, [searchBreed, searchType, searchGender, searchNeuter])
 
     useEffect(() => {
-
-        // let pullURL = petListURL +
-        //     "?breed=" + searchBreed +
-        //     "&type=" + searchType +
-        //     "&sex=" + searchSex +
-        //     "&neutered=" + searchNeuter;
-        //
-        // console.log("current pullURL is:" + pullURL);
         axios
             .get(buildURL(), petListConfig)
             .then(async function (response) {
@@ -117,16 +93,18 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             .catch(function (error) {
                 console.log(error)
             });
-    },[searchBreed, searchType, searchSex, searchNeuter]);
+    },[searchBreed, searchType, searchGender, searchNeuter]);
 
     const buildURL = () => {
         let pullURL = petListURL +
             "?breed=" + searchBreed
         if (searchType != ""){
             pullURL = pullURL + "&type=" + searchType
-        } else if (searchSex != ""){
-            pullURL = pullURL + "&sex=" + searchSex
-        } else if (searchNeuter != ""){
+        }
+        if (searchGender != ""){
+            pullURL = pullURL + "&gender=" + searchGender
+        }
+        if (searchNeuter != ""){
             pullURL = pullURL + "&neutered=" + searchNeuter}
         console.log("current pullURL is:" + pullURL);
         return pullURL;
@@ -159,7 +137,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     //
     // console.log("Your breed is:" + searchBreed);
     // console.log("Your type is:" + searchType);
-    // console.log("Your sex is:" + searchSex);
+    // console.log("Your sex is:" + searchGender);
     // console.log("Your neuter is:" + searchNeuter);
 
     const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
@@ -180,8 +158,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             <Searchbar
                 placeholder="Breed..."
                 onChangeText={(query) => setSearchBreed(query)}
-                // onEndEditing={() => onRefresh()}
-                clearTextOnFocus = {true}
                 value={searchBreed}
             />
 
@@ -190,26 +166,25 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingLeft: 10 }}>
-
                 <Pressable
                     style={styles.optionList}
                     onPress={() => {setModalVisible(true)
                                     setActionTriggered('ACTION_1');}}>
-                    <Text style={styles.optionText}>Type</Text>
+                    <Text style={styles.optionText}>{buttonTypeText}</Text>
                 </Pressable>
 
                 <Pressable
                     style={styles.optionList}
                     onPress={() => {setModalVisible(true)
                         setActionTriggered('ACTION_2');}}>
-                    <Text style={styles.optionText}>Sex</Text>
+                    <Text style={styles.optionText}>{buttonGenderText}</Text>
                 </Pressable>
 
                 <Pressable
                     style={styles.optionList}
                     onPress={() => {setModalVisible(true)
                         setActionTriggered('ACTION_3');}}>
-                    <Text style={styles.optionText}>Neutered/Spayed</Text>
+                    <Text style={styles.optionText}>{buttonNeuterText}</Text>
                 </Pressable>
             </ScrollView>
 
@@ -221,6 +196,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                     {actionTriggered === 'ACTION_1' ?
                         <View style={styles.ModalView}>
                             <Pressable onPress={() => {setSearchType("Cat")
+                                                        setButtonTypeText("Cat")
                                                         setModalVisible(false)}}>
                                 <View style={styles.ModalMenuView}>
                                     <Text style={{fontSize:25}}>Cat</Text>
@@ -228,6 +204,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                             </Pressable>
 
                             <Pressable onPress={() => {setSearchType("Dog")
+                                setButtonTypeText("Dog")
                                 setModalVisible(false)}}>
                                 <View style={styles.ModalMenuView}>
                                     <Text style={{fontSize:25}}>Dog</Text>
@@ -235,39 +212,44 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                             </Pressable>
 
                             <Pressable onPress={() => {setSearchType("")
+                                setButtonTypeText("Type")
                                 setModalVisible(false)}}>
                                 <View style={styles.ModalMenuView}>
-                                    <Text style={{fontSize:25}}>Cancel</Text>
+                                    <Text style={{fontSize:25}}>Reset</Text>
                                 </View>
                             </Pressable>
                         </View>
                         :
                         actionTriggered === 'ACTION_2' ?
                             <View style={styles.ModalView}>
-                                <Pressable onPress={() => {setSearchSex("m")
+                                <Pressable onPress={() => {setSearchGender("m")
+                                    setButtonGenderText("Male")
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Male</Text>
                                     </View>
                                 </Pressable>
 
-                                <Pressable onPress={() => {setSearchSex("f")
+                                <Pressable onPress={() => {setSearchGender("f")
+                                    setButtonGenderText("Female")
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Female</Text>
                                     </View>
                                 </Pressable>
 
-                                <Pressable onPress={() => {setSearchSex("")
+                                <Pressable onPress={() => {setSearchGender("")
+                                    setButtonGenderText("Gender")
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
-                                        <Text style={{fontSize:25}}>Cancel</Text>
+                                        <Text style={{fontSize:25}}>Reset</Text>
                                     </View>
                                 </Pressable>
                             </View>
                             :
                             <View style={styles.ModalView}>
                                 <Pressable onPress={() => {setSearchNeuter("true")
+                                    setButtonNeuterText("Neurtered/Spayed")
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Yes</Text>
@@ -275,6 +257,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                                 </Pressable>
 
                                 <Pressable onPress={() => {setSearchNeuter("false")
+                                    setButtonNeuterText("Not Neurtered/Spayed")
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>No</Text>
@@ -282,9 +265,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                                 </Pressable>
 
                                 <Pressable onPress={() => {setSearchNeuter("")
+                                    setButtonNeuterText("Neutering")
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
-                                        <Text style={{fontSize:25}}>Cancel</Text>
+                                        <Text style={{fontSize:25}}>Reset</Text>
                                     </View>
                                 </Pressable>
                             </View>
@@ -314,7 +298,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         marginRight: 10,
         marginTop: 15,
-        marginBottom: 4,
+        marginBottom: 10,
         padding: 10,
         borderRadius: 12,
         backgroundColor: `#DCDCDC`,
