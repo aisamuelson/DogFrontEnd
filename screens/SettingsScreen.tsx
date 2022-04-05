@@ -26,7 +26,21 @@ export default function SettingsScreen({ navigation }: NativeStackScreenProps<Ro
             <TouchableOpacity 
                 style={[styles.button, {backgroundColor: Colors.brand}]}
                 onPress={() => {
-                  navigation.navigate('AdoptPrefs');
+                  // (async () => {
+                  //   let { status } = await Location.requestForegroundPermissionsAsync();
+                  //   if (status !== 'granted') {
+                  //       setErrorMsg('Permission to access location was denied');
+                  //       console.log("Permission to access location was denied");
+                  //       return;
+                  //   }
+                  //   let location = await Location.getCurrentPositionAsync({});
+                  //   console.log("hi ", location);
+                    
+                  //   setLocation(location);
+                  //   let longitude = location.coords.longitude;
+                  //   let latitude = location.coords.latitude;
+                  Alert.alert("Location updated", "", [{ text: "OK" }])
+                  // })
                 }}
             >
                 <Text style={styles.buttonText}>Update Location</Text>
