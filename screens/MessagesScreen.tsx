@@ -14,17 +14,17 @@ export default function MessagesScreen({ navigation }: RootTabScreenProps<'TabFo
   const q = query(collection(db, myself));
   const [chatlist, setChatlist] = useState([])
   
-  useEffect(() => {
-    getDocs(q).then((docs) => {
-      var chats = []
-      docs.forEach((doc) => {
-        chats.push({
-          email: doc.id
-        })
-      })
-      setChatlist(chats)
-    })
-  }, [])
+  // useEffect(() => {
+  //   getDocs(q).then((docs) => {
+  //     var chats = []
+  //     docs.forEach((doc) => {
+  //       chats.push({
+  //         email: doc.id
+  //       })
+  //     })
+  //     setChatlist(chats)
+  //   })
+  // }, [])
 
   useEffect(() => {
     const unsub = onSnapshot(q, (snapshot) => {
