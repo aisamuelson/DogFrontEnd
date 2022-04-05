@@ -35,7 +35,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
     if (!result.cancelled) {
       const photoUri = result.uri;
       //setImageUri(photoUri);
-      
+
       const photoData = new FormData();
       photoData.append('photo', {
         uri: photoUri,
@@ -49,7 +49,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
       fetch(APIs.profilePhoto, {
         method: "post",
         body: photoData,
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${global.token}`,
         }
       }).then(response => response.json())
@@ -133,12 +133,12 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   );
 
   // const{name, email} = route.params;
-  console.log(imageUri);
+  // console.log(imageUri);
   return (
     <SafeAreaView style={[styles.container,{
       flexDirection:"column"
     }]}>
-      <View style={{ 
+      <View style={{
         flex: 1,
         flexDirection:"row",
         alignItems:"center"
@@ -148,10 +148,10 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.roundButton}
             onPress={pickImage}>
-            {imageUri == '' 
+            {imageUri == ''
               ? <Text>Upload Picture</Text>
               : <Image
                   source={{uri:imageUri}}
@@ -177,8 +177,8 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
           }
         </View>
       </View>
-      <View style={{ 
-        flex: 4, 
+      <View style={{
+        flex: 4,
         //backgroundColor: "green"
       }}>
         {

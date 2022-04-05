@@ -8,44 +8,27 @@ import {
     View,
     Text,
     Modal,
+    StyleSheet, ScrollView, Button, Pressable,
 } from 'react-native';
 import { RootTabScreenProps, ListingProps } from '../types';
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-// import * as Location from 'expo-location';
 import { Searchbar } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Menu, MenuOptions, MenuOption, MenuTrigger,} from 'react-native-popup-menu';
-// import SearchBar from "../components/SearchBar";
 import { PetListingCard } from "../components/PetListingCard";
-
+import {MaterialIcons} from "@expo/vector-icons";
+// import {BasicButton} from '@phomea/react-native-buttons';
+import GradientButton from 'react-native-gradient-buttons';
 
 const filterOptions= [
     {key:0,
-     optionType:"Type",
-     // options:
-     //    {option1:"Cat",
-     //     option2:"Dog",
-     //     optionKey:0}
-    },
+     optionType:"Type"},
     {key:1,
-     optionType:"Gender",
-     // options:
-     //    {option1:"Male",
-     //     option2:"Female",
-     //     optionKey:1}
-    },
+     optionType:"Gender"},
     {key:2,
-     optionType:"Neutered/Spayed",
-     // options:
-     //     {option1:"Yes",
-     //      option2:"No",
-     //     optionKey:2}
-    }];
+     optionType:"Neutered/Spayed"}];
 
-const option1 = ["Cat","Dog"];
-const option2 = ["Male","Female"];
-const option3 = ["Yes","No"];
+let options = [{option: "", key:1}, {option: "", key:2}];
+let options1 = ["",""];
 
 function parseListRes(data: any[]) {
     let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; }[] = [];
@@ -73,19 +56,30 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         }
     }
 
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-    const [searchPhrase, setSearchPhrase] = useState("");
-    const [clicked, setClicked] = useState(false);
+    // let pullURL = petListURL;
+
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [filterMenu, setFilterMenu] = useState([]);
+    const [actionTriggered, setActionTriggered] = useState("");
+
+    const [searchBreed, setSearchBreed] = useState("");
+    const [searchType, setSearchType] = useState("");
+    const [searchSex, setSearchSex] = useState("");
+    const [searchNeuter, setSearchNeuter] = useState("");
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)
+        // handleSearchPhrase(searchPhrase);
+        // let pullURL = petListURL +
+        //     "?breed=" + searchBreed +
+        //     "&type=" + searchType +
+        //     "&sex=" + searchSex +
+        //     "&neutered=" + searchNeuter;
+        //
+        // console.log("current pullURL is:" + pullURL);
         axios
-            .get(petListURL, petListConfig)
+            .get(buildURL(), petListConfig)
             .then(function (response) {
                 let parsedData = parseListRes(response.data);
                 // console.log('parsedData is: ',parsedData);
@@ -99,21 +93,19 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 console.log(error)
                 setRefreshing(false)
             })
-    }, [])
+    }, [searchBreed, searchType, searchSex, searchNeuter])
 
     useEffect(() => {
 
-        // if (searchPhrase != null){
-        //   let searchURL = petListURL + "?name=" + searchPhrase;
-        //   let pulledData = pullData(searchURL);
-        //   setPetList(pulledData);
-        // }
-        // let pulledData = pullData(petListURL);
-        // setPetList(pulledData);
-
-
+        // let pullURL = petListURL +
+        //     "?breed=" + searchBreed +
+        //     "&type=" + searchType +
+        //     "&sex=" + searchSex +
+        //     "&neutered=" + searchNeuter;
+        //
+        // console.log("current pullURL is:" + pullURL);
         axios
-            .get(petListURL + "?name=" + searchPhrase, petListConfig)
+            .get(buildURL(), petListConfig)
             .then(async function (response) {
                 let parsedData = parseListRes(response.data);
                 // console.log('parsedData is: ',parsedData);
@@ -125,27 +117,20 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             .catch(function (error) {
                 console.log(error)
             });
-        // (async () => {
-        //     let { status } = await Location.requestForegroundPermissionsAsync();
-        //     if (status !== 'granted') {
-        //         setErrorMsg('Permission to access location was denied');
-        //         return;
-        //     }
-        //
-        //     let location = await Location.getCurrentPositionAsync({});
-        //     setLocation(location);
-        // })();
-    },[]);
+    },[searchBreed, searchType, searchSex, searchNeuter]);
 
-    // let text = 'Waiting..';
-    // if (errorMsg) {
-    //     text = errorMsg;
-    // } else if (location) {
-    //     text = JSON.stringify(location);
-    // }
-    // console.log("location is:" + text);
-
-    console.log("You searched: " + searchPhrase);
+    const buildURL = () => {
+        let pullURL = petListURL +
+            "?breed=" + searchBreed
+        if (searchType != ""){
+            pullURL = pullURL + "&type=" + searchType
+        } else if (searchSex != ""){
+            pullURL = pullURL + "&sex=" + searchSex
+        } else if (searchNeuter != ""){
+            pullURL = pullURL + "&neutered=" + searchNeuter}
+        console.log("current pullURL is:" + pullURL);
+        return pullURL;
+    }
 
     const handleAdd = (id: number) => {
         const petaddFavURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
@@ -169,115 +154,143 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         })
     }
 
-    const renderSelectionMenu = ({item}) => {
-        setFilterMenu(option${item.key});
-        return(
-        <View>
-            <Text>{filterMenu.option1}</Text>
-            <Text>{filterMenu.option2}</Text>
-        </View>)
-    }
+    // console.log("Your option is:", option);
+    // console.log("Your filter phrase is:", filterPhrase);
+    //
+    // console.log("Your breed is:" + searchBreed);
+    // console.log("Your type is:" + searchType);
+    // console.log("Your sex is:" + searchSex);
+    // console.log("Your neuter is:" + searchNeuter);
 
     const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
         <TouchableOpacity
-            onPress={() => navigation.navigate('Detail', { item })}
-        >
+            onPress={() => navigation.navigate('Detail', { item })}>
             <PetListingCard
                 id={item.id}
                 name={item.name}
                 breed={item.breed}
                 avatar={item.avatar}
                 handleAdd={handleAdd}
-                // description = {item.description}
             />
-        </TouchableOpacity>);
+        </TouchableOpacity>
+    );
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {!clicked}
-            {/* <SearchBar
-          searchPhrase={searchPhrase}
-          setSearchPhrase={setSearchPhrase}
-          clicked={clicked}
-          setClicked={setClicked}
-      /> */}
             <Searchbar
                 placeholder="Breed..."
-                onEndEditing={(query) => setSearchPhrase(query.nativeEvent.text)}
-                // value={searchPhrase}
+                onChangeText={(query) => setSearchBreed(query)}
+                // onEndEditing={() => onRefresh()}
+                clearTextOnFocus = {true}
+                value={searchBreed}
             />
+
+            <ScrollView
+                style={{ flexGrow: 0 }}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingLeft: 10 }}>
+
+                <Pressable
+                    style={styles.optionList}
+                    onPress={() => {setModalVisible(true)
+                                    setActionTriggered('ACTION_1');}}>
+                    <Text style={styles.optionText}>Type</Text>
+                </Pressable>
+
+                <Pressable
+                    style={styles.optionList}
+                    onPress={() => {setModalVisible(true)
+                        setActionTriggered('ACTION_2');}}>
+                    <Text style={styles.optionText}>Sex</Text>
+                </Pressable>
+
+                <Pressable
+                    style={styles.optionList}
+                    onPress={() => {setModalVisible(true)
+                        setActionTriggered('ACTION_3');}}>
+                    <Text style={styles.optionText}>Neutered/Spayed</Text>
+                </Pressable>
+            </ScrollView>
+
             <Modal
                 animationType="fade"
                 transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    setModalVisible(!modalVisible);
-                }}>
-                <View style={{flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: 22}}>
-                    <View style={{margin: 20,
-                        backgroundColor: "white",
-                        borderRadius: 20,
-                        padding: 35,
-                        alignItems: "center",
-                        shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: 2
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 4,
-                        elevation: 5}}>
-                        <FlatList
-                            data={filterOptions}
-                            keyExtractor={(item) => item.key}
-                            renderItem={renderSelectionMenu}> </FlatList>
+                visible={modalVisible}>
+                <SafeAreaView style={styles.ModalWrapper}>
+                    {actionTriggered === 'ACTION_1' ?
+                        <View style={styles.ModalView}>
+                            <Pressable onPress={() => {setSearchType("Cat")
+                                                        setModalVisible(false)}}>
+                                <View style={styles.ModalMenuView}>
+                                    <Text style={{fontSize:25}}>Cat</Text>
+                                </View>
+                            </Pressable>
 
-                        <MaterialIcons
-                            name='close'
-                            size={24}
-                            onPress={() => setModalVisible(false)}
-                        />
-                    </View>
-                </View>
-            </Modal>
+                            <Pressable onPress={() => {setSearchType("Dog")
+                                setModalVisible(false)}}>
+                                <View style={styles.ModalMenuView}>
+                                    <Text style={{fontSize:25}}>Dog</Text>
+                                </View>
+                            </Pressable>
 
-                <FlatList
-                style={{ flexGrow: 0 }}
-                data={filterOptions}
-                keyExtractor={(item) => item.key}
-                contentContainerStyle={{ paddingLeft: 10 }}
-                showsHorizontalScrollIndicator={false}
-                horizontal
-                renderItem={({ item, index: fIndex }) => {
-                    return (
-                        <TouchableOpacity onPress={setModalVisible}>
-                            <View
-                                style={{
-                                    height:36,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    marginRight: 10,
-                                    marginTop: 10,
-                                    marginBottom: 18,
-                                    padding: 10,
-                                    // borderWidth: 2,
-                                    // borderColor: _colors.active,
-                                    borderRadius: 12,
-                                    backgroundColor: `#DCDCDC`,
-                                }}>
-                                <Text style={{ color: "black", fontWeight: '500' }}>
-                                    {item.optionType}
-                                </Text>
+                            <Pressable onPress={() => {setSearchType("")
+                                setModalVisible(false)}}>
+                                <View style={styles.ModalMenuView}>
+                                    <Text style={{fontSize:25}}>Cancel</Text>
+                                </View>
+                            </Pressable>
+                        </View>
+                        :
+                        actionTriggered === 'ACTION_2' ?
+                            <View style={styles.ModalView}>
+                                <Pressable onPress={() => {setSearchSex("m")
+                                    setModalVisible(false)}}>
+                                    <View style={styles.ModalMenuView}>
+                                        <Text style={{fontSize:25}}>Male</Text>
+                                    </View>
+                                </Pressable>
+
+                                <Pressable onPress={() => {setSearchSex("f")
+                                    setModalVisible(false)}}>
+                                    <View style={styles.ModalMenuView}>
+                                        <Text style={{fontSize:25}}>Female</Text>
+                                    </View>
+                                </Pressable>
+
+                                <Pressable onPress={() => {setSearchSex("")
+                                    setModalVisible(false)}}>
+                                    <View style={styles.ModalMenuView}>
+                                        <Text style={{fontSize:25}}>Cancel</Text>
+                                    </View>
+                                </Pressable>
                             </View>
-                        </TouchableOpacity>
-                    );
-                }}
-            />
+                            :
+                            <View style={styles.ModalView}>
+                                <Pressable onPress={() => {setSearchNeuter("true")
+                                    setModalVisible(false)}}>
+                                    <View style={styles.ModalMenuView}>
+                                        <Text style={{fontSize:25}}>Yes</Text>
+                                    </View>
+                                </Pressable>
+
+                                <Pressable onPress={() => {setSearchNeuter("false")
+                                    setModalVisible(false)}}>
+                                    <View style={styles.ModalMenuView}>
+                                        <Text style={{fontSize:25}}>No</Text>
+                                    </View>
+                                </Pressable>
+
+                                <Pressable onPress={() => {setSearchNeuter("")
+                                    setModalVisible(false)}}>
+                                    <View style={styles.ModalMenuView}>
+                                        <Text style={{fontSize:25}}>Cancel</Text>
+                                    </View>
+                                </Pressable>
+                            </View>
+                    }
+                </SafeAreaView>
+            </Modal>
 
             <FlatList
                 data={petList}
@@ -292,3 +305,56 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             />
         </SafeAreaView>);
 }
+
+const styles = StyleSheet.create({
+    optionList:{
+        height:36,
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
+        marginRight: 10,
+        marginTop: 15,
+        marginBottom: 4,
+        padding: 10,
+        borderRadius: 12,
+        backgroundColor: `#DCDCDC`,
+    },
+    optionText:{
+        color: '#36303F',
+        fontWeight: '500',
+    },
+    ModalWrapper:{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    ModalView:{
+        // margin: 150,
+        height: 350,
+        width: 300,
+        backgroundColor: "white",
+        borderRadius: 12,
+        padding: 30,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    ModalMenuView:{
+        // height:36,
+        width: 224,
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
+        marginTop: 18,
+        marginBottom: 18,
+        padding: 15,
+        borderRadius: 12,
+        backgroundColor: `#F5F5F5`,
+    },
+    })
