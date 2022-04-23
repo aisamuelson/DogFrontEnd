@@ -24,9 +24,13 @@ function parseListRes(data) {
             id: item.postid,
             name: item.petid.petname,
             breed: item.petid.breed,
+            weight: item.petid.weight,
+            hairlength: item.petid.hairlength,
             avatar: item.image,
             description: item.desc,
-            owner: item.petid.petowner.email
+            owner: item.petid.petowner.email,
+            owner_full_name: item.petid.petowner.full_name,
+            owner_avatar: item.petid.petowner.profilePhoto
         }
         parsedData.push(post);
     });
@@ -147,8 +151,13 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             <PetListingCard
                 id={item.id}
                 name={item.name}
+                weight={item.weight}
+                hairlength={item.hairlength}
                 breed={item.breed}
                 avatar={item.avatar}
+                owner={item.owner}
+                owner_full_name={item.owner_full_name}
+                owner_avatar={item.owner_avatar}
                 handleAdd={handleAdd}
             />
         </TouchableOpacity>
