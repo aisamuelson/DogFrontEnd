@@ -47,16 +47,23 @@
    id: string,
    name: string,
    breed: string,
-   avatar: string
+   weight: number,
+   hairlength: string,
+   avatar: string,
+   owner: string,
+   owner_full_name: string,
+   owner_avatar: string
  };
 
  export type RouteParamList = {
    Detail: {
-     item: ListingProps;
+     item: ListingProps,
    }
 
    ChatRoom: {
      user: string
+     full_name: string
+     avatar: string
    }
  }
 
@@ -82,6 +89,8 @@ export type PetInfo = {
     birthday: string,
     breed: string,
     gender: string,
+    weight: number,
+    hairlength: string,
     neutered: boolean,
     petid: number,
     petname: string,

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { Text, View, StyleSheet, SafeAreaView, Image, ScrollView } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RouteParamList, ListingProps, PetInfo, PostInfo } from '../types';
 import axios from 'axios';
 import APIs from '../constants/APIs';
-import { FontAwesome, MaterialCommunityIcons, Foundation } from '@expo/vector-icons'
+import { FontAwesome, MaterialCommunityIcons, Foundation, FontAwesome5 } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native';
 import { Alert } from 'react-native';
 import { Item } from 'react-native-paper/lib/typescript/components/List/List';
@@ -18,6 +18,7 @@ import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 export default function DetailScreen({ navigation }) {
   const route = useRoute<RouteProp<RouteParamList, 'Detail'>>();
   const data = route.params.item;
+  console.log(data)
   const id = data.id;
 
   const [postInfo, setPostInfo] = useState<PostInfo>();
@@ -89,9 +90,20 @@ export default function DetailScreen({ navigation }) {
   } else {
     genderComponent = femaleComponent
   }
+
+  let hairlength;
+  if (petInfo.hairlength === 'S') {
+    hairlength = 'Short Hair'
+  }
+  if (petInfo.hairlength === 'M') {
+    hairlength = 'Medium Hair'
+  }
+  if (petInfo.hairlength === 'L') {
+    hairlength = 'Long Hair'
+  }
   //console.log(petInfo);
   return (
-    <SafeAreaView>
+    <ScrollView>
       <View style={styles.imageContainerStyle}>
         <Image style={styles.imageStyle}
           source={{ uri: data.avatar }}
@@ -118,6 +130,18 @@ export default function DetailScreen({ navigation }) {
         </View>
         {genderComponent()}
         <View style={styles.hstack}>
+          <FontAwesome5 name="weight" size={24} color="black" />
+          <Text style={styles.petListItem}>&nbsp;
+            <Text>{petInfo.weight} lb</Text>
+          </Text>
+        </View>
+        <View style={styles.hstack}>
+          <MaterialCommunityIcons name="hair-dryer" size={24} color="black" />
+          <Text style={styles.petListItem}>&nbsp;
+            <Text>{hairlength}</Text>
+          </Text>
+        </View>
+        <View style={styles.hstack}>
           <MaterialCommunityIcons name="bandage" size={24} color="black" />
           <Text style={styles.petListItem}>&nbsp;
             <Text>{(petInfo.neutered ? '' : 'Not ') + (petInfo.gender == 'M' ? 'Neutered' : 'Spayed')}</Text>
@@ -137,12 +161,12 @@ export default function DetailScreen({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.addButton, { marginTop: 10 }]}
-          onPress={() => navigation.navigate('ChatRoom', { user: data.owner })}
+          onPress={() => navigation.navigate('ChatRoom', { user: data.owner, full_name: data.owner_full_name, avatar: data.owner_avatar })}
         >
           <Text style={styles.buttonText}>Chat</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 

@@ -30,6 +30,8 @@ const Login = ({navigation}) =>{
                 const {message, token} = result;
                 global.token = token
                 global.email = credentials.email;
+                global.full_name = result.full_name;
+                global.avatar = "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000" + result.profilePhoto;
                 console.log("result: ", result, " token:", token, " message: ", message);
                 if(response.status !== 200){
                     handleMessage("An error has occurred. Please check your network and try again")

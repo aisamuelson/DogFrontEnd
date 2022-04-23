@@ -11,8 +11,14 @@ import { RouteParamList } from '../types';
 export default function ChatScreen() {
     const [messages_, setMessages] = useState([]);
     const route = useRoute<RouteProp<RouteParamList, "ChatRoom">>();
-    const user_ = route.params.user
-    const myself = global.email
+    const user_ = route.params.user;
+    const user_full_name = route.params.full_name;
+    const user_avatar = route.params.avatar;
+    const myself = global.email;
+    const myname = global.full_name;
+    const myavatar = global.avatar;
+    console.log(user_avatar)
+    console.log(myavatar)
     const db = getFirestore()
     const q = query(collection(db, myself, user_, "messages"), orderBy("createdAt", "desc"));
     var messageList = []
@@ -41,11 +47,8 @@ export default function ChatScreen() {
                         name: msg.user.name
                     }
                 }])
-                // console.log("changed!")
             })
-            // console.log(doc.docChanges())
         })
-        // console.log("mounted!")
         return () => unsub()
     }, [])
 
@@ -74,14 +77,16 @@ export default function ChatScreen() {
     const onSend = useCallback((messages = []) => {
 
         setDoc(doc(db, myself, user_), {
-            dummy: ""
+            full_name: user_full_name,
+            avatar: user_avatar
         })
         addDoc(collection(db, myself, user_, "messages"), {
             message: messages[0],
             createdAt: messages[0].createdAt
         })
         setDoc(doc(db, user_, myself), {
-            dummy: ""
+            full_name: myname,
+            avatar: myavatar
         })
         addDoc(collection(db, user_, myself, "messages"), {
             message: messages[0],
@@ -96,8 +101,8 @@ export default function ChatScreen() {
             onSend={messages => onSend(messages)}
             user={{
                 _id: myself,
-                name: myself,
-                avatar: 'placeholder.com'
+                name: myname,
+                avatar: myavatar
             }}
         />
     )

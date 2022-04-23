@@ -47,11 +47,25 @@ export default function PostScreen() {
       return
     }
 
+    if (!parameter.weight) {
+      setDisabled(false)
+      Alert.alert("Field Error(Weight)", 'How much does your pet weight?', [{ text: "OK" }])
+      return
+    }
+
+    let weight = parseInt(parameter.weight)
+
+    if (!parameter.hairlength) {
+      setDisabled(false)
+      Alert.alert("Field Error(Hair Length)", 'How long is your pet\'s hair?', [{ text: "OK" }])
+    }
+
     if (!parameter.name) {
       setDisabled(false)
       Alert.alert("Field Missing", "Please give you furry friend a nice name", [{ text: "OK" }])
       return
     }
+
     if (!parameter.petType) {
       setDisabled(false)
       Alert.alert("Field Missing", "Please specify the species of your pet", [{ text: "OK" }])
@@ -89,7 +103,9 @@ export default function PostScreen() {
       age_month: monthDiff(date, now) % 12,
       birthday: parameter.birthday.toISOString().substring(0, 10),
       neutered: parameter.neutered["value"],
-      gender: parameter.gender["value"]
+      gender: parameter.gender["value"],
+      hairlength: parameter.hairlength["value"],
+      weight: weight
     })
     console.log(jsonData)
     axios.post(
@@ -164,12 +180,20 @@ export default function PostScreen() {
   let [breed, onChangeBreed] = React.useState<string | undefined>(undefined)
   let [reason, onChangeReason] = React.useState<string | undefined>(undefined)
   let [petType, setPetType] = useState<PickerItem>({ label: "Select...", value: '' });
+  let [hairlength, setHairlength] = useState<PickerItem>()
+  let [weight, setWeight] = useState<string>()
 
   const [disabled, setDisabled] = useState<boolean>(false);
   // const [petTypes, setPetTypes] = useState([
   //   { label: 'Cat', value: 'CAT' },
   //   { label: 'Dog', value: 'DOG' }
   // ]);
+
+  const hairlengths: Array<PickerItem> = [
+    { label: "Short", value: "S"},
+    { label: "Medium", value: "M"},
+    { label: "Long", value: "L"}
+  ]
 
   const neuteredStatus: Array<PickerItem> = [
     { label: "Yes", value: true },
@@ -249,6 +273,34 @@ export default function PostScreen() {
         <View style={styles.detailInfo}>
           <View style={styles.basicInfoLeft}>
             <View style={styles.flexV}>
+              <Text style={{ fontSize: 10 }}>Weight:</Text>
+              <TextInput
+                placeholder="in lb."
+                onChangeText={setWeight}
+                value={weight}
+                style={[styles.inputBox]}
+                keyboardType={"numeric"}
+              />
+            </View>
+
+          </View>
+          <View style={styles.spacer}></View>
+          <View style={styles.basicInfoRight}>
+            <View style={[styles.flexV]}>
+              <Text style={{ fontSize: 10 }}>Hair Length:</Text>
+              <Picker
+                item={hairlength}
+                items={hairlengths}
+                onItemChange={setHairlength}
+                placeholder="..."
+                style={styles.inputBox}
+              />
+            </View>
+          </View>
+        </View>
+        <View style={styles.detailInfo}>
+          <View style={styles.basicInfoLeft}>
+            <View style={styles.flexV}>
               <Text style={{ fontSize: 10 }}>Birthday:</Text>
               <DatePicker
                 value={birthday}
@@ -305,6 +357,8 @@ export default function PostScreen() {
               neutered: neutered,
               petType: petType,
               reason: reason,
+              weight: weight,
+              hairlength: hairlength,
               image: image
             })}
             disabled={disabled}
@@ -327,7 +381,8 @@ const styles = StyleSheet.create({
 
   basicInfo: {
     // borderWidth: 2,
-    flexDirection: "row"
+    flexDirection: "row",
+    marginBottom: 20
   },
 
   basicInfoLeft: {
@@ -349,7 +404,7 @@ const styles = StyleSheet.create({
 
   detailInfo: {
     flexDirection: "row",
-    marginTop: 60
+    marginTop: 0
   },
 
   detailLeft: {

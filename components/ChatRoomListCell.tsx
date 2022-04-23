@@ -1,18 +1,23 @@
 import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 import Colors from '../constants/Colors';
 import { MonoText } from './StyledText';
 import { Text, View } from './Themed';
 
 export default function ChatRoomListCell(prop) {
-  
+  console.log(prop.avatar)
   return (
     <View style={styles.cell}>
-      <View style={styles.icon}></View>
+      <View style={styles.icon}>
+        <Image
+          source={{uri: prop.avatar}}
+          style={{width: "100%", height: "100%"}}
+        />
+      </View>
       <View style={styles.content}>
-        <Text style={styles.title}>{prop.email}</Text>
+        <Text style={styles.title}>{prop.full_name}</Text>
         {/* <Text style={styles.snippet} numberOfLines={2}>Snippet of the messageSnippet of the messageSnippet of the messageSnippet of the message</Text> */}
       </View>
       {/* <View style={styles.mark}></View> */}
@@ -38,7 +43,7 @@ export default function ChatRoomListCell(prop) {
     icon: {
       height: 80,
       width: 80,
-      backgroundColor: "#818181",
+      // backgroundColor: "#818181",
       borderRadius: 10
     },
   
