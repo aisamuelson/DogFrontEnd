@@ -24,6 +24,7 @@ import { StatusBar } from "expo-status-bar";
 const AdoptPrefsScreen = ({ navigation }) => {
   const url =
     "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/preference";
+  const header = { headers: { Authorization: `Bearer ${global.token}` } };
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
 
@@ -106,11 +107,11 @@ const AdoptPrefsScreen = ({ navigation }) => {
       age: parameter.ageGroup["value"],
       gender: parameter.gender["value"],
       hairlength: parameter.hairlength["value"],
-      size: parameter.size["value"],
+      weight: parameter.size["value"],
     });
     console.log(jsonData);
     axios
-      .put(url, jsonData)
+      .put(url, jsonData, header)
       .then((response) => {
         console.log(response.data);
         Alert.alert("Preferences Updated", "", [{ text: "OK" }]);

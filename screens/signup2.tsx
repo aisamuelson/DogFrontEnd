@@ -37,6 +37,7 @@ const { brand, darkLight, primary } = Colors;
 const Signup2 = ({ navigation }) => {
   const url =
     "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/preference";
+  const header = { headers: { Authorization: `Bearer ${global.token}` } };
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
 
@@ -119,11 +120,11 @@ const Signup2 = ({ navigation }) => {
       age: parameter.ageGroup["value"],
       gender: parameter.gender["value"],
       hairlength: parameter.hairlength["value"],
-      size: parameter.size["value"],
+      weight: parameter.size["value"],
     });
     console.log(jsonData);
     axios
-      .post(url, jsonData)
+      .post(url, jsonData, header)
       .then((response) => {
         console.log(response.data);
         navigation.navigate("Root", { screen: "HomeScreen" });
