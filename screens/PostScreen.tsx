@@ -16,7 +16,7 @@ import { DatePicker, Picker, PickerItem } from 'react-native-woodpicker';
 const { brand, darkLight, primary } = Colors;
 /**
  * 1. Before the server's response, the user should not be able to make another post
- * 
+ *
  */
 function monthDiff(d1, d2) {
   var months;
@@ -26,7 +26,7 @@ function monthDiff(d1, d2) {
   return months <= 0 ? 0 : months;
 }
 
-export default function PostScreen() {
+export default function PostScreen({navigation}) {
 
   const onHandleSubmit = (parameter: any) => (e: any) => {
     const urlPet = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/mypet';
@@ -132,15 +132,16 @@ export default function PostScreen() {
         method: "post",
         body: postsData,
         headers: postsHeaderConfig
-      }).then(response => response.json())
+      }).then(response => {response.json()
+        navigation.navigate("Root", {screen:"HomeScreen"})})
         .then(response => {
           setDisabled(false)
-          Alert.alert("Success", "", [{ text: "OK" }])
           setImage(null)
           onChangeName(undefined)
           onChangeBirthday(null)
           onChangeBreed(undefined)
           onChangeReason(undefined)
+          Alert.alert("Success", "", [{ text: "OK" }])
         })
         .catch(function (response) {
           setDisabled(false)

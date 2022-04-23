@@ -21,7 +21,9 @@ export function PetListingCard(item: ListingCardProp) {
                     <Text style={styles.petListItemBreed}>Breed:&nbsp;
                         <Text>{item.breed}</Text>
                     </Text>
-                    {/*<Text style={styles.description}>{item.description}</Text>*/}
+                    <Text style={styles.petListItemBreed}>Distance:&nbsp;
+                        <Text>{item.distance} Mile</Text>
+                    </Text>
                 </View>
                 <View style={{ flex: 1 }}></View>
                 <TouchableOpacity

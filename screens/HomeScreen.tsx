@@ -15,6 +15,7 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { Searchbar } from 'react-native-paper';
 import { PetListingCard } from "../components/PetListingCard";
+import {getPreciseDistance} from 'geolib';
 
 
 function parseListRes(data) {
@@ -30,11 +31,24 @@ function parseListRes(data) {
             description: item.desc,
             owner: item.petid.petowner.email,
             owner_full_name: item.petid.petowner.full_name,
-            owner_avatar: item.petid.petowner.profilePhoto
+            owner_avatar: item.petid.petowner.profilePhoto,
+            latitude: item.petid.petowner.latitude,
+            longitude: item.petid.petowner.longitude
         }
         parsedData.push(post);
     });
     return parsedData;
+}
+
+function calculateDistance(myLatitude: number, myLongitude: number,
+                           targetLatitude: number, targetLongitude: number){
+    if (myLatitude == 0 || myLongitude == 0 || targetLatitude == 0 || targetLongitude == 0){
+        return 0;
+    }
+    const myCoords = {latitude: myLatitude, longitude: myLongitude};
+    const targetCoords = {latitude: targetLatitude, longitude: targetLongitude};
+    let distance = getPreciseDistance(myCoords, targetCoords) / 1000 * 0.621371;
+    return distance.toFixed(2);
 }
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
@@ -47,6 +61,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             'content-type': 'application/json'
         }
     }
+
+    let myLatitude = 0;
+    let myLongitude = 0;
 
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
@@ -63,7 +80,20 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     const [searchGender, setSearchGender] = useState("");
     const [searchNeuter, setSearchNeuter] = useState("");
 
-    let ageTestURL = petListURL + "?age=22&age=11";
+    const userURL = "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/user"
+
+    axios
+        .get(userURL, petListConfig)
+        .then(function (response){
+            console.log("response is:", response.data);
+            myLatitude = response.data.latitude;
+            myLongitude = response.data.longitude;
+
+            console.log("My location is: Latitude = ", myLatitude, "Longitude = ", myLongitude);
+        })
+        .catch(function (error){
+            console.log(error)
+        });
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)
@@ -158,6 +188,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 owner={item.owner}
                 owner_full_name={item.owner_full_name}
                 owner_avatar={item.owner_avatar}
+                distance = {calculateDistance(myLatitude, myLongitude, item.latitude, item.longitude)}
                 handleAdd={handleAdd}
             />
         </TouchableOpacity>
