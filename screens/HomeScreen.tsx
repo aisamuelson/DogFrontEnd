@@ -18,8 +18,11 @@ import { PetListingCard } from "../components/PetListingCard";
 import {getPreciseDistance} from 'geolib';
 
 
+let myLatitude = 0;
+let myLongitude = 0;
+
 function parseListRes(data) {
-    let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; ownerEmail: string }[] = [];
+    let parsedData: { id: string; name: string; breed: string; avatar: string; description: string; ownerEmail: string; distance: number }[] = [];
     data.forEach((item) => {
         let post = {
             id: item.postid,
@@ -32,12 +35,13 @@ function parseListRes(data) {
             owner: item.petid.petowner.email,
             owner_full_name: item.petid.petowner.full_name,
             owner_avatar: item.petid.petowner.profilePhoto,
-            latitude: item.petid.petowner.latitude,
-            longitude: item.petid.petowner.longitude
+            distance: calculateDistance(myLatitude, myLongitude, item.petid.petowner.latitude, item.petid.petowner.longitude),
+            // latitude: item.petid.petowner.latitude,
+            // longitude: item.petid.petowner.longitude
         }
         parsedData.push(post);
     });
-    return parsedData;
+    return parsedData.sort((a,b)=> a.distance - b.distance);
 }
 
 function calculateDistance(myLatitude: number, myLongitude: number,
@@ -62,9 +66,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         }
     }
 
-    let myLatitude = 0;
-    let myLongitude = 0;
-
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
 
@@ -73,23 +74,25 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     const [actionTriggered, setActionTriggered] = useState("");
     const [buttonTypeText, setButtonTypeText] = useState("Type");
     const [buttonGenderText, setButtonGenderText] = useState("Gender");
-    const [buttonNeuterText, setButtonNeuterText] = useState("Neutering")
+    const [buttonNeuterText, setButtonNeuterText] = useState("Neutering");
+    const [buttonHairText, setButtonHairText] = useState("Hair Length");
 
     const [searchBreed, setSearchBreed] = useState("");
     const [searchType, setSearchType] = useState("");
     const [searchGender, setSearchGender] = useState("");
     const [searchNeuter, setSearchNeuter] = useState("");
+    const [searchHair, setSearchHair] = useState("");
 
     const userURL = "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/user"
 
     axios
         .get(userURL, petListConfig)
         .then(function (response){
-            console.log("response is:", response.data);
+            // console.log("response is:", response.data);
             myLatitude = response.data.latitude;
             myLongitude = response.data.longitude;
 
-            console.log("My location is: Latitude = ", myLatitude, "Longitude = ", myLongitude);
+            // console.log("My location is: Latitude = ", myLatitude, "Longitude = ", myLongitude);
         })
         .catch(function (error){
             console.log(error)
@@ -112,7 +115,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 console.log(error)
                 setRefreshing(false)
             })
-    }, [searchBreed, searchType, searchGender, searchNeuter])
+    }, [searchBreed, searchType, searchGender, searchNeuter, searchHair])
 
     useEffect(() => {
         axios
@@ -128,7 +131,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             .catch(function (error) {
                 console.log(error)
             });
-    },[searchBreed, searchType, searchGender, searchNeuter]);
+    },[searchBreed, searchType, searchGender, searchNeuter, searchHair]);
 
     const buildURL = () => {
         let pullURL = petListURL +
@@ -140,7 +143,11 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             pullURL = pullURL + "&gender=" + searchGender
         }
         if (searchNeuter != ""){
-            pullURL = pullURL + "&neutered=" + searchNeuter}
+            pullURL = pullURL + "&neutered=" + searchNeuter
+        }
+        if (searchHair != ""){
+            pullURL = pullURL + "&hairlength=" + searchHair
+        }
         console.log("current pullURL is:" + pullURL);
         return pullURL;
     }
@@ -188,7 +195,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 owner={item.owner}
                 owner_full_name={item.owner_full_name}
                 owner_avatar={item.owner_avatar}
-                distance = {calculateDistance(myLatitude, myLongitude, item.latitude, item.longitude)}
+                distance = {item.distance}
                 handleAdd={handleAdd}
             />
         </TouchableOpacity>
@@ -227,6 +234,13 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                         setActionTriggered('ACTION_3');}}>
                     <Text style={styles.optionText}>{buttonNeuterText}</Text>
                 </Pressable>
+
+                {/*<Pressable*/}
+                {/*    style={styles.optionList}*/}
+                {/*    onPress={() => {setModalVisible(true)*/}
+                {/*        setActionTriggered('ACTION_4');}}>*/}
+                {/*    <Text style={styles.optionText}>{buttonHairText}</Text>*/}
+                {/*</Pressable>*/}
             </ScrollView>
 
             <Modal
@@ -288,6 +302,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                                 </Pressable>
                             </View>
                             :
+                            // actionTriggered === 'ACTION_3' ?
                             <View style={styles.ModalView}>
                                 <Pressable onPress={() => {setSearchNeuter("true")
                                     setButtonNeuterText("Neurtered/Spayed")
@@ -313,6 +328,40 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                                     </View>
                                 </Pressable>
                             </View>
+                            // :
+                            //     <View style={styles.ModalView}>
+                            //         <Pressable onPress={() => {setSearchHair("short")
+                            //             setButtonHairText("Short")
+                            //             setModalVisible(false)}}>
+                            //             <View style={styles.ModalMenuView}>
+                            //                 <Text style={{fontSize:25}}>Short</Text>
+                            //             </View>
+                            //         </Pressable>
+                            //
+                            //         <Pressable onPress={() => {setSearchHair("M")
+                            //             setButtonHairText("Medium")
+                            //             setModalVisible(false)}}>
+                            //             <View style={styles.ModalMenuView}>
+                            //                 <Text style={{fontSize:25}}>Medium</Text>
+                            //             </View>
+                            //         </Pressable>
+                            //
+                            //         <Pressable onPress={() => {setSearchHair("L")
+                            //             setButtonHairText("Long")
+                            //             setModalVisible(false)}}>
+                            //             <View style={styles.ModalMenuView}>
+                            //                 <Text style={{fontSize:25}}>Long</Text>
+                            //             </View>
+                            //         </Pressable>
+                            //
+                            //         <Pressable onPress={() => {setSearchHair("")
+                            //             setButtonHairText("Hair Length")
+                            //             setModalVisible(false)}}>
+                            //             <View style={styles.ModalMenuView}>
+                            //                 <Text style={{fontSize:25}}>Reset</Text>
+                            //             </View>
+                            //         </Pressable>
+                            //     </View>
                     }
                 </SafeAreaView>
             </Modal>
