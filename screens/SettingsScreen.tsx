@@ -56,10 +56,10 @@ export default function SettingsScreen({
               let latitude = location.coords.latitude;
               const url =
                 "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/update_location";
-              const jsonData = JSON.stringify({
+              const jsonData = {
                 longitude: longitude,
                 latitude: latitude,
-              });
+              };
               console.log(jsonData);
               const header = {
                 headers: { Authorization: `Bearer ${global.token}` },

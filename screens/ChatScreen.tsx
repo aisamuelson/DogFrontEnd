@@ -16,7 +16,10 @@ export default function ChatScreen() {
     const user_avatar = route.params.avatar;
     const myself = global.email;
     const myname = global.full_name;
-    const myavatar = global.avatar;
+    let myavatar = global.avatar;
+    if (myavatar === undefined) {
+        myavatar = null
+    }
     console.log(user_avatar)
     console.log(myavatar)
     const db = getFirestore()
@@ -75,6 +78,8 @@ export default function ChatScreen() {
     }, [])
 
     const onSend = useCallback((messages = []) => {
+
+        console.log(messages)
 
         setDoc(doc(db, myself, user_), {
             full_name: user_full_name,

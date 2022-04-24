@@ -41,12 +41,13 @@ function parseListRes(data) {
         }
         parsedData.push(post);
     });
-    return parsedData.sort((a,b)=> a.distance - b.distance);
+    // return parsedData.sort((a,b)=> a.distance - b.distance);
+    return parsedData
 }
 
 function calculateDistance(myLatitude: number, myLongitude: number,
                            targetLatitude: number, targetLongitude: number){
-    if (myLatitude == 0 || myLongitude == 0 || targetLatitude == 0 || targetLongitude == 0){
+    if (myLatitude == 0 || myLongitude == 0){
         return 0;
     }
     const myCoords = {latitude: myLatitude, longitude: myLongitude};

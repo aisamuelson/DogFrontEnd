@@ -30,6 +30,7 @@ const Login = ({navigation}) =>{
                 const {message, token} = result;
                 global.token = token
                 global.email = credentials.email;
+                global.full_name = result.full_name;
                 console.log("result: ", result, " token:", token, " message: ", message);
                 if(response.status !== 200){
                     handleMessage("An error has occurred. Please check your network and try again")

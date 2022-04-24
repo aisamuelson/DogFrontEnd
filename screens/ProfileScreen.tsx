@@ -20,7 +20,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
       .then((response) => {
         //console.log(response.data);
         const uri = response.data[0].profilePhoto;
-        //console.log(uri);
+        console.log(uri);
         setImageUri(uri == null ? '' : uri);
       })
       .catch((error) => {
