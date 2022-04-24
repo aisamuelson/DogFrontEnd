@@ -1,5 +1,6 @@
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, View } from '../components/Themed';
+import Colors from '../constants/Colors';
 import { FavCardProp } from '../types';
 
 export function FavoritePetCard(prop: FavCardProp) {
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
   removeButton: {
     width: "70%",
     borderRadius: 10,
-    backgroundColor: "dodgerblue",
+    backgroundColor: Colors.red,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   labelText: {
     fontSize: 18,
     fontWeight: "900",
-    color: "#818181"
+    color: Colors.brand,
   },
 
   attrText: {

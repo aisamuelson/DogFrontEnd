@@ -23,6 +23,9 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
         //console.log(uri);
         setImageUri(uri == null ? '' : uri);
       })
+      .catch((error) => {
+        console.log(error)
+      })
   }, []);
 
   const pickImage = async () => {
@@ -152,7 +155,7 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
             style={styles.roundButton}
             onPress={pickImage}>
             {imageUri == ''
-              ? <Text>Upload Picture</Text>
+              ? <Text style={{color: 'white'}}>Upload Picture</Text>
               : <Image
                   source={{uri:imageUri}}
                   style={{ width: "130%", aspectRatio: 1 }}
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderRadius: 100,
-    backgroundColor: 'grey',
+    backgroundColor: Colors.brand,
     overflow: 'hidden'
   },
   pillButton: {
