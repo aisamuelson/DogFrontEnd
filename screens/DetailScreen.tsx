@@ -8,6 +8,7 @@ import { FontAwesome, MaterialCommunityIcons, Foundation, FontAwesome5 } from '@
 import { TouchableOpacity } from 'react-native';
 import { Alert } from 'react-native';
 import { Item } from 'react-native-paper/lib/typescript/components/List/List';
+import Colors from '../constants/Colors';
 /**
  * 
  * Improvements to be made:
@@ -153,18 +154,20 @@ export default function DetailScreen({ navigation }) {
             <Text>{postInfo.desc}</Text>
           </Text>
         </View>
-        <TouchableOpacity
-          style={[styles.addButton, { marginTop: 10 }]}
-          onPress={() => handleAdd(id)}
-        >
-          <Text style={styles.buttonText}>Favorite</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.addButton, { marginTop: 10 }]}
-          onPress={() => navigation.navigate('ChatRoom', { user: data.owner, full_name: data.owner_full_name, avatar: data.owner_avatar })}
-        >
-          <Text style={styles.buttonText}>Chat</Text>
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <TouchableOpacity
+            style={[styles.addButton, { marginTop: 10 }]}
+            onPress={() => handleAdd(id)}
+          >
+            <Text style={styles.buttonText}>Favorite</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.addButton, { marginTop: 10 }]}
+            onPress={() => navigation.navigate('ChatRoom', { user: data.owner, full_name: data.owner_full_name, avatar: data.owner_avatar })}
+          >
+            <Text style={styles.buttonText}>Chat</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -217,10 +220,11 @@ const styles = StyleSheet.create({
   },
   addButton: {
     borderRadius: 10,
-    backgroundColor: "dodgerblue",
+    backgroundColor: Colors.brand,
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "center"
+    alignSelf: "center",
+    marginHorizontal: 10,
   },
   buttonText: {
     paddingVertical: 10,

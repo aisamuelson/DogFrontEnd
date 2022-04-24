@@ -5,6 +5,7 @@ const authAPI = API + '/auth';
 const myPets = postAPI + '/mypet';
 const myPosts = postAPI + '/myposts';
 const profilePhoto = authAPI + '/profile_photo';
+const user = authAPI + '/user';
 
 function getParams(token: string){
     return {
@@ -19,6 +20,7 @@ export default {
     myPets,
     myPosts,
     profilePhoto,
+    user,
     postAPI,
     authAPI,
     getParams

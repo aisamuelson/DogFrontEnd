@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "dodgerblue",
+    backgroundColor: Colors.brand,
     borderRadius: 8,
     paddingVertical: 5,
     paddingHorizontal: 15

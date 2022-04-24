@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from 'react-native'
+import Colors from '../constants/Colors';
 import { ListingCardProp } from "../types";
 // import { color } from 'react-native-reanimated'
 
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
 
     addButton: {
         borderRadius: 10,
-        backgroundColor: "dodgerblue",
+        backgroundColor: Colors.brand,
         justifyContent: "center",
         alignItems: "center",
         alignSelf: "center"

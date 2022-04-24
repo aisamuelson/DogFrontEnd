@@ -12,6 +12,7 @@ import { RootStackParamList } from "../types";
 import Colors from "../constants/Colors";
 import * as Location from "expo-location";
 import axios from "axios";
+import APIs from "../constants/APIs";
 
 export default function SettingsScreen({
   navigation,
@@ -35,11 +36,9 @@ export default function SettingsScreen({
         >
           <Text style={styles.buttonText}>Adoption Preferences</Text>
         </TouchableOpacity>
-      </View>
 
-      <View>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: Colors.green }]}
+          style={[styles.button, { backgroundColor: Colors.brand }]}
           onPress={() => {
             (async () => {
               let { status } =
@@ -84,16 +83,54 @@ export default function SettingsScreen({
           <Text style={styles.buttonText}>Update Location</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: Colors.red }]}
-        onPress={() => {
-          global.token = null;
-          global.email = null;
-          navigation.navigate("Login");
-        }}
-      >
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
+
+      <View>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: Colors.red }]}
+          onPress={() => {
+            global.token = null;
+            global.email = null;
+            navigation.navigate("Login");
+          }}
+        >
+          <Text style={styles.buttonText}>Logout</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.account}
+          onPress={() => {
+            Alert.alert(
+              "Are you sure?",
+              "Your account and data will be PERMANENTLY lost!",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel"
+                },
+                { 
+                  text: "Delete", 
+                  style: 'destructive',
+                  onPress: () => {
+                    axios.delete(APIs.user, APIs.getParams(global.token))
+                    .then((response) => {
+                      console.log(response.data)
+                      global.token = null;
+                      global.email = null;
+                      navigation.navigate("Login");
+                    })
+                    .catch((error) => {
+                      console.log(error)
+                    })
+                  } 
+                }
+              ]
+            );
+          }}
+        >
+          <Text style={styles.accountText}>Detele Account</Text>
+        </TouchableOpacity>
+      </View>
+      
     </SafeAreaView>
   );
 }
@@ -111,5 +148,15 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: "white",
+  },
+  account: {
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    justifyContent: "center",
+    alignItems: "center",
+    height: 30,
+  },
+  accountText: {
+    fontSize: 14,
+    color: "grey",
   },
 });
