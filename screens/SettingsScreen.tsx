@@ -19,6 +19,7 @@ export default function SettingsScreen({
 }: NativeStackScreenProps<RootStackParamList>) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [disabled, setDisabled] = useState(false);
 
   return (
     <SafeAreaView
@@ -39,7 +40,9 @@ export default function SettingsScreen({
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: Colors.brand }]}
+          disabled={disabled}
           onPress={() => {
+            setDisabled(true);
             (async () => {
               let { status } =
                 await Location.requestForegroundPermissionsAsync();
@@ -69,6 +72,7 @@ export default function SettingsScreen({
                 .then((response) => {
                   console.log(response.data);
                   Alert.alert("Location Updated", "", [{ text: "OK" }]);
+                  setDisabled(false);
                   navigation.navigate("Root", { screen: "HomeScreen" });
                 })
                 .catch((error) => {
@@ -105,24 +109,25 @@ export default function SettingsScreen({
               [
                 {
                   text: "Cancel",
-                  style: "cancel"
+                  style: "cancel",
                 },
-                { 
-                  text: "Delete", 
-                  style: 'destructive',
+                {
+                  text: "Delete",
+                  style: "destructive",
                   onPress: () => {
-                    axios.delete(APIs.user, APIs.getParams(global.token))
-                    .then((response) => {
-                      console.log(response.data)
-                      global.token = null;
-                      global.email = null;
-                      navigation.navigate("Login");
-                    })
-                    .catch((error) => {
-                      console.log(error)
-                    })
-                  } 
-                }
+                    axios
+                      .delete(APIs.user, APIs.getParams(global.token))
+                      .then((response) => {
+                        console.log(response.data);
+                        global.token = null;
+                        global.email = null;
+                        navigation.navigate("Login");
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
+                  },
+                },
               ]
             );
           }}
@@ -130,7 +135,6 @@ export default function SettingsScreen({
           <Text style={styles.accountText}>Detele Account</Text>
         </TouchableOpacity>
       </View>
-      
     </SafeAreaView>
   );
 }
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   account: {
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+    backgroundColor: "rgba(0, 0, 0, 0)",
     justifyContent: "center",
     alignItems: "center",
     height: 30,

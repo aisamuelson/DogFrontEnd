@@ -1,17 +1,24 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import React, { useState, useEffect } from 'react';
-import { Button, Image, Platform, TextInput, Alert, AlertButton } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { StyledTextInput, Colors } from './../components/LogStyles'
-import DropDownPicker from 'react-native-dropdown-picker';
-import { InputTextRowProp } from '../types';
-import KeyboardWrapper from '../components/KeyboardWrapper';
-import { Icon } from 'react-native-elements'
-import axios from 'axios';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { DatePicker, Picker, PickerItem } from 'react-native-woodpicker';
+import { StyleSheet, TouchableOpacity } from "react-native";
+import EditScreenInfo from "../components/EditScreenInfo";
+import { Text, View } from "../components/Themed";
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Image,
+  Platform,
+  TextInput,
+  Alert,
+  AlertButton,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { StyledTextInput, Colors } from "./../components/LogStyles";
+import DropDownPicker from "react-native-dropdown-picker";
+import { InputTextRowProp } from "../types";
+import KeyboardWrapper from "../components/KeyboardWrapper";
+import { Icon } from "react-native-elements";
+import axios from "axios";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { DatePicker, Picker, PickerItem } from "react-native-woodpicker";
 
 const { brand, darkLight, primary } = Colors;
 /**
@@ -26,74 +33,95 @@ function monthDiff(d1, d2) {
   return months <= 0 ? 0 : months;
 }
 
-export default function PostScreen({navigation}) {
-
+export default function PostScreen({ navigation }) {
   const onHandleSubmit = (parameter: any) => (e: any) => {
-    const urlPet = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/mypet';
-    const urlPosts = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/myposts';
+    const urlPet =
+      "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/mypet";
+    const urlPosts =
+      "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/myposts";
     const petHeaderConfig = {
       headers: {
-        'Authorization': `Bearer ${global.token}`,
-        'Content-Type': "application/json"
-      }
-    }
+        Authorization: `Bearer ${global.token}`,
+        "Content-Type": "application/json",
+      },
+    };
 
-    setDisabled(true)
+    setDisabled(true);
 
     let neutered;
     if (!parameter.neutered) {
-      setDisabled(false)
-      Alert.alert("Field Error(Neutered)", 'Is your pet neutered? Please indicate \"Yes\" or \"No\"', [{ text: "OK" }])
-      return
+      setDisabled(false);
+      Alert.alert(
+        "Field Error(Neutered)",
+        'Is your pet neutered? Please indicate "Yes" or "No"',
+        [{ text: "OK" }]
+      );
+      return;
     }
 
     if (!parameter.weight) {
-      setDisabled(false)
-      Alert.alert("Field Error(Weight)", 'How much does your pet weight?', [{ text: "OK" }])
-      return
+      setDisabled(false);
+      Alert.alert("Field Error(Weight)", "How much does your pet weight?", [
+        { text: "OK" },
+      ]);
+      return;
     }
 
-    let weight = parseInt(parameter.weight)
+    let weight = parseInt(parameter.weight);
 
     if (!parameter.hairlength) {
-      setDisabled(false)
-      Alert.alert("Field Error(Hair Length)", 'How long is your pet\'s hair?', [{ text: "OK" }])
+      setDisabled(false);
+      Alert.alert("Field Error(Hair Length)", "How long is your pet's hair?", [
+        { text: "OK" },
+      ]);
     }
 
     if (!parameter.name) {
-      setDisabled(false)
-      Alert.alert("Field Missing", "Please give you furry friend a nice name", [{ text: "OK" }])
-      return
+      setDisabled(false);
+      Alert.alert("Field Missing", "Please give you furry friend a nice name", [
+        { text: "OK" },
+      ]);
+      return;
     }
 
     if (!parameter.petType) {
-      setDisabled(false)
-      Alert.alert("Field Missing", "Please specify the species of your pet", [{ text: "OK" }])
+      setDisabled(false);
+      Alert.alert("Field Missing", "Please specify the species of your pet", [
+        { text: "OK" },
+      ]);
     }
     let breed: string;
     if (!parameter.breed) {
-      breed = "N/A"
+      breed = "N/A";
     } else {
-      breed = parameter.breed
+      breed = parameter.breed;
     }
-    let date = parameter.birthday
-    let now = new Date()
+    let date = parameter.birthday;
+    let now = new Date();
     if (isNaN(date) || !date) {
-      setDisabled(false)
-      Alert.alert("Field Missing", "Invalid date for birthday. Please enter the birthday in format \"YYYY-MM-DD\"(e.g. 2015-03-25)", [{ text: "OK" }])
-      return
+      setDisabled(false);
+      Alert.alert(
+        "Field Missing",
+        'Invalid date for birthday. Please enter the birthday in format "YYYY-MM-DD"(e.g. 2015-03-25)',
+        [{ text: "OK" }]
+      );
+      return;
     } else {
-      console.log(monthDiff(date, now))
+      console.log(monthDiff(date, now));
     }
 
     if (!parameter.image) {
-      setDisabled(false)
-      Alert.alert("Field Missing", "Pick a nice photo for your pet please", [{ text: "OK" }])
+      setDisabled(false);
+      Alert.alert("Field Missing", "Pick a nice photo for your pet please", [
+        { text: "OK" },
+      ]);
     }
 
     if (!parameter.gender) {
-      setDisabled(false)
-      Alert.alert("Field Missing", "Is your pet a boy or a girl?", [{ text: "OK" }])
+      setDisabled(false);
+      Alert.alert("Field Missing", "Is your pet a boy or a girl?", [
+        { text: "OK" },
+      ]);
     }
     const jsonData = JSON.stringify({
       petname: parameter.name,
@@ -105,56 +133,57 @@ export default function PostScreen({navigation}) {
       neutered: parameter.neutered["value"],
       gender: parameter.gender["value"],
       hairlength: parameter.hairlength["value"],
-      weight: weight
-    })
-    console.log(jsonData)
-    axios.post(
-      urlPet,
-      jsonData,
-      petHeaderConfig,
-    ).then((response) => {
-      console.log(response.data)
-      const postsData = new FormData()
+      weight: weight,
+    });
+    console.log(jsonData);
+    axios
+      .post(urlPet, jsonData, petHeaderConfig)
+      .then((response) => {
+        console.log(response.data);
+        const postsData = new FormData();
 
-      const postsHeaderConfig = {
-        'Accept': '*/*',
-        'Authorization': `Bearer ${global.token}`,
-        // 'Content-Type': "multipart/form-data"
-      }
-      postsData.append('image', {
-        uri: parameter.image,
-        type: "image/*",
-        name: "petphoto.jpg"
-      })
-      postsData.append('desc', parameter.reason)
-      postsData.append('petid', response.data.petid)
-      fetch(urlPosts, {
-        method: "post",
-        body: postsData,
-        headers: postsHeaderConfig
-      }).then(response => {response.json()
-        navigation.navigate("Root", {screen:"HomeScreen"})})
-        .then(response => {
-          setDisabled(false)
-          setImage(null)
-          onChangeName(undefined)
-          onChangeBirthday(null)
-          onChangeBreed(undefined)
-          onChangeReason(undefined)
-          Alert.alert("Success", "", [{ text: "OK" }])
-        })
-        .catch(function (response) {
-          setDisabled(false)
-          //handle error
-          console.log(response)
-          //Alert.alert("Error", "Please fill out all fields", [{ text: "OK" }])
+        const postsHeaderConfig = {
+          Accept: "*/*",
+          Authorization: `Bearer ${global.token}`,
+          // 'Content-Type': "multipart/form-data"
+        };
+        postsData.append("image", {
+          uri: parameter.image,
+          type: "image/*",
+          name: "petphoto.jpg",
         });
-    })
-      .catch((error) => {
-        setDisabled(false)
-        Alert.alert("Error", "Please fill out all fields", [{ text: "OK" }])
+        postsData.append("desc", parameter.reason);
+        postsData.append("petid", response.data.petid);
+        fetch(urlPosts, {
+          method: "post",
+          body: postsData,
+          headers: postsHeaderConfig,
+        })
+          .then((response) => {
+            response.json();
+            navigation.navigate("Root", { screen: "HomeScreen" });
+          })
+          .then((response) => {
+            setDisabled(false);
+            setImage(null);
+            onChangeName(undefined);
+            onChangeBirthday(null);
+            onChangeBreed(undefined);
+            onChangeReason(undefined);
+            Alert.alert("Success", "", [{ text: "OK" }]);
+          })
+          .catch(function (response) {
+            setDisabled(false);
+            //handle error
+            console.log(response);
+            //Alert.alert("Error", "Please fill out all fields", [{ text: "OK" }])
+          });
       })
-  }
+      .catch((error) => {
+        setDisabled(false);
+        Alert.alert("Error", "Please fill out all fields", [{ text: "OK" }]);
+      });
+  };
 
   const [image, setImage] = useState<string | null>();
 
@@ -174,15 +203,21 @@ export default function PostScreen({navigation}) {
     }
   };
 
-  let [name, onChangeName] = React.useState<string | undefined>(undefined)
+  let [name, onChangeName] = React.useState<string | undefined>(undefined);
   // const [birthday, onChangeBirthday] = React.useState<string | undefined>(undefined)
-  let [birthday, onChangeBirthday] = React.useState<Date | null>(null)
-  let [neutered, onChangeNeutered] = React.useState<PickerItem>({ label: "Select...", value: true })
-  let [breed, onChangeBreed] = React.useState<string | undefined>(undefined)
-  let [reason, onChangeReason] = React.useState<string | undefined>(undefined)
-  let [petType, setPetType] = useState<PickerItem>({ label: "Select...", value: '' });
-  let [hairlength, setHairlength] = useState<PickerItem>()
-  let [weight, setWeight] = useState<string>()
+  let [birthday, onChangeBirthday] = React.useState<Date | null>(null);
+  let [neutered, onChangeNeutered] = React.useState<PickerItem>({
+    label: "Select...",
+    value: true,
+  });
+  let [breed, onChangeBreed] = React.useState<string | undefined>(undefined);
+  let [reason, onChangeReason] = React.useState<string | undefined>(undefined);
+  let [petType, setPetType] = useState<PickerItem>({
+    label: "Select...",
+    value: "",
+  });
+  let [hairlength, setHairlength] = useState<PickerItem>();
+  let [weight, setWeight] = useState<string>();
 
   const [disabled, setDisabled] = useState<boolean>(false);
   // const [petTypes, setPetTypes] = useState([
@@ -191,36 +226,40 @@ export default function PostScreen({navigation}) {
   // ]);
 
   const hairlengths: Array<PickerItem> = [
-    { label: "Short", value: "S"},
-    { label: "Medium", value: "M"},
-    { label: "Long", value: "L"}
-  ]
+    { label: "Short", value: "S" },
+    { label: "Medium", value: "M" },
+    { label: "Long", value: "L" },
+  ];
 
   const neuteredStatus: Array<PickerItem> = [
     { label: "Yes", value: true },
-    { label: "No", value: false }
-  ]
+    { label: "No", value: false },
+  ];
 
   const petTypes: Array<PickerItem> = [
-    { label: "Cat", value: 'CAT' },
-    { label: "Dog", value: 'DOG' }
-  ]
-  const [gender, setGender] = useState<PickerItem>({ label: 'Select...', value: '' });
-  const genders: Array<PickerItem> = [
-    { label: 'Male', value: 'M' },
-    { label: 'Female', value: 'F' }
+    { label: "Cat", value: "CAT" },
+    { label: "Dog", value: "DOG" },
   ];
-  const handleText = (): string => birthday
-    ? birthday.toLocaleDateString()
-    : "Set Birthday";
+  const [gender, setGender] = useState<PickerItem>({
+    label: "Select...",
+    value: "",
+  });
+  const genders: Array<PickerItem> = [
+    { label: "Male", value: "M" },
+    { label: "Female", value: "F" },
+  ];
+  const handleText = (): string =>
+    birthday ? birthday.toLocaleDateString() : "Set Birthday";
   let imageIcon;
   if (image == undefined) {
-    imageIcon = <Icon name="plus" type="font-awesome" />
+    imageIcon = <Icon name="plus" type="font-awesome" />;
   } else {
-    imageIcon = <Image
-      source={{ uri: image }}
-      style={{ width: "100%", aspectRatio: 1 }}
-    />
+    imageIcon = (
+      <Image
+        source={{ uri: image }}
+        style={{ width: "100%", aspectRatio: 1 }}
+      />
+    );
   }
   return (
     <KeyboardWrapper>
@@ -229,7 +268,11 @@ export default function PostScreen({navigation}) {
           <View style={styles.basicInfoLeft1}>
             <TouchableOpacity
               onPress={pickImage}
-              style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+              }}
             >
               {imageIcon}
             </TouchableOpacity>
@@ -254,7 +297,7 @@ export default function PostScreen({navigation}) {
                 onItemChange={setPetType}
                 placeholder="Select a Species..."
                 style={styles.inputBox}
-              // textInputStyle={{color: "#C4C4C4"}}
+                // textInputStyle={{color: "#C4C4C4"}}
               />
             </View>
             <View style={styles.spacer}></View>
@@ -266,7 +309,7 @@ export default function PostScreen({navigation}) {
                 onItemChange={setGender}
                 placeholder="Select a gender..."
                 style={styles.inputBox}
-              // textInputStyle={{color: "#C4C4C4"}}
+                // textInputStyle={{color: "#C4C4C4"}}
               />
             </View>
           </View>
@@ -283,7 +326,6 @@ export default function PostScreen({navigation}) {
                 keyboardType={"numeric"}
               />
             </View>
-
           </View>
           <View style={styles.spacer}></View>
           <View style={styles.basicInfoRight}>
@@ -308,10 +350,9 @@ export default function PostScreen({navigation}) {
                 onDateChange={onChangeBirthday}
                 text={handleText()}
                 style={styles.inputBox}
-              // textInputStyle={{color: "#C4C4C4"}}
+                // textInputStyle={{color: "#C4C4C4"}}
               />
             </View>
-
           </View>
           <View style={styles.spacer}></View>
           <View style={styles.basicInfoRight}>
@@ -337,12 +378,14 @@ export default function PostScreen({navigation}) {
           />
         </View>
         <View style={styles.flexV}>
-          <Text style={{ fontSize: 10 }}>Reason for Putting Up for Adoption:</Text>
+          <Text style={{ fontSize: 10 }}>
+            Reason for Putting Up for Adoption:
+          </Text>
           <TextInput
             placeholder="..."
             onChangeText={onChangeReason}
             value={reason}
-            style={[styles.inputBox, { height: 200 }]}
+            style={[styles.inputBox, { height: 160 }]}
             multiline={true}
           />
         </View>
@@ -360,10 +403,10 @@ export default function PostScreen({navigation}) {
               reason: reason,
               weight: weight,
               hairlength: hairlength,
-              image: image
+              image: image,
             })}
             disabled={disabled}
-            >
+          >
             <Text style={{ color: "white", fontSize: 24 }}>Make Post</Text>
           </TouchableOpacity>
         </View>
@@ -375,7 +418,7 @@ export default function PostScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingTop: 20,
   },
@@ -383,11 +426,11 @@ const styles = StyleSheet.create({
   basicInfo: {
     // borderWidth: 2,
     flexDirection: "row",
-    marginBottom: 20
+    marginBottom: 20,
   },
 
   basicInfoLeft: {
-    width: "40%"
+    width: "40%",
   },
 
   basicInfoLeft1: {
@@ -395,7 +438,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "black",
-    borderRadius: 10
+    borderRadius: 10,
   },
 
   basicInfoRight: {
@@ -405,7 +448,7 @@ const styles = StyleSheet.create({
 
   detailInfo: {
     flexDirection: "row",
-    marginTop: 0
+    marginTop: 0,
   },
 
   detailLeft: {
@@ -413,12 +456,10 @@ const styles = StyleSheet.create({
   },
 
   detailRight: {
-    width: "50%"
+    width: "50%",
   },
 
-  reasonInput: {
-
-  },
+  reasonInput: {},
 
   flexV: {
     flexDirection: "column",
@@ -440,7 +481,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingLeft: 5,
     shadowRadius: 5,
-    marginTop: 3
+    marginTop: 3,
   },
 
   picker: {
@@ -453,25 +494,25 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 5,
     shadowRadius: 5,
-    marginTop: 3
+    marginTop: 3,
   },
 
   button: {
     backgroundColor: Colors.brand,
     borderRadius: 8,
     paddingVertical: 5,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
 
   dropdownContainer: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: "#E5E5E5",
     borderWidth: 0,
     zIndex: 10,
-    elevation: 10
+    elevation: 10,
   },
 
   dropdownListContainer: {
     borderWidth: 0,
-    borderRadius: 5
-  }
+    borderRadius: 5,
+  },
 });

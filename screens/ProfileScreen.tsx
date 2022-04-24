@@ -1,31 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, ListRenderItem, Image } from 'react-native';
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import { RootTabScreenProps, ListingProps, PostInfo } from '../types';
+import React, { useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  FlatList,
+  ListRenderItem,
+  Image,
+} from "react-native";
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
+import { RootTabScreenProps, ListingProps, PostInfo } from "../types";
 import { PetListingCard } from "../components/PetListingCard";
-import APIs from '../constants/APIs';
-import axios from 'axios';
-import * as ImagePicker from 'expo-image-picker';
-import { Alert } from 'react-native';
+import APIs from "../constants/APIs";
+import axios from "axios";
+import * as ImagePicker from "expo-image-picker";
+import { Alert } from "react-native";
+import { Line } from "../components/LogStyles";
+import { Icon } from "react-native-elements";
 
-export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFive'>) {
+export default function ProfileScreen({
+  navigation,
+}: RootTabScreenProps<"TabFive">) {
   const textColor = Colors[useColorScheme()].text;
 
   // Profile Info //
-  const [imageUri, setImageUri] = useState<string>('');
+  const [imageUri, setImageUri] = useState<string>("");
 
   useEffect(() => {
-    axios.get(APIs.profilePhoto, APIs.getParams(global.token))
+    axios
+      .get(APIs.profilePhoto, APIs.getParams(global.token))
       .then((response) => {
         //console.log(response.data);
         const uri = response.data[0].profilePhoto;
         console.log(uri);
-        setImageUri(uri == null ? '' : uri);
+        setImageUri(uri == null ? "" : uri);
       })
       .catch((error) => {
-        console.log(error)
-      })
+        console.log(error);
+      });
   }, []);
 
   const pickImage = async () => {
@@ -40,10 +54,10 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
       //setImageUri(photoUri);
 
       const photoData = new FormData();
-      photoData.append('photo', {
+      photoData.append("photo", {
         uri: photoUri,
         type: "image/*",
-        name: "profile_photo.jpg"
+        name: "profile_photo.jpg",
       });
       //console.log('POSTING');
       //console.log(APIs.profilePhoto);
@@ -53,17 +67,19 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
         method: "post",
         body: photoData,
         headers: {
-          'Authorization': `Bearer ${global.token}`,
-        }
-      }).then(response => response.json())
-      .then(response => {
-        //console.log('UPLOADED');
-        //console.log(response);
-        setImageUri(APIs.address + response.profilePhoto);
-      }).catch(response => {
-        //console.log(response);
-        Alert.alert("Profile Photo Not Uploaded");
+          Authorization: `Bearer ${global.token}`,
+        },
       })
+        .then((response) => response.json())
+        .then((response) => {
+          //console.log('UPLOADED');
+          //console.log(response);
+          setImageUri(APIs.address + response.profilePhoto);
+        })
+        .catch((response) => {
+          //console.log(response);
+          Alert.alert("Profile Photo Not Uploaded");
+        });
     }
   };
 
@@ -72,65 +88,66 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   // Posts //
   const [posts, setPosts] = useState<PostInfo[]>([]);
 
-  function updatePosts(){
-    axios.get<PostInfo[]>(APIs.myPosts, APIs.getParams(global.token))
-    .then((response) => {
-      setPosts(response.data);
-      //console.log(posts);
-    })
-    .catch((error) =>{
-      //console.log(error);
-    })
+  function updatePosts() {
+    axios
+      .get<PostInfo[]>(APIs.myPosts, APIs.getParams(global.token))
+      .then((response) => {
+        setPosts(response.data);
+        //console.log(posts);
+      })
+      .catch((error) => {
+        //console.log(error);
+      });
   }
 
-  useEffect(updatePosts, [])
+  useEffect(updatePosts, []);
   //console.log(posts);
 
-  const unsubscribe = navigation.addListener('focus', updatePosts);
+  const unsubscribe = navigation.addListener("focus", updatePosts);
 
   const handleAdd = (id: number) => {
-    const petaddFavUri = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add';
+    const petaddFavUri =
+      "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add";
     const petaddFavHeader = {
       headers: {
-        'Authorization': `Bearer ${global.token}`,
-        'content-type': 'application/json'
-      }
-    }
-    const data = JSON.stringify( {
-      postid: id
-    })
-    axios.post(
-      petaddFavUri,
-      data,
-      petaddFavHeader
-    ).then(( response ) => {
-      Alert.alert("Success", "", [{text: "OK"}])
-    }).catch(( error ) => {
-      Alert.alert("Failed", "You've already added this pet to favorite!", [{text: "OK"}])
-    })
-  }
+        Authorization: `Bearer ${global.token}`,
+        "content-type": "application/json",
+      },
+    };
+    const data = JSON.stringify({
+      postid: id,
+    });
+    axios
+      .post(petaddFavUri, data, petaddFavHeader)
+      .then((response) => {
+        Alert.alert("Success", "", [{ text: "OK" }]);
+      })
+      .catch((error) => {
+        Alert.alert("Failed", "You've already added this pet to favorite!", [
+          { text: "OK" },
+        ]);
+      });
+  };
 
   const listings = posts.map((post) => {
     const listing: ListingProps = {
-      id: '' + post.postid,
+      id: "" + post.postid,
       name: post.petid.petname,
       breed: post.petid.breed,
       avatar: post.image,
-    }
+    };
     return listing;
-  })
+  });
 
-  const renderItem: ListRenderItem<ListingProps> = ({item}) => (
-    <TouchableOpacity
-      onPress={()=>navigation.navigate('Detail', {item})}
-    >
+  const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate("Detail", { item })}>
       <PetListingCard
-          id = {item.id}
-          name = {item.name}
-          breed = {item.breed}
-          avatar = {item.avatar}
-          handleAdd = {handleAdd}
-          // description = {item.description}
+        id={item.id}
+        name={item.name}
+        breed={item.breed}
+        avatar={item.avatar}
+        handleAdd={handleAdd}
+        // description = {item.description}
       />
     </TouchableOpacity>
   );
@@ -138,94 +155,126 @@ export default function ProfileScreen({ navigation }: RootTabScreenProps<'TabFiv
   // const{name, email} = route.params;
   // console.log(imageUri);
   return (
-    <SafeAreaView style={[styles.container,{
-      flexDirection:"column"
-    }]}>
-      <View style={{
-        flex: 1,
-        flexDirection:"row",
-        alignItems:"center"
-      }}>
-        <View style={{
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          flexDirection: "column",
+        },
+      ]}
+    >
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
             flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            style={styles.roundButton}
-            onPress={pickImage}>
-            {imageUri == ''
-              ? <Text style={{color: 'white'}}>Upload Picture</Text>
-              : <Image
-                  source={{uri:imageUri}}
-                  style={{ width: "130%", aspectRatio: 1 }}
-                />
-            }
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity style={styles.roundButton} onPress={pickImage}>
+            {imageUri == "" ? (
+              <Icon name="plus" type="font-awesome" />
+            ) : (
+              <Image
+                source={{ uri: imageUri }}
+                style={{ width: "130%", aspectRatio: 1 }}
+              />
+            )}
           </TouchableOpacity>
         </View>
-        <View style={{
-          flex: 1,
-          flexDirection: "column",
-          backgroundColor: "transparent"
-        }}>
-          <Text style={{
-            fontSize: 18,
-            marginBottom: 10,
-            color: textColor
-          }}>{userEmail}</Text>
-          {false && //TODO: add more user info. Perhaps edit profile?
-          <Text style={{
-            color: textColor
-          }}>About me...</Text>
-          }
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            backgroundColor: "transparent",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              marginBottom: 10,
+              color: textColor,
+            }}
+          >
+            {global.full_name}
+          </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              marginBottom: 10,
+              color: textColor,
+            }}
+          >
+            {userEmail}
+          </Text>
+          {false && ( //TODO: add more user info. Perhaps edit profile?
+            <Text
+              style={{
+                color: textColor,
+              }}
+            >
+              About me...
+            </Text>
+          )}
         </View>
       </View>
-      <View style={{
-        flex: 4,
-        //backgroundColor: "green"
-      }}>
+      <Line></Line>
+      <View
+        style={{
+          flex: 4,
+          //backgroundColor: "green"
+        }}
+      >
         {
-        <FlatList
-          data = {listings}
-          renderItem = {renderItem}
-          keyExtractor = {item => item.id}
-        />}
+          <FlatList
+            data={listings}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+        }
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%',
+    width: "80%",
   },
   roundButton: {
     width: 100,
     height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 10,
     borderRadius: 100,
     backgroundColor: Colors.brand,
-    overflow: 'hidden'
+    overflow: "hidden",
   },
   pillButton: {
     width: 80,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 10,
     borderRadius: 100,
-    backgroundColor: '#FB6565',
-    margin: 10
-  }
+    backgroundColor: "#FB6565",
+    margin: 10,
+  },
 });
