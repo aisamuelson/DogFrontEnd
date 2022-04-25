@@ -53,7 +53,9 @@ const Signup = ({ navigation }) => {
     axios
       .post(url, credentials)
       .then((response) => {
+        global.token = token;
         global.email = credentials.email;
+        global.full_name = result.full_name;
 
         //log in after registering
         const url =
