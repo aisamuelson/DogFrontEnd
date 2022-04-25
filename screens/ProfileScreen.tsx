@@ -32,13 +32,13 @@ export default function ProfileScreen({
     axios
       .get(APIs.profilePhoto, APIs.getParams(global.token))
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         const uri = response.data.profilePhoto;
-        console.log(uri);
+        //console.log(uri);
         setImageUri(uri == null ? "" : APIs.address + uri);
       })
       .catch((error) => {
-        console.log(error);
+        console.log('Profile pic not loaded');
       });
   }, []);
 
