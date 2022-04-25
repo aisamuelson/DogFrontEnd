@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Image } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
@@ -7,6 +7,8 @@ import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RouteParamList } from '../types';
+import axios from 'axios';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ChatScreen() {
     const [messages_, setMessages] = useState([]);
@@ -16,12 +18,13 @@ export default function ChatScreen() {
     const user_avatar = route.params.avatar;
     const myself = global.email;
     const myname = global.full_name;
+    const post = route.params.postid;
+    const [petdata, setPetdata] = useState(null)
+    console.log(post)
     let myavatar = global.avatar;
     if (myavatar === undefined) {
         myavatar = null
     }
-    console.log(user_avatar)
-    console.log(myavatar)
     const db = getFirestore()
     const q = query(collection(db, myself, user_, "messages"), orderBy("createdAt", "desc"));
     var messageList = []
@@ -32,6 +35,59 @@ export default function ChatScreen() {
         },
         [messages_]
     )
+
+    const maleComponent = () => {
+        return (
+          <View style={styles.hstack}>
+            <MaterialCommunityIcons name="gender-male" size={24} color="black" />
+            <Text style={styles.petListItem}>&nbsp;
+              <Text>Male</Text>
+            </Text>
+          </View>
+        )
+    }
+    
+    const femaleComponent = () => {
+        return (
+            <View style={styles.hstack}>
+                <MaterialCommunityIcons name="gender-female" size={24} color="black" />
+                <Text style={styles.petListItem}>&nbsp;
+                    <Text>Female</Text>
+                </Text>
+            </View>
+        )
+    }
+
+    const renderPostCard = ( postid: number ) => {
+        if (petdata !== null) {
+            let genderComponent;
+            if (petdata?.petid.gender === "M") {
+                genderComponent = maleComponent
+            } else {
+                genderComponent = femaleComponent
+            }
+            return (
+                <View style={styles.petCardContainer}>
+                    <Image
+                        source={{ uri: petdata?.image ?? "" }}
+                        style={{ height: "100%", aspectRatio: 1, borderRadius: 20 }}
+                    />
+                    <View style={styles.flexV}>
+                        <View style={styles.hstack}>
+                            <Text> {petdata?.petid.petname} - {petdata?.petid.breed} </Text>
+                        </View>
+                        <View style={styles.spacer}/>
+                        {genderComponent()}
+                    </View>
+                </View>
+            )
+        }
+        else {
+            return (
+                <View><Text>Didn't get it</Text></View>
+            )
+        }
+    }
 
     useLayoutEffect(() => {
         let unsub = onSnapshot(q, (snapshot) => {
@@ -77,13 +133,31 @@ export default function ChatScreen() {
         })
     }, [])
 
+    useEffect(() => {
+        let mounted = true
+        const petHeaderConfig = {
+            headers: {
+            'Authorization': `Bearer ${global.token}`,
+            }
+        }
+        const url = `http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/${post}`
+        axios.get(url, petHeaderConfig).then((response) => {
+            setPetdata(response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+        return () => { mounted = false }
+
+    }, [])
+
     const onSend = useCallback((messages = []) => {
 
         console.log(messages)
 
         setDoc(doc(db, myself, user_), {
             full_name: user_full_name,
-            avatar: user_avatar
+            avatar: user_avatar,
+            postid: post
         })
         addDoc(collection(db, myself, user_, "messages"), {
             message: messages[0],
@@ -91,7 +165,8 @@ export default function ChatScreen() {
         })
         setDoc(doc(db, user_, myself), {
             full_name: myname,
-            avatar: myavatar
+            avatar: myavatar,
+            postid: post
         })
         addDoc(collection(db, user_, myself, "messages"), {
             message: messages[0],
@@ -109,6 +184,8 @@ export default function ChatScreen() {
                 name: myname,
                 avatar: myavatar
             }}
+            renderChatFooter={() => renderPostCard(post)}
+            showUserAvatar={true}
         />
     )
 }
@@ -127,5 +204,32 @@ const styles = StyleSheet.create({
         marginVertical: 30,
         height: 1,
         width: '80%',
+    },
+
+    petCardContainer: {
+        height: 100,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        padding: 10
+    },
+    
+    flexV: {
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "baseline",
+        marginLeft: 20
+        // borderWidth: 2,
+    },
+
+    spacer: {
+      flex: 1,
+    },
+
+    hstack: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "flex-end",
+      padding: 5
     },
 });

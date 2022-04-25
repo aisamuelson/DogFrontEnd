@@ -34,7 +34,8 @@ export default function MessagesScreen({ navigation }: RootTabScreenProps<'TabFo
           chats.push({
             email: change.doc.id,
             full_name: change.doc.data().full_name,
-            avatar: change.doc.data().avatar
+            avatar: change.doc.data().avatar,
+            postid: change.doc.data().postid
           })
         }
       })
@@ -46,7 +47,7 @@ export default function MessagesScreen({ navigation }: RootTabScreenProps<'TabFo
 
   const renderItem = ({item}) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('ChatRoom', { user: item.email, full_name: item.full_name, avatar: item.avatar })}
+      onPress={() => navigation.navigate('ChatRoom', { user: item.email, full_name: item.full_name, avatar: item.avatar, postid: item.postid })}
     > 
       <ChatRoomListCell
         email={item.email}
