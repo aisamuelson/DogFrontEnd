@@ -12,7 +12,7 @@ import {
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import { RootTabScreenProps, ListingProps, PostInfo } from "../types";
-import { PetListingCard } from "../components/PetListingCard";
+import { PetListingCard2 } from "../components/PetListingCard2";
 import APIs from "../constants/APIs";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
@@ -107,7 +107,7 @@ export default function ProfileScreen({
 
   const handleAdd = (id: number) => {
     const petaddFavUri =
-      "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/favorites/add";
+      "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/";
     const petaddFavHeader = {
       headers: {
         Authorization: `Bearer ${global.token}`,
@@ -117,13 +117,16 @@ export default function ProfileScreen({
     const data = JSON.stringify({
       postid: id,
     });
+    const removeUrl = petaddFavUri + id;
     axios
-      .post(petaddFavUri, data, petaddFavHeader)
+      .delete(removeUrl, petaddFavHeader)
       .then((response) => {
         Alert.alert("Success", "", [{ text: "OK" }]);
       })
       .catch((error) => {
-        Alert.alert("Failed", "You've already added this pet to favorite!", [
+        console.log(error);
+        console.log(removeUrl);
+        Alert.alert("Failed", "We are having trouble removing this post", [
           { text: "OK" },
         ]);
       });
@@ -141,7 +144,7 @@ export default function ProfileScreen({
 
   const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate("Detail", { item })}>
-      <PetListingCard
+      <PetListingCard2
         id={item.id}
         name={item.name}
         breed={item.breed}
