@@ -163,7 +163,7 @@ export default function DetailScreen({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.addButton, { marginTop: 10 }]}
-            onPress={() => navigation.navigate('ChatRoom', { user: data.owner, full_name: data.owner_full_name, avatar: data.owner_avatar })}
+            onPress={() => navigation.navigate('ChatRoom', { user: data.owner, full_name: data.owner_full_name, avatar: data.owner_avatar, postid: id })}
           >
             <Text style={styles.buttonText}>Chat</Text>
           </TouchableOpacity>

@@ -67,6 +67,7 @@
      user: string
      full_name: string
      avatar: string
+     postid: number
    }
  }
 
