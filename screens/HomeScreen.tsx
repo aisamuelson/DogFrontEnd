@@ -41,8 +41,8 @@ function parseListRes(data) {
         }
         parsedData.push(post);
     });
-    // return parsedData.sort((a,b)=> a.distance - b.distance);
-    return parsedData
+    return parsedData.sort((a,b)=> a.distance - b.distance);
+    // return parsedData;
 }
 
 function calculateDistance(myLatitude: number, myLongitude: number,
@@ -58,7 +58,7 @@ function calculateDistance(myLatitude: number, myLongitude: number,
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 
-    const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts';
+    const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts?limit=5&offset=';
     const petListConfig = {
         headers: {
             'Authorization': `Bearer ${global.token}`,
@@ -67,6 +67,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         }
     }
 
+    let nextPageURL = "";
+
+    const [page, setPage] = useState(0);
+    const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
 
@@ -102,13 +106,18 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)
         axios
+            // .get(petListURL, petListConfig)
             .get(buildURL(), petListConfig)
             .then(function (response) {
-                let parsedData = parseListRes(response.data);
+                // let parsedData = parseListRes(response.data);
+                let parsedData = parseListRes(response.data.results);
                 // console.log('parsedData is: ',parsedData);
 
-                setPetList(parsedData);
+                nextPageURL = response.data.next;
+
+                setPetList(petList.concat(parsedData));
                 setRefreshing(false);
+                setLoading(false);
                 // console.log('the petlist is:', petList);
 
             })
@@ -116,27 +125,35 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 console.log(error)
                 setRefreshing(false)
             })
-    }, [searchBreed, searchType, searchGender, searchNeuter, searchHair])
+    }, [searchBreed, searchType, searchGender, searchNeuter, page])
 
     useEffect(() => {
         axios
+            // .get(petListURL, petListConfig)
             .get(buildURL(), petListConfig)
             .then(async function (response) {
-                let parsedData = parseListRes(response.data);
+                setLoading(true);
+                // console.log("respond is: " + JSON.stringify(response.data));
+                // let parsedData = parseListRes(response.data);
+                let parsedData = parseListRes(response.data.results);
+
                 // console.log('parsedData is: ',parsedData);
 
-                setPetList(parsedData);
+                // nextPageURL = response.data.next;
+
+                // setPetListURL(response.data.next);
+                setPetList(petList.concat(parsedData));
+                setLoading(false);
                 // console.log('the petlist is:', petList);
 
             })
             .catch(function (error) {
                 console.log(error)
             });
-    },[searchBreed, searchType, searchGender, searchNeuter, searchHair]);
+    },[searchBreed, searchType, searchGender, searchNeuter, page]);
 
     const buildURL = () => {
-        let pullURL = petListURL +
-            "?breed=" + searchBreed
+        let pullURL = petListURL + page + "&breed=" + searchBreed
         if (searchType != ""){
             pullURL = pullURL + "&type=" + searchType
         }
@@ -174,14 +191,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             Alert.alert("Failed", "You've already added this pet to favorite!", [{text: "OK"}])
         })
     }
-
-    // console.log("Your option is:", option);
-    // console.log("Your filter phrase is:", filterPhrase);
-    //
-    // console.log("Your breed is:" + searchBreed);
-    // console.log("Your type is:" + searchType);
-    // console.log("Your sex is:" + searchGender);
-    // console.log("Your neuter is:" + searchNeuter);
 
     const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
         <TouchableOpacity
@@ -377,6 +386,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                         onRefresh={onRefresh}
                     />
                 }
+                onEndReached={() => {setPage(page+5)}}
             />
         </SafeAreaView>);
 }
