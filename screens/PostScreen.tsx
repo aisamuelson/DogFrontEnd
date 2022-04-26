@@ -207,16 +207,19 @@ export default function PostScreen({ navigation }) {
   // const [birthday, onChangeBirthday] = React.useState<string | undefined>(undefined)
   let [birthday, onChangeBirthday] = React.useState<Date | null>(null);
   let [neutered, onChangeNeutered] = React.useState<PickerItem>({
-    label: "Select...",
+    label: "Yes",
     value: true,
   });
   let [breed, onChangeBreed] = React.useState<string | undefined>(undefined);
   let [reason, onChangeReason] = React.useState<string | undefined>(undefined);
   let [petType, setPetType] = useState<PickerItem>({
-    label: "Select...",
-    value: "",
+    label: "Cat",
+    value: "CAT",
   });
-  let [hairlength, setHairlength] = useState<PickerItem>();
+  let [hairlength, setHairlength] = useState<PickerItem>({
+    label: "Short",
+    value: "S"
+  });
   let [weight, setWeight] = useState<string>();
 
   const [disabled, setDisabled] = useState<boolean>(false);
@@ -241,8 +244,8 @@ export default function PostScreen({ navigation }) {
     { label: "Dog", value: "DOG" },
   ];
   const [gender, setGender] = useState<PickerItem>({
-    label: "Select...",
-    value: "",
+    label: "Male",
+    value: "M",
   });
   const genders: Array<PickerItem> = [
     { label: "Male", value: "M" },

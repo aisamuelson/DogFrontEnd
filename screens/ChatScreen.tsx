@@ -84,7 +84,7 @@ export default function ChatScreen() {
         }
         else {
             return (
-                <View><Text>Didn't get it</Text></View>
+                <View><Text>Pet Post is Removed</Text></View>
             )
         }
     }
