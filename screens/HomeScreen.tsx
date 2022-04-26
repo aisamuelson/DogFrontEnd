@@ -35,9 +35,8 @@ function parseListRes(data) {
             owner: item.petid.petowner.email,
             owner_full_name: item.petid.petowner.full_name,
             owner_avatar: item.petid.petowner.profilePhoto,
-            distance: calculateDistance(myLatitude, myLongitude, item.petid.petowner.latitude, item.petid.petowner.longitude),
-            // latitude: item.petid.petowner.latitude,
-            // longitude: item.petid.petowner.longitude
+            distance: calculateDistance(myLatitude, myLongitude,
+                                        item.petid.petowner.latitude, item.petid.petowner.longitude),
         }
         parsedData.push(post);
     });
@@ -58,7 +57,7 @@ function calculateDistance(myLatitude: number, myLongitude: number,
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 
-    const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts?limit=5&offset=';
+    const petListURL = 'http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/posts/posts?breed=';
     const petListConfig = {
         headers: {
             'Authorization': `Bearer ${global.token}`,
@@ -67,15 +66,16 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         }
     }
 
-    let nextPageURL = "";
-
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(5);
     const [loading, setLoading] = useState(false);
+
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
+    const [renderList, setRenderList] = useState([]);
 
     const [modalVisible, setModalVisible] = useState(false);
 
+    const [isFiltering, setIsFiltering] = useState(false);
     const [actionTriggered, setActionTriggered] = useState("");
     const [buttonTypeText, setButtonTypeText] = useState("Type");
     const [buttonGenderText, setButtonGenderText] = useState("Gender");
@@ -93,67 +93,91 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     axios
         .get(userURL, petListConfig)
         .then(function (response){
-            // console.log("response is:", response.data);
             myLatitude = response.data.latitude;
             myLongitude = response.data.longitude;
-
-            // console.log("My location is: Latitude = ", myLatitude, "Longitude = ", myLongitude);
         })
         .catch(function (error){
             console.log(error)
         });
 
     const onRefresh = React.useCallback(() => {
-        setRefreshing(true)
+        setRefreshing(true);
         axios
-            // .get(petListURL, petListConfig)
+            // .get(testURL, petListConfig)
             .get(buildURL(), petListConfig)
             .then(function (response) {
+                // let parsedData = isFiltering ? parseListRes(response.data) : parseListRes(response.data.results);
                 // let parsedData = parseListRes(response.data);
                 let parsedData = parseListRes(response.data.results);
+
                 // console.log('parsedData is: ',parsedData);
 
-                nextPageURL = response.data.next;
-
                 setPetList(petList.concat(parsedData));
-                setRefreshing(false);
-                setLoading(false);
-                // console.log('the petlist is:', petList);
+                // setPetList(parsedData);
+                // setRenderList(parsedData.slice(0,page));
+                // handlePagination();
 
+                setRefreshing(false);
             })
             .catch(function (error) {
                 console.log(error)
                 setRefreshing(false)
             })
-    }, [searchBreed, searchType, searchGender, searchNeuter, page])
+        // setPetList([]);
+        console.log("I am Refresh");
+    }, [searchBreed, searchType, searchGender, searchNeuter,page])
 
     useEffect(() => {
+        setLoading(true);
+        // setPetList([]);
         axios
-            // .get(petListURL, petListConfig)
+            // .get(testURL, petListConfig)
             .get(buildURL(), petListConfig)
             .then(async function (response) {
-                setLoading(true);
-                // console.log("respond is: " + JSON.stringify(response.data));
+                // let parsedData = isFiltering ? parseListRes(response.data) : parseListRes(response.data.results);
                 // let parsedData = parseListRes(response.data);
                 let parsedData = parseListRes(response.data.results);
 
                 // console.log('parsedData is: ',parsedData);
 
-                // nextPageURL = response.data.next;
-
-                // setPetListURL(response.data.next);
                 setPetList(petList.concat(parsedData));
-                setLoading(false);
-                // console.log('the petlist is:', petList);
+                // setPetList(parsedData);
+                // setRenderList(parsedData.slice(0,page));
+                // handlePagination();
 
+                setLoading(false);
             })
             .catch(function (error) {
                 console.log(error)
             });
+        console.log("I am useEffect" );
     },[searchBreed, searchType, searchGender, searchNeuter, page]);
 
     const buildURL = () => {
-        let pullURL = petListURL + page + "&breed=" + searchBreed
+        // if (isFiltering) {
+        //     let pullURL = petListURL + searchBreed;
+        //     if (searchType != ""){
+        //         pullURL = pullURL + "&type=" + searchType
+        //     }
+        //     if (searchGender != ""){
+        //         pullURL = pullURL + "&gender=" + searchGender
+        //     }
+        //     if (searchNeuter != ""){
+        //         pullURL = pullURL + "&neutered=" + searchNeuter
+        //     }
+        //     if (searchHair != ""){
+        //         pullURL = pullURL + "&hairlength=" + searchHair
+        //     }
+        //     // pullURL = pullURL + "&limit=5&offset=" + page;
+        //     console.log("current pullURL is:" + pullURL);
+        //
+        //     return pullURL;
+        // }
+        // else {
+        //     return petListURL + "&limit=5&offset=" + page;
+        // }
+
+        let pullURL = petListURL + searchBreed;
         if (searchType != ""){
             pullURL = pullURL + "&type=" + searchType
         }
@@ -166,7 +190,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         if (searchHair != ""){
             pullURL = pullURL + "&hairlength=" + searchHair
         }
+        pullURL = pullURL + "&limit=5&offset=" + page;
         console.log("current pullURL is:" + pullURL);
+
         return pullURL;
     }
 
@@ -192,6 +218,11 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         })
     }
 
+    const handlePagination = async() => {
+        setRenderList(petList.slice(0,page));
+        setPage(page + 5);
+    }
+
     const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
         <TouchableOpacity
             onPress={() => navigation.navigate('Detail', { item })}>
@@ -210,6 +241,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             />
         </TouchableOpacity>
     );
+
+    console.log("current pet list is:" + petList);
+    console.log("current render list is:" + renderList);
+    console.log("we are at page:" + page);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -262,6 +297,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                         <View style={styles.ModalView}>
                             <Pressable onPress={() => {setSearchType("Cat")
                                                         setButtonTypeText("Cat")
+                                                        setPetList([])
+                                                        setPage(0)
                                                         setModalVisible(false)}}>
                                 <View style={styles.ModalMenuView}>
                                     <Text style={{fontSize:25}}>Cat</Text>
@@ -270,6 +307,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
                             <Pressable onPress={() => {setSearchType("Dog")
                                 setButtonTypeText("Dog")
+                                setPetList([])
+                                setPage(0)
                                 setModalVisible(false)}}>
                                 <View style={styles.ModalMenuView}>
                                     <Text style={{fontSize:25}}>Dog</Text>
@@ -278,6 +317,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
                             <Pressable onPress={() => {setSearchType("")
                                 setButtonTypeText("Type")
+                                setPetList([])
+                                setPage(0)
                                 setModalVisible(false)}}>
                                 <View style={styles.ModalMenuView}>
                                     <Text style={{fontSize:25}}>Reset</Text>
@@ -289,6 +330,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                             <View style={styles.ModalView}>
                                 <Pressable onPress={() => {setSearchGender("m")
                                     setButtonGenderText("Male")
+                                    setPetList([])
+                                    setPage(0)
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Male</Text>
@@ -297,6 +340,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
                                 <Pressable onPress={() => {setSearchGender("f")
                                     setButtonGenderText("Female")
+                                    setPetList([])
+                                    setPage(0)
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Female</Text>
@@ -305,6 +350,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
                                 <Pressable onPress={() => {setSearchGender("")
                                     setButtonGenderText("Gender")
+                                    setPetList([])
+                                    setPage(0)
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Reset</Text>
@@ -316,6 +363,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                             <View style={styles.ModalView}>
                                 <Pressable onPress={() => {setSearchNeuter("true")
                                     setButtonNeuterText("Neurtered/Spayed")
+                                    setPetList([])
+                                    setPage(0)
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Yes</Text>
@@ -324,6 +373,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
                                 <Pressable onPress={() => {setSearchNeuter("false")
                                     setButtonNeuterText("Not Neurtered/Spayed")
+                                    setPetList([])
+                                    setPage(0)
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>No</Text>
@@ -332,6 +383,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
                                 <Pressable onPress={() => {setSearchNeuter("")
                                     setButtonNeuterText("Neutering")
+                                    setPetList([])
+                                    setPage(0)
                                     setModalVisible(false)}}>
                                     <View style={styles.ModalMenuView}>
                                         <Text style={{fontSize:25}}>Reset</Text>
@@ -377,6 +430,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             </Modal>
 
             <FlatList
+                // data={renderList}
                 data={petList}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => 'key' + index}
@@ -386,7 +440,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                         onRefresh={onRefresh}
                     />
                 }
-                onEndReached={() => {setPage(page+5)}}
+                onEndReached={handlePagination}
+                onEndReachedThreshold={0}
             />
         </SafeAreaView>);
 }

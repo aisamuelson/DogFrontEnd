@@ -53,8 +53,6 @@
    owner: string,
    owner_full_name: string,
    owner_avatar: string,
-   latitude: number,
-   longitude: number,
    distance: number,
  };
 
