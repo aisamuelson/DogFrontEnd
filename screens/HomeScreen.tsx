@@ -40,8 +40,8 @@ function parseListRes(data) {
         }
         parsedData.push(post);
     });
-    return parsedData.sort((a,b)=> a.distance - b.distance);
-    // return parsedData;
+    // return parsedData.sort((a,b)=> a.distance - b.distance);
+    return parsedData;
 }
 
 function calculateDistance(myLatitude: number, myLongitude: number,
@@ -66,7 +66,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         }
     }
 
-    const [page, setPage] = useState(5);
+    const [page, setPage] = useState(0);
 
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
@@ -349,7 +349,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             </Modal>
 
             <FlatList
-                data={petList}
+                data={petList.sort((a,b)=> a.distance - b.distance)}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => 'key' + index}
                 refreshControl={
