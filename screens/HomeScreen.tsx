@@ -67,7 +67,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     }
 
     const [page, setPage] = useState(5);
-    const [loading, setLoading] = useState(false);
 
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
@@ -75,12 +74,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [isFiltering, setIsFiltering] = useState(false);
     const [actionTriggered, setActionTriggered] = useState("");
     const [buttonTypeText, setButtonTypeText] = useState("Type");
     const [buttonGenderText, setButtonGenderText] = useState("Gender");
     const [buttonNeuterText, setButtonNeuterText] = useState("Neutering");
-    const [buttonHairText, setButtonHairText] = useState("Hair Length");
 
     const [searchBreed, setSearchBreed] = useState("");
     const [searchType, setSearchType] = useState("");
@@ -103,19 +100,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         axios
-            // .get(testURL, petListConfig)
             .get(buildURL(), petListConfig)
             .then(function (response) {
-                // let parsedData = isFiltering ? parseListRes(response.data) : parseListRes(response.data.results);
-                // let parsedData = parseListRes(response.data);
                 let parsedData = parseListRes(response.data.results);
-
-                // console.log('parsedData is: ',parsedData);
-
                 setPetList(petList.concat(parsedData));
-                // setPetList(parsedData);
-                // setRenderList(parsedData.slice(0,page));
-                // handlePagination();
 
                 setRefreshing(false);
             })
@@ -128,24 +116,11 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     }, [searchBreed, searchType, searchGender, searchNeuter,page])
 
     useEffect(() => {
-        setLoading(true);
-        // setPetList([]);
         axios
-            // .get(testURL, petListConfig)
             .get(buildURL(), petListConfig)
             .then(async function (response) {
-                // let parsedData = isFiltering ? parseListRes(response.data) : parseListRes(response.data.results);
-                // let parsedData = parseListRes(response.data);
                 let parsedData = parseListRes(response.data.results);
-
-                // console.log('parsedData is: ',parsedData);
-
                 setPetList(petList.concat(parsedData));
-                // setPetList(parsedData);
-                // setRenderList(parsedData.slice(0,page));
-                // handlePagination();
-
-                setLoading(false);
             })
             .catch(function (error) {
                 console.log(error)
@@ -154,30 +129,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     },[searchBreed, searchType, searchGender, searchNeuter, page]);
 
     const buildURL = () => {
-        // if (isFiltering) {
-        //     let pullURL = petListURL + searchBreed;
-        //     if (searchType != ""){
-        //         pullURL = pullURL + "&type=" + searchType
-        //     }
-        //     if (searchGender != ""){
-        //         pullURL = pullURL + "&gender=" + searchGender
-        //     }
-        //     if (searchNeuter != ""){
-        //         pullURL = pullURL + "&neutered=" + searchNeuter
-        //     }
-        //     if (searchHair != ""){
-        //         pullURL = pullURL + "&hairlength=" + searchHair
-        //     }
-        //     // pullURL = pullURL + "&limit=5&offset=" + page;
-        //     console.log("current pullURL is:" + pullURL);
-        //
-        //     return pullURL;
-        // }
-        // else {
-        //     return petListURL + "&limit=5&offset=" + page;
-        // }
-
-        let pullURL = petListURL + searchBreed;
+        let pullURL = petListURL
+        if (searchBreed != ""){
+            pullURL = pullURL + searchBreed
+        }
         if (searchType != ""){
             pullURL = pullURL + "&type=" + searchType
         }
@@ -250,7 +205,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         <SafeAreaView style={{ flex: 1 }}>
             <Searchbar
                 placeholder="Breed..."
-                onChangeText={(query) => setSearchBreed(query)}
+                onChangeText={(query) => {setSearchBreed(query)
+                    setPetList([])
+                    setPage(0)
+                }}
                 value={searchBreed}
             />
 
