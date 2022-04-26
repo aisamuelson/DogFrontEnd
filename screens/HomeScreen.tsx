@@ -70,7 +70,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
 
     const [refreshing, setRefreshing] = useState(false);
     const [petList, setPetList] = useState([]);
-    const [renderList, setRenderList] = useState([]);
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -83,7 +82,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
     const [searchType, setSearchType] = useState("");
     const [searchGender, setSearchGender] = useState("");
     const [searchNeuter, setSearchNeuter] = useState("");
-    const [searchHair, setSearchHair] = useState("");
 
     const userURL = "http://ec2-18-220-242-107.us-east-2.compute.amazonaws.com:8000/api/auth/user"
 
@@ -111,8 +109,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                 console.log(error)
                 setRefreshing(false)
             })
-        // setPetList([]);
-        console.log("I am Refresh");
     }, [searchBreed, searchType, searchGender, searchNeuter,page])
 
     useEffect(() => {
@@ -125,7 +121,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
             .catch(function (error) {
                 console.log(error)
             });
-        console.log("I am useEffect" );
     },[searchBreed, searchType, searchGender, searchNeuter, page]);
 
     const buildURL = () => {
@@ -142,9 +137,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         if (searchNeuter != ""){
             pullURL = pullURL + "&neutered=" + searchNeuter
         }
-        if (searchHair != ""){
-            pullURL = pullURL + "&hairlength=" + searchHair
-        }
+        // if (searchHair != ""){
+        //     pullURL = pullURL + "&hairlength=" + searchHair
+        // }
         pullURL = pullURL + "&limit=5&offset=" + page;
         console.log("current pullURL is:" + pullURL);
 
@@ -173,10 +168,10 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         })
     }
 
-    const handlePagination = async() => {
-        setRenderList(petList.slice(0,page));
-        setPage(page + 5);
-    }
+    // const handlePagination = async() => {
+    //     setRenderList(petList.slice(0,page));
+    //     setPage(page + 5);
+    // }
 
     const renderItem: ListRenderItem<ListingProps> = ({ item }) => (
         <TouchableOpacity
@@ -197,9 +192,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
         </TouchableOpacity>
     );
 
-    console.log("current pet list is:" + petList);
-    console.log("current render list is:" + renderList);
-    console.log("we are at page:" + page);
+    // console.log("current pet list is:" + petList);
+    // console.log("current render list is:" + renderList);
+    // console.log("we are at page:" + page);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -349,46 +344,11 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                                     </View>
                                 </Pressable>
                             </View>
-                            // :
-                            //     <View style={styles.ModalView}>
-                            //         <Pressable onPress={() => {setSearchHair("short")
-                            //             setButtonHairText("Short")
-                            //             setModalVisible(false)}}>
-                            //             <View style={styles.ModalMenuView}>
-                            //                 <Text style={{fontSize:25}}>Short</Text>
-                            //             </View>
-                            //         </Pressable>
-                            //
-                            //         <Pressable onPress={() => {setSearchHair("M")
-                            //             setButtonHairText("Medium")
-                            //             setModalVisible(false)}}>
-                            //             <View style={styles.ModalMenuView}>
-                            //                 <Text style={{fontSize:25}}>Medium</Text>
-                            //             </View>
-                            //         </Pressable>
-                            //
-                            //         <Pressable onPress={() => {setSearchHair("L")
-                            //             setButtonHairText("Long")
-                            //             setModalVisible(false)}}>
-                            //             <View style={styles.ModalMenuView}>
-                            //                 <Text style={{fontSize:25}}>Long</Text>
-                            //             </View>
-                            //         </Pressable>
-                            //
-                            //         <Pressable onPress={() => {setSearchHair("")
-                            //             setButtonHairText("Hair Length")
-                            //             setModalVisible(false)}}>
-                            //             <View style={styles.ModalMenuView}>
-                            //                 <Text style={{fontSize:25}}>Reset</Text>
-                            //             </View>
-                            //         </Pressable>
-                            //     </View>
                     }
                 </SafeAreaView>
             </Modal>
 
             <FlatList
-                // data={renderList}
                 data={petList}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => 'key' + index}
@@ -398,7 +358,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'TabOne'>)
                         onRefresh={onRefresh}
                     />
                 }
-                onEndReached={handlePagination}
+                onEndReached={() => {setPage(page + 5)}}
                 onEndReachedThreshold={0}
             />
         </SafeAreaView>);
